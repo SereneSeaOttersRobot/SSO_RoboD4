@@ -1,0 +1,7 @@
+First file of this repository, doesn't count as a README file, but please read this if that isn't setup.
+This repository is for the software development, testing, and final production of the Serene Sea Otter's
+FEH Robot. Use of this code maliciously or in any untended manner outside of the FEH program is not
+premitted by the developers of this code and such no blame can be placed on them. Excluding cases where
+the developer explicity permits the use of this code or the developer uses this code for said purpose.
+
+Besides this is a currently private repo (of 2/7/2024), so the above statement probably wasn't needed.
