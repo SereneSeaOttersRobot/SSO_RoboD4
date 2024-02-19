@@ -6,10 +6,10 @@
 #include <FEHAccel.h>
 #include <FEHSD.h>
 
-FEHMotor leftDrive(FEHMotor::Motor1, 1.0);
-FEHMotor rightDrive(FEHMotor::Motor2, 1.0);
+FEHMotor leftVex(FEHMotor::Motor1, 1.0);
+FEHMotor rightVex(FEHMotor::Motor2, 1.0);
 AnalogInputPin cds1(FEHIO::P0_0);
-FEHServo servoLift(FEHServo::FEHServoPort);
+FEHServo liftServo(FEHServo::FEHServoPort);
 AnalogInputPin optoLine1(FEHIO::P0_1);
 AnalogInputPin optoLine2(FEHIO::P0_1);
 AnalogInputPin optoLine3(FEHIO::P0_1);
