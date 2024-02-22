@@ -13,16 +13,17 @@ Function prototypes and contracts
 
 /**
  * Turns the robot @param degrees and reports the turned amount by the end of the method.
- * @endif Ends if turned = degrees or timeLimit reached or sensor_bumper_* hit.
- * @returns degrees turned
+ * @endif Ends if turned = @param degrees or @param timeLimit reached or @param sensor_bumper_* hit.
+ * @returns amount turned in degrees
  * @param degrees - The amount of degrees to turn
- * @param timeLimit - The time limit for this to run in, if this runtime exceeds timeLimit, returns early
+ * @param timeLimit - The time limit for this run time, if this runtime exceeds timeLimit, returns early
  * @param motor_*
  * @param sensor_bumper_*
  * @param sensor_encoder_*
  * @updates motor_*, sensor_bumper_*, sensor_encoder_*
- * @post ensures turn = [amount turned] iff (degrees = [amount turned] or [runtime] exceeds timeLimit) 
- * or turn = -1 * [amount turned] iff (sensor_bumper_*.Value() = false), and -360 < turn < 360 
+ * @pre none
+ * @post ensures turn = [amount turned] iff ( @param degrees = [amount turned] or [runtime] exceeds @param timeLimit) 
+ * or turn = -1 * [amount turned] iff ( @param sensor_bumper_*.Value() = false), and -360 < turn < 360 
  */
 float turn(float degrees, int timeLimit);
 
@@ -30,12 +31,13 @@ float turn(float degrees, int timeLimit);
  * Moves robot forward by @param inches and reports the amount moved by the end of the method.
  * @endif Ends if [amount moved] = @param inches or [runtime of this] exceeds @param timeLimit or @param sensor_bumper_* hit
  * @returns amount moved in inches
- * @param inches - the amount of inches to move forward
- * @param timeLimit - the time limit for this run time
+ * @param inches - the amount of inches to move
+ * @param timeLimit - the time limit for this run time, if this runtime exceeds timeLimit, returns early
  * @param motor_*
  * @param sensor_bumper_*
  * @param sensor_encoder_*
  * @updates motor_*, sensor_bumper_*, sensor_encoder_*
+ * @pre none
  * @post ensures move = [amount moved] iff ( @param inches = [amount moved] or [runtime] exceeds @param timeLimit) 
  * or move = -1 * [amount moved] iff ( @param sensor_bumper_*.Value() = false)
  */
