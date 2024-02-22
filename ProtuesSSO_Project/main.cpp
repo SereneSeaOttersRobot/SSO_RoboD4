@@ -19,7 +19,8 @@ Function prototypes and contracts
  * @param timeLimit - The time limit for this to run in, if this runtime exceeds timeLimit, returns early
  * @updates motor_*
  * @uses sensor_bumper_*, sensor_encoder_*
- * @ensures turn = [amount turned] iff (degrees = [amount turned] or [runtime] >= timeLimit), or turn = -1 * [amount turned] iff (sensor_bumper_*.Value() = false) 
+ * @ensures turn = [amount turned] iff (degrees = [amount turned] or [runtime] >= timeLimit) 
+ * or turn = -1 * [amount turned] iff (sensor_bumper_*.Value() = false), and -360 < turn < 360 
  */
 float turn(float degrees, int timeLimit);
 
