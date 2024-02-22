@@ -11,6 +11,16 @@
 Function prototypes and contracts
 */
 
+/**
+ * Turns the robot @degrees and reports the turned amount by the end of the method.
+ * Ends if turned = degrees or timeLimit reached or sensor_bumper_* hit.
+ * @returns degrees turned
+ * @param degrees - The amount of degrees to turn
+ * @param timeLimit - The time limit for this to run in, if this runtime exceeds timeLimit, returns early
+ * @updates motor_*
+ * @uses sensor_bumper_*, sensor_encoder_*
+ * @ensures turn = [amount turned] iff (degrees = [amount turned] or [runtime] >= timeLimit), or turn = -1 * [amount turned] iff (sensor_bumper_*.Value() = false) 
+ */
 float turn(float degrees, int timeLimit);
 
 float move(float inches, int timeLimit);
