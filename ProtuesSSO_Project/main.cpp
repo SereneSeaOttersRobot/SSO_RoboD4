@@ -12,18 +12,33 @@ Function prototypes and contracts
 */
 
 /**
- * Turns the robot @degrees and reports the turned amount by the end of the method.
- * Ends if turned = degrees or timeLimit reached or sensor_bumper_* hit.
+ * Turns the robot @param degrees and reports the turned amount by the end of the method.
+ * @endif Ends if turned = degrees or timeLimit reached or sensor_bumper_* hit.
  * @returns degrees turned
  * @param degrees - The amount of degrees to turn
  * @param timeLimit - The time limit for this to run in, if this runtime exceeds timeLimit, returns early
- * @updates motor_*
- * @uses sensor_bumper_*, sensor_encoder_*
- * @ensures turn = [amount turned] iff (degrees = [amount turned] or [runtime] >= timeLimit) 
+ * @param motor_*
+ * @param sensor_bumper_*
+ * @param sensor_encoder_*
+ * @updates motor_*, sensor_bumper_*, sensor_encoder_*
+ * @post ensures turn = [amount turned] iff (degrees = [amount turned] or [runtime] exceeds timeLimit) 
  * or turn = -1 * [amount turned] iff (sensor_bumper_*.Value() = false), and -360 < turn < 360 
  */
 float turn(float degrees, int timeLimit);
 
+/**
+ * Moves robot forward by @param inches and reports the amount moved by the end of the method.
+ * @endif Ends if [amount moved] = @param inches or [runtime of this] exceeds @param timeLimit or @param sensor_bumper_* hit
+ * @returns amount moved in inches
+ * @param inches - the amount of inches to move forward
+ * @param timeLimit - the time limit for this run time
+ * @param motor_*
+ * @param sensor_bumper_*
+ * @param sensor_encoder_*
+ * @updates motor_*, sensor_bumper_*, sensor_encoder_*
+ * @post ensures move = [amount moved] iff ( @param inches = [amount moved] or [runtime] exceeds @param timeLimit) 
+ * or move = -1 * [amount moved] iff ( @param sensor_bumper_*.Value() = false)
+ */
 float move(float inches, int timeLimit);
 
 bool withinStartLightRange(float lightValue);
