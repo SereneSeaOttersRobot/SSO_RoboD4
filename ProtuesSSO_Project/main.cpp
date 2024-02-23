@@ -6,181 +6,120 @@
 #include <FEHAccel.h>
 #include <FEHSD.h>
 
+//function prototypes
+bool startLightWithinRange(float lightValue);
 
-/*
-Function prototypes and contracts
-*/
+//global variables and defines
+//Enumeration of Left, Right,...
+#define RIGHT 2
+#define LEFT 0
+#define FRONT 1
+
+//Motor voltage
+#define MOTOR_VOLT 1.0
+
+//hardware global declarations
+//motors
+FEHMotor motor_left(FEHMotor::Motor0, MOTOR_VOLT);
+FEHMotor motor_right(FEHMotor::Motor2, MOTOR_VOLT);
+
+//cds sensor
+AnalogInputPin sensor_cds(FEHIO::P0_1);
+
+//bumper sensor
+DigitalInputPin sensor_bumper_left(FEHIO::P3_4);
+DigitalInputPin sensor_bumper_front(FEHIO::P0_2);
+DigitalInputPin sensor_bumper_right(FEHIO::P0_3);
+
 
 /**
- * Turns the robot degrees and reports the turned amount by the end of the method.
- * @endif Ends if turned = degrees or timeLimit reached or sensor_bumper_* hit.
- * @returns amount turned in degrees
- * @param degrees - The amount of degrees to turn
- * @param timeLimit - The time limit for this run time, if this runtime exceeds timeLimit, returns early
- * @param motor_*
- * @param sensor_bumper_*
- * @param sensor_encoder_*
- * @updates motor_*, sensor_bumper_*, sensor_encoder_*
- * @pre none
- * @post ensures turn = [amount turned] iff ( degrees = [amount turned] or [runtime] exceeds timeLimit) 
- * or turn = -1 * [amount turned] iff ( sensor_bumper_*.Value() = false), and -360 < turn < 360 
+ * Main function of program
  */
-float turn(float degrees, int timeLimit);
-
-/**
- * Moves robot forward by inches and reports the amount moved by the end of the method.
- * @endif Ends if [amount moved] = inches or [runtime of this] exceeds timeLimit or sensor_bumper_* hit
- * @returns amount moved in inches
- * @param inches - the amount of inches to move
- * @param timeLimit - the time limit for this run time, if this runtime exceeds timeLimit, returns early
- * @param motor_*
- * @param sensor_bumper_*
- * @param sensor_encoder_*
- * @updates motor_*, sensor_bumper_*, sensor_encoder_*
- * @pre none
- * @post ensures move = [amount moved] iff ( inches = [amount moved] or [runtime] exceeds timeLimit) 
- * or move = -1 * [amount moved] iff ( sensor_bumper_*.Value() = false)
- */
-float move(float inches, int timeLimit);
-
-bool withinStartLightRange(float lightValue);
-
-bool withinTicketLightRange(float lightValue);
-
-/*
-Global declarations of hardware objects
-*/
-//Motors
-#define motor_voltage 1.0
-FEHMotor motor_left(FEHMotor::Motor0, motor_voltage);
-FEHMotor motor_right(FEHMotor::Motor1, motor_voltage);
-//*************** Sensors ***************
-//******analog*******
-//light color sensor (cds)
-AnalogInputPin sensor_cds(FEHIO::P0_0);
-
-//motor encoder sensors - @attention thresholds not set
-#define ME_LOW_THRESHOLD 0.2
-#define ME_HIGH_THRESHOLD 2.2
-AnalogEncoder sensor_encoder_left(FEHIO::P0_4);
-AnalogEncoder sensor_encoder_right(FEHIO::P0_5);
-
-//******digital*******
-DigitalInputPin sensor_bumper_pos1(FEHIO::P0_1);
-DigitalInputPin sensor_bumper_pos2(FEHIO::P0_2);
-DigitalInputPin sensor_bumper_pos3(FEHIO::P0_3);
-//...
-
-
-/*
-Global declarations for non-hardware variables or constants
-*/
-//tick to linear inch ratio
-#define LINEAR_RATIO 1
-
-//tick to left inch ratio
-#define ANGLE_LEFT_RATIO 1
-
-//tick to right inch ratio
-#define ANGLE_RIGHT_RATIO 1
-
-//start light gloabal storage
-float start_light = 0;
-
-int main(void)
-{   
-    //loading start
-    //set thresholds for encoders
-    sensor_encoder_left.SetThresholds(ME_LOW_THRESHOLD, ME_HIGH_THRESHOLD);
-    sensor_encoder_right.SetThresholds(ME_LOW_THRESHOLD, ME_HIGH_THRESHOLD);
-
-    //load complete start
+int main(void) {
+    /*
+    Pre load variables
+    */
+    //ready
     LCD.Clear(BLACK);
     LCD.WriteLine("Touch to ready up");
-    //Wait on touch
+    //wait touch
     float *x, *y;
-    while(!LCD.Touch(x,y));
-    while(LCD.Touch(x,y));
+    while(!LCD.Touch(x,y)) {
+        LCD.ClearBuffer();
+    }
+    while(LCD.Touch(x,y)){
+        LCD.ClearBuffer();
+    }
+    LCD.WriteLine("GO");
 
-    //wait for acceptable value from light sensor
-    int updateWaitTicks = 10, ticks = 10;
-    float lightValue;
-    do{
-        lightValue = sensor_cds.Value();
-        if (ticks == updateWaitTicks){
+    //light detection wait block
+    float lightValue = 0.0;
+    bool isAcceptable = false;
+    do {
+        LCD.WriteLine("In light loop");
+        //lightValue = sensor_cds.Value();
+        isAcceptable = startLightWithinRange(lightValue);
+    } while (!isAcceptable);
+    LCD.WriteLine("Out of light loop, at intital motor part");
+
+    motor_left.SetPercent(25.0);
+    motor_right.SetPercent(-5.0);
+    Sleep(6.0);
+
+    motor_left.Stop();
+    motor_right.Stop();
+
+    const int numBum = 3;
+    bool bumpers[numBum] = {false, false, false};
+    do {
+        motor_left.SetPercent(25.0);
+        //drift clockwise
+        motor_right.SetPercent(20.0);
+        do {
+            LCD.WriteLine("Bumper sensor group get sensor values");
+            bumpers[LEFT] = !sensor_bumper_left.Value();
+            //bumpers[RIGHT] = !sensor_bumper_right.Value();
+            //bumpers[FRONT] = !sensor_bumper_front.Value();
+        } while (!(bumpers[FRONT] || bumpers[LEFT] || bumpers[RIGHT]));
+        motor_left.Stop();
+        motor_right.Stop();
+        LCD.WriteLine("got out of sensor group");
+        if (bumpers[FRONT] && bumpers[LEFT] && bumpers[RIGHT]){
+            //kill
+            return -1;
+        } else if (bumpers[FRONT] && bumpers[LEFT]){
+            //handle
+            motor_left.SetPercent(-25.0);
+            motor_right.SetPercent(-25.0);
+            Sleep(2.0);
+            motor_left.SetPercent(-12.0);
+        } else if (bumpers[FRONT] && bumpers[RIGHT]){
+            //here
+        } else if (bumpers[RIGHT]){
+            //here
+            motor_left.SetPercent(-25.0);
+            motor_right.SetPercent(-12.0);
+            Sleep(1.0);
+        } else if (bumpers[FRONT]){
+            //here
+        } else if (bumpers[LEFT] && bumpers[RIGHT]){
+            //kill
+            return -1;
+        } else if (bumpers[LEFT]){
+            //handle
             LCD.Clear(BLACK);
-            LCD.WriteLine("detected light value");
-            LCD.WriteLine(lightValue);
-            ticks = 0;
+            LCD.WriteLine("ahahahahahhahah");
+            Sleep(6.0);
+            return 1;
         }
-        ticks++;
-    }while(!withinStartLightRange(lightValue));
-    LCD.Clear(BLACK);
-    LCD.WriteLine("detected and saved light value");
-    LCD.WriteLine(lightValue);
-    start_light = lightValue;
-
-    /*
-    Main function constants
-    */
-    const int time_limit = 2; // 2 second time limit base
-    //********
-
-    //**ISSUE** floater math is not exact, == or != is bad when comparing floats, high chance of error
-
-    //Turn and move to ramp
-    float turn1 = 45.0;
-    float turned1 = turn(turn1, time_limit);
-    if (turn1 != turned1){
-        //error handling
-        //ex
-        LCD.Clear(BLACK);
-        LCD.WriteLine("Error in turn1, angle returned : ");
-        LCD.WriteLine(turned1);
-        Sleep(2.0);
-    }
-    float move1 = 12.0; //inches
-    float moved1 = move(move1, time_limit);
-    if (move1 != moved1){
-        //error handling
-    }
-
-
-
-}
-
-float turn(float degrees, int timeLimit){
-    //here for compiler error handling, replace with actual implementation.
-    float res = 0.0;
-    //remove full revolutions from turn.
-    int numRevInt = ((int)degrees)/360;
-    const float desired_degrees = degrees - (360*numRevInt);
-
-    return res;
-}
-
-float move(float inches, int timeLimit){
-    //here for compiler error handling, replace with actual implementation.
-    float res = 0.0;
-    const double time_limit = timeLimit;
-    const double time_start = TimeNow();
-    //cast inches to int to access remainder operator, getting signage of inches, determining motor direction.
-    const float motor_percent = ((int) inches)%1 * 25;
+        //no need to reset bumper[], do while does that.
+    } while(!LCD.Touch(x,y));
+    LCD.WriteLine("Wider loop ends with a touch, a touch was detected");
     
-    
-    return res;
 }
 
-bool withinStartLightRange(float lightValue){
-    //here for compiler error handling, replace with actual implementation.
-    bool res = false;
-
-    return res;
-}
-
-bool withinTicketLightRange(float lightValue){
-    //here for compiler error handling, replace with actual implementation.
-    bool res = false;
-
+bool startLightWithinRange(float lightValue){
+    bool res = true; // for testing, change back to false after testing
+    //chain of ifs, account for tolerances
     return res;
 }
