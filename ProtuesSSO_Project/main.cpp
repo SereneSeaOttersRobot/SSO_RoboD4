@@ -12,8 +12,8 @@ Function prototypes and contracts
 */
 
 /**
- * Turns the robot @param degrees and reports the turned amount by the end of the method.
- * @endif Ends if turned = @param degrees or @param timeLimit reached or @param sensor_bumper_* hit.
+ * Turns the robot degrees and reports the turned amount by the end of the method.
+ * @endif Ends if turned = degrees or timeLimit reached or sensor_bumper_* hit.
  * @returns amount turned in degrees
  * @param degrees - The amount of degrees to turn
  * @param timeLimit - The time limit for this run time, if this runtime exceeds timeLimit, returns early
@@ -22,14 +22,14 @@ Function prototypes and contracts
  * @param sensor_encoder_*
  * @updates motor_*, sensor_bumper_*, sensor_encoder_*
  * @pre none
- * @post ensures turn = [amount turned] iff ( @param degrees = [amount turned] or [runtime] exceeds @param timeLimit) 
- * or turn = -1 * [amount turned] iff ( @param sensor_bumper_*.Value() = false), and -360 < turn < 360 
+ * @post ensures turn = [amount turned] iff ( degrees = [amount turned] or [runtime] exceeds timeLimit) 
+ * or turn = -1 * [amount turned] iff ( sensor_bumper_*.Value() = false), and -360 < turn < 360 
  */
 float turn(float degrees, int timeLimit);
 
 /**
- * Moves robot forward by @param inches and reports the amount moved by the end of the method.
- * @endif Ends if [amount moved] = @param inches or [runtime of this] exceeds @param timeLimit or @param sensor_bumper_* hit
+ * Moves robot forward by inches and reports the amount moved by the end of the method.
+ * @endif Ends if [amount moved] = inches or [runtime of this] exceeds timeLimit or sensor_bumper_* hit
  * @returns amount moved in inches
  * @param inches - the amount of inches to move
  * @param timeLimit - the time limit for this run time, if this runtime exceeds timeLimit, returns early
@@ -38,8 +38,8 @@ float turn(float degrees, int timeLimit);
  * @param sensor_encoder_*
  * @updates motor_*, sensor_bumper_*, sensor_encoder_*
  * @pre none
- * @post ensures move = [amount moved] iff ( @param inches = [amount moved] or [runtime] exceeds @param timeLimit) 
- * or move = -1 * [amount moved] iff ( @param sensor_bumper_*.Value() = false)
+ * @post ensures move = [amount moved] iff ( inches = [amount moved] or [runtime] exceeds timeLimit) 
+ * or move = -1 * [amount moved] iff ( sensor_bumper_*.Value() = false)
  */
 float move(float inches, int timeLimit);
 
@@ -51,14 +51,19 @@ bool withinTicketLightRange(float lightValue);
 Global declarations of hardware objects
 */
 //Motors
-const static float motor_voltage = 1.0;
+#define motor_voltage 1.0
 FEHMotor motor_left(FEHMotor::Motor0, motor_voltage);
 FEHMotor motor_right(FEHMotor::Motor1, motor_voltage);
 //*************** Sensors ***************
 //******analog*******
 //light color sensor (cds)
-const static float sensor_cds_voltage = 3.3;
 AnalogInputPin sensor_cds(FEHIO::P0_0);
+
+//motor encoder sensors - @attention thresholds not set
+#define ME_LOW_THRESHOLD 0.2
+#define ME_HIGH_THRESHOLD 2.2
+AnalogEncoder sensor_encoder_left(FEHIO::P0_4);
+AnalogEncoder sensor_encoder_right(FEHIO::P0_5);
 
 //******digital*******
 DigitalInputPin sensor_bumper_pos1(FEHIO::P0_1);
@@ -68,15 +73,28 @@ DigitalInputPin sensor_bumper_pos3(FEHIO::P0_3);
 
 
 /*
-Global declarations for non-hardware variables.
+Global declarations for non-hardware variables or constants
 */
+//tick to linear inch ratio
+#define LINEAR_RATIO 1
 
-//start light
+//tick to left inch ratio
+#define ANGLE_LEFT_RATIO 1
+
+//tick to right inch ratio
+#define ANGLE_RIGHT_RATIO 1
+
+//start light gloabal storage
 float start_light = 0;
 
 int main(void)
 {   
-    //start
+    //loading start
+    //set thresholds for encoders
+    sensor_encoder_left.SetThresholds(ME_LOW_THRESHOLD, ME_HIGH_THRESHOLD);
+    sensor_encoder_right.SetThresholds(ME_LOW_THRESHOLD, ME_HIGH_THRESHOLD);
+
+    //load complete start
     LCD.Clear(BLACK);
     LCD.WriteLine("Touch to ready up");
     //Wait on touch
@@ -115,6 +133,11 @@ int main(void)
     float turned1 = turn(turn1, time_limit);
     if (turn1 != turned1){
         //error handling
+        //ex
+        LCD.Clear(BLACK);
+        LCD.WriteLine("Error in turn1, angle returned : ");
+        LCD.WriteLine(turned1);
+        Sleep(2.0);
     }
     float move1 = 12.0; //inches
     float moved1 = move(move1, time_limit);
@@ -139,7 +162,12 @@ float turn(float degrees, int timeLimit){
 float move(float inches, int timeLimit){
     //here for compiler error handling, replace with actual implementation.
     float res = 0.0;
-
+    const double time_limit = timeLimit;
+    const double time_start = TimeNow();
+    //cast inches to int to access remainder operator, getting signage of inches, determining motor direction.
+    const float motor_percent = ((int) inches)%1 * 25;
+    
+    
     return res;
 }
 
