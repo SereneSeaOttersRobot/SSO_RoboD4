@@ -16,15 +16,42 @@ bool startLightWithinRange(float lightValue);
 #define FRONT 1
 
 //Motor voltage
-#define MOTOR_VOLT 1.0
+#define MOTOR_VOLT 9.0
 
 //hardware global declarations
+
+FEHMotor tempLeft(FEHMotor::Motor0, MOTOR_VOLT);
+FEHMotor tempRight(FEHMotor::Motor2, MOTOR_VOLT);
+
+
 //motors
-FEHMotor motor_left(FEHMotor::Motor0, MOTOR_VOLT);
-FEHMotor motor_right(FEHMotor::Motor2, MOTOR_VOLT);
+class Motor {
+    public:
+    FEHMotor left = tempLeft;
+    FEHMotor right = tempRight;
+    Motor();
+    Motor(){};
+    void setPerc(float percent){
+        left.SetPercent(percent);
+        right.SetPercent(percent);
+    }
+    void setPerc(float leftP, float rightP){
+        left.SetPercent(leftP);
+        right.SetPercent(rightP);
+    }
+
+    void stop(){
+        left.Stop();
+        right.Stop();
+    }
+};
+
+Motor motor;
+
+
 
 //cds sensor
-AnalogInputPin sensor_cds(FEHIO::P0_1);
+AnalogInputPin sensor_cds(FEHIO::P0_4);
 
 //bumper sensor
 DigitalInputPin sensor_bumper_left(FEHIO::P3_4);
@@ -36,85 +63,6 @@ DigitalInputPin sensor_bumper_right(FEHIO::P0_3);
  * Main function of program
  */
 int main(void) {
-    /*
-    Pre load variables
-    */
-    //ready
-    LCD.Clear(BLACK);
-    LCD.WriteLine("Touch to ready up");
-    //wait touch
-    float *x, *y;
-    while(!LCD.Touch(x,y)) {
-        LCD.ClearBuffer();
-    }
-    while(LCD.Touch(x,y)){
-        LCD.ClearBuffer();
-    }
-    LCD.WriteLine("GO");
-
-    //light detection wait block
-    float lightValue = 0.0;
-    bool isAcceptable = false;
-    do {
-        LCD.WriteLine("In light loop");
-        //lightValue = sensor_cds.Value();
-        isAcceptable = startLightWithinRange(lightValue);
-    } while (!isAcceptable);
-    LCD.WriteLine("Out of light loop, at intital motor part");
-
-    motor_left.SetPercent(25.0);
-    motor_right.SetPercent(-5.0);
-    Sleep(6.0);
-
-    motor_left.Stop();
-    motor_right.Stop();
-
-    const int numBum = 3;
-    bool bumpers[numBum] = {false, false, false};
-    do {
-        motor_left.SetPercent(25.0);
-        //drift clockwise
-        motor_right.SetPercent(20.0);
-        do {
-            LCD.WriteLine("Bumper sensor group get sensor values");
-            bumpers[LEFT] = !sensor_bumper_left.Value();
-            //bumpers[RIGHT] = !sensor_bumper_right.Value();
-            //bumpers[FRONT] = !sensor_bumper_front.Value();
-        } while (!(bumpers[FRONT] || bumpers[LEFT] || bumpers[RIGHT]));
-        motor_left.Stop();
-        motor_right.Stop();
-        LCD.WriteLine("got out of sensor group");
-        if (bumpers[FRONT] && bumpers[LEFT] && bumpers[RIGHT]){
-            //kill
-            return -1;
-        } else if (bumpers[FRONT] && bumpers[LEFT]){
-            //handle
-            motor_left.SetPercent(-25.0);
-            motor_right.SetPercent(-25.0);
-            Sleep(2.0);
-            motor_left.SetPercent(-12.0);
-        } else if (bumpers[FRONT] && bumpers[RIGHT]){
-            //here
-        } else if (bumpers[RIGHT]){
-            //here
-            motor_left.SetPercent(-25.0);
-            motor_right.SetPercent(-12.0);
-            Sleep(1.0);
-        } else if (bumpers[FRONT]){
-            //here
-        } else if (bumpers[LEFT] && bumpers[RIGHT]){
-            //kill
-            return -1;
-        } else if (bumpers[LEFT]){
-            //handle
-            LCD.Clear(BLACK);
-            LCD.WriteLine("ahahahahahhahah");
-            Sleep(6.0);
-            return 1;
-        }
-        //no need to reset bumper[], do while does that.
-    } while(!LCD.Touch(x,y));
-    LCD.WriteLine("Wider loop ends with a touch, a touch was detected");
     
 }
 
