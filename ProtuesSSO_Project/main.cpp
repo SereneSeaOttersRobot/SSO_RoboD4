@@ -17,14 +17,9 @@ bool startLightWithinRange(float lightValue);
 
 //Motor voltage
 #define MOTOR_VOLT 9.0
-
-//hardware global declarations
-
 FEHMotor tempLeft(FEHMotor::Motor0, MOTOR_VOLT);
 FEHMotor tempRight(FEHMotor::Motor2, MOTOR_VOLT);
-
-
-//motors
+//motors, methods for handling both at same time.
 class Motor {
     public:
     FEHMotor left = tempLeft;
@@ -48,10 +43,24 @@ class Motor {
 
 Motor motor;
 
-
+//Returned datatype of detect light of lightsense
+struct Color {
+    #define RED 1
+    #define BLUE 0 
+};
 
 //cds sensor
-AnalogInputPin sensor_cds(FEHIO::P0_4);
+AnalogInputPin sensor_temp_cds(FEHIO::P0_4);
+
+class LightSense {
+    public:
+    AnalogInputPin cds = sensor_temp_cds;
+    float blue_light_val = 0.433; //filter none, blue filter 0.525
+    float red_light_val = 0.200; //filter none, blue filter 0.940
+    LightSense();
+    Color detectLight();
+};
+
 
 //bumper sensor
 DigitalInputPin sensor_bumper_left(FEHIO::P3_4);
