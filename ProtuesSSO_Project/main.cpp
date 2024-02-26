@@ -63,9 +63,9 @@ class LightSense {
 
 
 //bumper sensor
-DigitalInputPin sensor_bumper_left(FEHIO::P3_4);
-DigitalInputPin sensor_bumper_front(FEHIO::P0_2);
-DigitalInputPin sensor_bumper_right(FEHIO::P0_3);
+DigitalInputPin sensor_bumper_left(FEHIO::P2_7);
+DigitalInputPin sensor_bumper_front(FEHIO::P2_0);
+DigitalInputPin sensor_bumper_right(FEHIO::P0_0);
 
 
 /**
@@ -79,19 +79,19 @@ int main(void) {
     LCD.WriteLine("Press front bumper to ready up");
     while(sensor_bumper_front.Value());
 
-    do {
-        LCD.Clear(BLACK);
-        LCD.WriteLine("Bumper pressed, waiting on light");
-        LCD.WriteLine("Light value detected : ");
-        LCD.WriteLine(lumy.cds.Value());
-        LCD.WriteLine("Not detected as red");
-    } while(!lumy.detectRed());
-    LCD.Clear(BLACK);
-    LCD.WriteLine("Light value detected : ");
-    LCD.WriteLine(lumy.cds.Value());
-    LCD.WriteLine("Detected as red");
-    LCD.WriteLine("Moving in 3 seconds");
-    Sleep(3.0);
+    // do {
+    //     LCD.Clear(BLACK);
+    //     LCD.WriteLine("Bumper pressed, waiting on light");
+    //     LCD.WriteLine("Light value detected : ");
+    //     LCD.WriteLine(lumy.cds.Value());
+    //     LCD.WriteLine("Not detected as red");
+    // } while(!lumy.detectRed());
+    // LCD.Clear(BLACK);
+    // LCD.WriteLine("Light value detected : ");
+    // LCD.WriteLine(lumy.cds.Value());
+    // LCD.WriteLine("Detected as red");
+    // LCD.WriteLine("Moving in 3 seconds");
+    // Sleep(3.0);
 
     LCD.Clear(BLACK);
     LCD.WriteLine("Turn Right, motors(25,-25) sleep(3)");
