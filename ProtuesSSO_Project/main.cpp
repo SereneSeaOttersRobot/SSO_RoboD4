@@ -173,6 +173,7 @@ Color LightSense::detectLight(){
     Color res;
     float lightValue = cds.Value();
     const float tolerance = 0.01;
+    //need long second check (ie check, sleep, check)
     if (lightValue >= blue_light_val - tolerance && lightValue <= blue_light_val+tolerance){
         res.color = ColorBLUE;
     } else if (lightValue >= red_light_val - tolerance && lightValue <= red_light_val + tolerance){
