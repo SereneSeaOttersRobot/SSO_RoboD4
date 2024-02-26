@@ -105,11 +105,12 @@ int main(void) {
     bool front, right, left;
     do {
         //clear screen logic
-        if (iteration % 7 == 1){
+        if (iteration >= 7){
             LCD.Clear(BLACK);
             LCD.WriteLine("End codition is all buttons pressed at once");
             LCD.Write("Iteration (gaps) : ");
             LCD.WriteLine(iteration);
+            iteration = 0;
         }
 
         //base move forward line
@@ -128,21 +129,21 @@ int main(void) {
         */
 
         if (!front){
-            LCD.WriteLine("Move Backwards motors(-25) sleep(2)");
+            LCD.WriteLine("Move Backwards motors(-25) sleep(3)");
             motors.setPerc(-25);
-            Sleep(2);
+            Sleep(3);
         }
 
         if (!right){
-            LCD.WriteLine("Turn slightly Left, motors(-25, 10) sleep (1)");
+            LCD.WriteLine("Turn slightly Left, motors(-25, 10) sleep (2)");
             motors.setPerc(-25,10);
-            Sleep(1);
+            Sleep(2);
         }
 
         if (!left){
-            LCD.WriteLine("Turn slightly Right, motors(10, -25) sleep (1)");
+            LCD.WriteLine("Turn slightly Right, motors(10, -25) sleep (2)");
             motors.setPerc(10,-25);
-            Sleep(1);
+            Sleep(2);
         }
 
         iteration++;
