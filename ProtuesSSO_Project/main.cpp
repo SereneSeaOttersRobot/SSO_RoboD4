@@ -102,7 +102,8 @@ int main(void) {
     LCD.WriteLine("Entering Outer Main While loop, end condition is all buttons pressed at once");
     //clear update screen counter
     int iteration = 0;
-    while (sensor_bumper_left.Value() || sensor_bumper_front.Value() || sensor_bumper_right.Value()) {
+    bool front, right, left;
+    do {
         //clear screen logic
         if (iteration % 7 == 1){
             LCD.Clear(BLACK);
@@ -114,7 +115,6 @@ int main(void) {
         //base move forward line
         motors.setPerc(25,23);
 
-        bool front, left, right;
         do {
             front = sensor_bumper_front.Value();
             left = sensor_bumper_left.Value();
@@ -146,7 +146,7 @@ int main(void) {
         }
 
         iteration++;
-    }
+    } while (front || left || right);
 
 }
 
