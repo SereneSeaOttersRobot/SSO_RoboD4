@@ -49,7 +49,7 @@ struct Color {
 };
 
 //cds sensor
-AnalogInputPin sensor_temp_cds(FEHIO::P0_4);
+AnalogInputPin sensor_temp_cds(FEHIO::P1_0);
 
 class LightSense {
     public:
@@ -79,19 +79,19 @@ int main(void) {
     LCD.WriteLine("Press front bumper to ready up");
     while(sensor_bumper_front.Value());
 
-    // do {
-    //     LCD.Clear(BLACK);
-    //     LCD.WriteLine("Bumper pressed, waiting on light");
-    //     LCD.WriteLine("Light value detected : ");
-    //     LCD.WriteLine(lumy.cds.Value());
-    //     LCD.WriteLine("Not detected as red");
-    // } while(!lumy.detectRed());
-    // LCD.Clear(BLACK);
-    // LCD.WriteLine("Light value detected : ");
-    // LCD.WriteLine(lumy.cds.Value());
-    // LCD.WriteLine("Detected as red");
-    // LCD.WriteLine("Moving in 3 seconds");
-    // Sleep(3.0);
+    do {
+        LCD.Clear(BLACK);
+        LCD.WriteLine("Bumper pressed, waiting on light");
+        LCD.WriteLine("Light value detected : ");
+        LCD.WriteLine(lumy.cds.Value());
+        LCD.WriteLine("Not detected as red");
+    } while(!lumy.detectRed());
+    LCD.Clear(BLACK);
+    LCD.WriteLine("Light value detected : ");
+    LCD.WriteLine(lumy.cds.Value());
+    LCD.WriteLine("Detected as red");
+    LCD.WriteLine("Moving in 3 seconds");
+    Sleep(3.0);
 
     LCD.Clear(BLACK);
     LCD.WriteLine("Turn Right, motors(25,-25) sleep(3)");
