@@ -1,4 +1,4 @@
-#include <ProtHeaderTests_Project\Motors.h>
+#include <Motors.h>
 #include <FEHProteus.h>
 #include <fehproteusfirmware\Libraries\FEHMotor.h>
 
