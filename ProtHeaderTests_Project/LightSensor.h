@@ -77,10 +77,12 @@ class LightSensor{
      * @enum BLUE - Light color Blue
      * @enum EMPTY - Unknown Light color
      */
-    enum LColor{
-        RED, BLUE, EMPTY
+    typedef enum {
+        RED = 0,
+        BLUE, 
+        EMPTY
         //expandable
-    };
+    }LColor;
     /**
      * @brief returns the detected color of light as a custom enumeration of this class.
      * @enum LColor : RED,BLUE,EMPTY
