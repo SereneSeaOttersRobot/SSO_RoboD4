@@ -13,7 +13,11 @@ LightSensor::LightSensor(FEHIO::FEHIOPin pin, float red_light, float blue_light,
 }
 
 LightSensor::LightSensor(FEHIO::FEHIOPin pin){
-    LightSensor(pin, Base_Red_Light, Base_Blue_Light, Base_Tolerance);
+    LightSensor::red_light = Base_Red_Light;
+    LightSensor::blue_light = Base_Blue_Light;
+    LightSensor::tolerance = Base_Tolerance;
+    AnalogInputPin temp(pin);
+    cds_sensor = &temp;
 }
 
 LightSensor::LightSensor(){

@@ -12,11 +12,12 @@ class LightSensor{
     float red_light;
     float blue_light;
     float tolerance;
-    AnalogInputPin * cds_sensor;
     public:
+    AnalogInputPin * cds_sensor;
     /**
      * @brief default constructor for this, uses #defgroup Base_* for all possible
      * @post successful construction of this
+     * @bug Client must create cds object themselves then get this pointer to point to client's cds sensor, otherwise won't work.
      */
     LightSensor();
     /**
@@ -26,12 +27,14 @@ class LightSensor{
      * @param blue_light float value between 0 and 3.3 representing a blue_light
      * @param tolerance float value to tolerance the light values, allowing for error acceptance.
      * @post successful construction of this
+     * @bug Client must create cds object themselves then get this pointer to point to client's cds sensor, otherwise won't work.
      */
     LightSensor(FEHIO::FEHIOPin pin, float red_light, float blue_light, float tolerance);
     /**
      * @brief Uses the given pin but the rest of the values are set to base value from #defgroup Base
      * @param pin a memberof FEHIO::FEHIOPin enumeration, the hardware pin to read the cds sensor from.
      * @post successful construction of this
+     * @bug Client must create cds object themselves then get this pointer to point to client's cds sensor, otherwise won't work.
      */
     LightSensor(FEHIO::FEHIOPin pin);
     /**
