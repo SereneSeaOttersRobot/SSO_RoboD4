@@ -68,11 +68,11 @@ void LightSensor::setTolerance(float tolerance){
 };
 
 LightSensor::LColor LightSensor::detectColor(){
-    LightSensor::LColor res = LightSensor::LColor::EMPTY;
+    LightSensor::LColor res = LightSensor::LColor::LEMPTY;
     if (LightSensor::detectRed()){
-        res = LightSensor::LColor::RED;
+        res = LightSensor::LColor::LRED;
     } else if (LightSensor::detectBlue()){
-        res = LightSensor::LColor::BLUE;
+        res = LightSensor::LColor::LBLUE;
     }
     return res;
 };

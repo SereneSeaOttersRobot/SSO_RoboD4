@@ -73,19 +73,19 @@ class LightSensor{
     void setTolerance(float tolerance);
     /**
      * @brief Colors for this class's colors red and blue, with empty for detected not of those two colors.
-     * @enum RED - Light color Red
-     * @enum BLUE - Light color Blue
-     * @enum EMPTY - Unknown Light color
+     * @enum LRED - Light color Red
+     * @enum LBLUE - Light color Blue
+     * @enum LEMPTY - Unknown Light color
      */
     typedef enum {
-        RED = 0,
-        BLUE, 
-        EMPTY
+        LRED = 0,
+        LBLUE, 
+        LEMPTY
         //expandable
     }LColor;
     /**
      * @brief returns the detected color of light as a custom enumeration of this class.
-     * @enum LColor : RED,BLUE,EMPTY
+     * @enum LColor : LRED,LBLUE,LEMPTY
      * @see LColor memberof LightSensor
      * @pre Requires this to have been successfully constructed
      * @return LColor associated with the detected Light Color or absence of known.
