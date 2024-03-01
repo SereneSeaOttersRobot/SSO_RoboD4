@@ -1,4 +1,4 @@
-#include <LightSensor.h>
+#include <customLibs\LightSensor.h>
 #include <FEHProteus.h>
 #include <fehproteusfirmware\Libraries\FEHIO.h>
 

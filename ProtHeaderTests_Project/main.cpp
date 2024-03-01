@@ -5,8 +5,8 @@
 #include <FEHMotor.h>
 #include <FEHAccel.h>
 #include <FEHSD.h>
-#include <Motors.h>
-#include <LightSensor.h>
+#include <customLibs\Motors.h>
+#include <customLibs\LightSensor.h>
 
 LightSensor Lumy(FEHIO::P0_0);
 #define VOLTAGE 5.0
