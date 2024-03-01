@@ -5,8 +5,8 @@
  Drivers/adc16.h Libraries/FEHMotor.h Libraries/FEHAccel.h Drivers/i2c.h \
  Libraries/FEHSD.h Drivers/SDHC.h Drivers/diskio.h Drivers/ff.h \
  Drivers/ffconf.h Drivers/ffconf.h Drivers/diskio.h Libraries/FEHFile.h \
- ../customLibs\Motors.h ../fehproteusfirmware\Libraries\FEHMotor.h \
- ../customLibs\LightSensor.h ../fehproteusfirmware\Libraries\FEHIO.h
+ ../Motors.h ../fehproteusfirmware\Libraries\FEHMotor.h ../LightSensor.h \
+ ../fehproteusfirmware\Libraries\FEHIO.h
 Libraries/FEHUtility.h:
 Libraries/FEHServo.h:
 Libraries/FEHLCD.h:
@@ -28,7 +28,7 @@ Drivers/ffconf.h:
 Drivers/ffconf.h:
 Drivers/diskio.h:
 Libraries/FEHFile.h:
-../customLibs\Motors.h:
+../Motors.h:
 ../fehproteusfirmware\Libraries\FEHMotor.h:
-../customLibs\LightSensor.h:
+../LightSensor.h:
 ../fehproteusfirmware\Libraries\FEHIO.h:
