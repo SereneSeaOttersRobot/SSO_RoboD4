@@ -16,7 +16,7 @@ void move_forward(int percent, int counts) //using encoders
     left_encoder.ResetCounts();
 
     //Set both motors to desired percent
-    right_motor.SetPercent(percent);
+    right_motor.SetPercent(-percent);
     left_motor.SetPercent(percent);
 
     //While the average of the left and right encoder is less than counts,
@@ -28,10 +28,71 @@ void move_forward(int percent, int counts) //using encoders
     left_motor.Stop();
 }
 
+void turn_right(int percent, int counts) //using encoders
+
+{
+
+//Reset encoder counts
+
+right_encoder.ResetCounts();
+
+left_encoder.ResetCounts();
+
+//Set both motors to desired percent
+
+//hint: set right motor backwards, left motor forwards
+
+right_motor.SetPercent(percent);
+left_motor.SetPercent(percent);
+
+//While the average of the left and right encoder is less than counts,
+
+//keep running motors
+//TEST TO FIND CORRECT NUMBER OF COUNTS
+
+while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts);
+
+//Turn off motors
+
+right_motor.Stop();
+
+left_motor.Stop();
+
+}
+
+void turn_left(int percent, int counts) //using encoders
+
+{
+
+//Reset encoder counts
+
+right_encoder.ResetCounts();
+
+left_encoder.ResetCounts();
+
+//Set both motors to desired percent
+
+right_motor.SetPercent(-percent);
+left_motor.SetPercent(-percent);
+
+//While the average of the left and right encoder is less than counts,
+
+//keep running motors
+
+while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts);
+
+//Turn off motors
+
+right_motor.Stop();
+
+left_motor.Stop();
+
+}
+
 int main(void)
 {
-    int motor_percent = 0; //Input power level here
-    int expected_counts = 0; //Input theoretical counts here
+    int motor_percent = 25; //Input power level here
+    int expected_counts = 567; //Input theoretical counts here 14 inches
 
     float x, y; //for touch screen
 
@@ -45,6 +106,24 @@ int main(void)
     while(LCD.Touch(&x,&y)); //Wait for screen to be unpressed
 
     move_forward(motor_percent, expected_counts); //see function
+
+    Sleep(0.5);
+    //turning left
+    expected_counts = 200;
+    turn_left(motor_percent,expected_counts);
+    Sleep(0.5);
+    //moving 10 inches
+    expected_counts = 405;
+    move_forward(motor_percent, expected_counts); //see function
+    Sleep(0.5);
+    //turning right
+    expected_counts = 243;
+    turn_right(motor_percent,expected_counts);
+    Sleep(0.5);
+    //moving 4 inches
+    expected_counts = 162;
+    move_forward(motor_percent, expected_counts); //see function
+
 
     Sleep(2.0); //Wait for counts to stabilize
     //Print out data
