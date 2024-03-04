@@ -35,7 +35,7 @@ int main(void)
     // Write the value returned by the optosensor to your output file
     // <ADD CODE HERE>
     float val = left_opto.Value();
-    SD.FPrintf(file,"Left opto sensor on line : %f",&val);
+    SD.FPrintf(file,"\nLeft opto sensor on line : %f",val);
     // Left Optosensor off straight line
     LCD.Clear(BLACK);
     LCD.WriteLine("Place left optosensor off straight line");
@@ -46,7 +46,7 @@ int main(void)
     // Write the value returned by the optosensor to your output file
     // <ADD CODE HERE>
     val = left_opto.Value();
-    SD.FPrintf(file,"Left opto sensor off line : %f",&val);
+    SD.FPrintf(file,"\nLeft opto sensor off line : %f",val);
     // Repeat process for remaining optosensors, and repeat all three for the curved line values
     // <ADD CODE HERE>
 
@@ -60,7 +60,7 @@ int main(void)
     while(LCD.Touch(&x,&y)); //Wait for screen to be unpressed
     // Write the value returned by the optosensor to your output file
     val = right_opto.Value();
-    SD.FPrintf(file,"Right opto sensor on line : %f",&val);
+    SD.FPrintf(file,"\nRight opto sensor on line : %f",val);
     // Right Optosensor off straight line
     LCD.Clear(BLACK);
     LCD.WriteLine("Place Right optosensor off straight line");
@@ -71,7 +71,7 @@ int main(void)
     // Write the value returned by the optosensor to your output file
     // <ADD CODE HERE>
     val = right_opto.Value();
-    SD.FPrintf(file,"Right opto sensor off line : %f",&val);
+    SD.FPrintf(file,"\nRight opto sensor off line : %f",val);
 
     // Record values for optosensors on and off of the straight line
     // Middle Optosensor on straight line
@@ -83,7 +83,7 @@ int main(void)
     while(LCD.Touch(&x,&y)); //Wait for screen to be unpressed
     // Write the value returned by the optosensor to your output file
     val = middle_opto.Value();
-    SD.FPrintf(file,"Middle opto sensor on line : %f",&val);
+    SD.FPrintf(file,"\nMiddle opto sensor on line : %f",val);
     // middle Optosensor off straight line
     LCD.Clear(BLACK);
     LCD.WriteLine("Place Middle optosensor off straight line");
@@ -94,7 +94,7 @@ int main(void)
     // Write the value returned by the optosensor to your output file
     // <ADD CODE HERE>
     val = middle_opto.Value();
-    SD.FPrintf(file,"Middle opto sensor off line : %f",&val);
+    SD.FPrintf(file,"\nMiddle opto sensor off line : %f",val);
 
     //CURVED CODE
 
@@ -108,7 +108,7 @@ int main(void)
     while(LCD.Touch(&x,&y)); //Wait for screen to be unpressed
     // Write the value returned by the optosensor to your output file
     val = middle_opto.Value();
-    SD.FPrintf(file,"Middle opto sensor on curv line : %f",&val);
+    SD.FPrintf(file,"\nMiddle opto sensor on curv line : %f",val);
     // middle Optosensor off straight line
     LCD.Clear(BLACK);
     LCD.WriteLine("Place Middle optosensor off curved line");
@@ -119,7 +119,7 @@ int main(void)
     // Write the value returned by the optosensor to your output file
     // <ADD CODE HERE>
     val = middle_opto.Value();
-    SD.FPrintf(file,"Middle opto sensor off curv line : %f",&val);
+    SD.FPrintf(file,"\nMiddle opto sensor off curv line : %f",val);
 
     // Record values for optosensors on and off of the curved line
     // Left Optosensor on curved line
@@ -131,7 +131,7 @@ int main(void)
     while(LCD.Touch(&x,&y)); //Wait for screen to be unpressed
     // Write the value returned by the optosensor to your output file
     val = left_opto.Value();
-    SD.FPrintf(file,"Left opto sensor on curv line : %f",&val);
+    SD.FPrintf(file,"\nLeft opto sensor on curv line : %f",val);
     // middle Optosensor off straight line
     LCD.Clear(BLACK);
     LCD.WriteLine("Place Left optosensor off curved line");
@@ -142,7 +142,7 @@ int main(void)
     // Write the value returned by the optosensor to your output file
     // <ADD CODE HERE>
     val = left_opto.Value();
-    SD.FPrintf(file,"Left opto sensor off curv line : %f",&val);
+    SD.FPrintf(file,"\nLeft opto sensor off curv line : %f",val);
 
     // Record values for optosensors on and off of the curved line
     // Middle Optosensor on curved line
@@ -154,7 +154,7 @@ int main(void)
     while(LCD.Touch(&x,&y)); //Wait for screen to be unpressed
     // Write the value returned by the optosensor to your output file
     val = right_opto.Value();
-    SD.FPrintf(file,"Right opto sensor on curv line : %f",&val);
+    SD.FPrintf(file,"\nRight opto sensor on curv line : %f",val);
     // middle Optosensor off straight line
     LCD.Clear(BLACK);
     LCD.WriteLine("Place Right optosensor off curved line");
@@ -165,7 +165,7 @@ int main(void)
     // Write the value returned by the optosensor to your output file
     // <ADD CODE HERE>
     val = right_opto.Value();
-    SD.FPrintf(file,"Right opto sensor off curv line : %f",&val);
+    SD.FPrintf(file,"\nRight opto sensor off curv line : %f",val);
 
     // Close output file
     // <ADD CODE HERE> 
