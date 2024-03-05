@@ -3,6 +3,9 @@
 #include <fehproteusfirmware\Libraries\FEHMotor.h>
 
 class Motors {
+    private:
+    bool leftPositiveIsForward;
+    bool rightPositiveIsForward;
     public:
     /**
      * @brief pointer to the left motor object
@@ -15,19 +18,18 @@ class Motors {
      */
     FEHMotor * right;
     /**
-     * @brief default constructor, left and right point to nothing.
-     * @param left pointer to left motor object
-     * @param right pointer to right motor object
+     * @brief default constructor, left and right point to nothing. Defaults are set for privates.
+     * @param left pointer to left motor object is set to null
+     * @param right pointer to right motor object is set to null
      */
     Motors();
     /**
-     * @brief Takes ports for left and right motors and the voltage to set them at.
-     * @param lef enumeration Port for left motor object
-     * @param righ enumeration Port for right motor object
-     * @param voltage the float voltage that motors will be set to
+     * @brief Takes ports for left and right motors and the voltage to set them at. Defaults are set for privates.
+     * @param lef address of in scope FEHMotor object for left motor
+     * @param righ address of in scope FEHMotor object for right motor
      * @post This is fully created object, accessing data members through pointers or can use functions after this
      */
-    Motors(FEHMotor::FEHMotorPort lef, FEHMotor::FEHMotorPort righ, float voltage);
+    Motors(FEHMotor &lef, FEHMotor &righ);
     /**
      * @overload this function is overloaded
      * @brief sets both member motors to the percent given
@@ -51,6 +53,14 @@ class Motors {
      * @post both motors stop moving
      */
     void stop();
+    /**
+     * @brief updates internal logic to handle cases where setPercent values have opposite effects. So that after this, the setPercent function works correctly for single argument.
+     * @pre requires this has been successfully constructed
+     * @param leftPosIsForward send true if postive values make the motor go 'forward', false otherwise. Default is true.
+     * @param rightPosIsForward send true if postive values make the motor go 'forward', false otherwise. Default is true.
+     * @post internal logic is updated so that setPercent(15.0) makes both motors go forward.
+     */
+    void setMotorDirection(bool leftPosIsForward, bool rightPosIsForward);
 };
 
 #endif
