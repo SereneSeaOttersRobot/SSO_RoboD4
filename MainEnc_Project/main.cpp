@@ -63,6 +63,10 @@ Motors moto;
 LightSensor lumy;
 Encoders cody;
 
+/*
+Global output file for run data
+*/
+FEHFile * output;
 
 int main(){
     //Finalize creation of global objects
@@ -83,6 +87,10 @@ int main(){
     cody.left = &tempencoderleft;
     cody.right = &tempencoderright;
     cody.setThresholds(LOW_THRESHOLD,HIGH_THRESHOLD);
+
+    //  output file open
+    output = SD.FOpen("MainEnc.txt","a");
+    SD.FPrintf(output,"\n\nNew Run Section\n");
 
     /*
     Wait on start light
@@ -147,6 +155,7 @@ int main(){
 
 double reportAngle(){
     double res = cody.getRightDifferLeft() * ONE_TICK_DIF_DEGREE;
+    SD.FPrintf(output,"reportAngle Full: %0.4d \t",res);
     //linear time, find better way to do it later
     while(res <= -180.0 || res >= 180.0){
         if (res <= -180.0){
@@ -155,10 +164,12 @@ double reportAngle(){
             res -= 360;
         }
     }
+    SD.FPrintf(output,"reportAngle trunc: %0.4d\n",res);
     return res;
 }
 
 double turnBoth(double degrees){
+    SD.FPrintf(output,"TurnBoth\n");
     double curDeg = reportAngle();
     double getToDeg = curDeg + degrees;
     if (getToDeg <= -180.0){
@@ -166,6 +177,7 @@ double turnBoth(double degrees){
     } else if (getToDeg >= 180.0){
         getToDeg -= 360.0;
     }
+    SD.FPrintf(output,"curDeg: %0.4d, change: %0.4d, getTo: %0.4d\n",curDeg,degrees,getToDeg);
     if (degrees < 0){
         cody.setDir(false, true);
         moto.setPerc(-15.0,15.0);
@@ -174,8 +186,12 @@ double turnBoth(double degrees){
         moto.setPerc(15.0,-15.0);
     }
     const float tolerance = 1.4;
+    SD.FPrintf(output,"tolerance: %f\n",tolerance);
+    long l,r;
     do {
         curDeg = reportAngle();
+        cody.archives(l,r);
+        SD.FPrintf(output,"curDeg: %0.4d, leftArc: %i, righArc: %i\n",curDeg,l,r);
     } while (getToDeg - tolerance <= curDeg && getToDeg <= getToDeg + tolerance);
     moto.stop();
     cody.setDir(true,true);
@@ -184,6 +200,7 @@ double turnBoth(double degrees){
 }
 
 double turnOne(double degrees){
+    SD.FPrintf(output,"TurnOne\n");
     double curDeg = reportAngle();
     double getToDeg = curDeg + degrees;
     if (getToDeg <= -180.0){
@@ -191,14 +208,19 @@ double turnOne(double degrees){
     } else if (getToDeg >= 180.0){
         getToDeg -= 360.0;
     }
+    SD.FPrintf(output,"curDeg: %0.4d, change: %0.4d, getTo: %0.4d\n",curDeg,degrees,getToDeg);
     if (degrees < 0){
         moto.setPerc(0,15.0);
     } else {
         moto.setPerc(15.0,0);
     }
     const float tolerance = 0.7;
+    SD.FPrintf(output,"tolerance: %f\n",tolerance);
+    long l,r;
     do {
         curDeg = reportAngle();
+        cody.archives(l,r);
+        SD.FPrintf(output,"curDeg: %0.4d, leftArc: %i, righArc: %i\n",curDeg,l,r);
     } while (getToDeg - tolerance <= curDeg && getToDeg <= getToDeg + tolerance);
     moto.stop();
     //end of turnOne
@@ -206,10 +228,12 @@ double turnOne(double degrees){
 }
 
 double move(double inches){
+    SD.FPrintf(output,"move, %0.4d inches\n",inches);
     double actualInches = 0;
     cody.resetTicks();
     int lefTic, rigTic;
     const int tolerance = 0.1;
+    SD.FPrintf(output,"tolerance %0.2f\n",tolerance);
     if (inches < 0){
         cody.setDir(false, false);
         moto.setPerc(-15.0);
@@ -220,6 +244,7 @@ double move(double inches){
     do {
         cody.ticks(lefTic, rigTic);
         actualInches = ((lefTic+rigTic)/2 ) * TICKS_INCHES;
+        SD.FPrintf(output,"lefTic: %i, rigTic: %i, actuInch: %0.4d\n",lefTic,rigTic,actualInches);
     } while (inches - tolerance <= actualInches && actualInches <= inches + tolerance );
     moto.stop();
     cody.setDir(true,true);
