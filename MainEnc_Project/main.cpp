@@ -34,6 +34,14 @@ Encoder class needs changed to be compatible for both single and double signal e
 #define TICKS_INCHES 0.07854
 #define ONE_TICK_DIF_DEGREE 0.615 /* - /\ + */
 #define CDS_SENSOR_PORT FEHIO::P0_2
+//determine light color values
+#define RED_LIGHT 0.273
+#define BLUE_LIGHT 0.9
+#define TOLERANCE_LIGHT 0.075
+//use of double encoders
+#define DOUBLE_SIGNAL false
+#define LEFT_D_ENCODER_PORT FEHIO::P0_3
+#define RIGHT_D_ENCODER_PORT FEHIO::P0_4
 
 
 /**
@@ -94,44 +102,143 @@ int main(){
     AnalogInputPin tempcdssensor(CDS_SENSOR_PORT);
     lumy.cds_sensor = &tempcdssensor;
     //  currently using defualt light values for red and blue, and default tolerance, check these in the header / class file of LightSensor
-
+    //change to defined ones in this file
+    lumy.setLights(RED_LIGHT,BLUE_LIGHT);
+    lumy.setTolerance(TOLERANCE_LIGHT);
     //  Cody
     AnalogEncoder tempencoderleft(LEFT_ENCODER_PORT);
     AnalogEncoder tempencoderright(RIGHT_ENCODER_PORT);
+    AnalogEncoder tempencoderleftD(LEFT_D_ENCODER_PORT);
+    AnalogEncoder tempencoderrightD(RIGHT_D_ENCODER_PORT);
     cody.left = &tempencoderleft;
     cody.right = &tempencoderright;
+    if (DOUBLE_SIGNAL){
+        cody.enableDoubleSignal();
+        cody.leftDouble = &tempencoderleftD;
+        cody.rightDouble = &tempencoderrightD;
+    }
     cody.setThresholds(LOW_THRESHOLD,HIGH_THRESHOLD);
 
     //  output file open
     output = SD.FOpen("MainEnc.txt","a");
     SD.FPrintf(output,"\n*******************************\n\tNew Run Section\n");
 
-    //Code emulating encoder exploration task
-    LCD.Clear();
-    LCD.WriteLine("Moving 14 inches");
-    Sleep(0.3);
-    move(14.0);
-    Sleep(0.3);
-    LCD.Clear();
-    LCD.WriteLine("Turning -90 degrees or left, on spot");
-    Sleep(0.3);
-    turnBoth(-90.0);
-    Sleep(0.3);
-    LCD.Clear();
-    LCD.WriteLine("Moving 5 inches");
-    Sleep(0.3);
-    move(5.0);
-    Sleep(0.3);
-    LCD.Clear();
-    LCD.WriteLine("Turning 90 degrees or right, on spot");
-    Sleep(0.3);
-    turnBoth(90.0);
-    Sleep(0.3);
-    LCD.Clear();
-    LCD.WriteLine("Moving 4 inches");
-    Sleep(0.3);
-    move(4.0);
-    Sleep(0.2);
+    //software problems, file storage may be overloaded with number of report degrees being called by turns
+    //tolerances for turns may be too loose
+    //...
+
+    /*
+    Test: just that move works for 1 inch
+    */
+    if (true){
+        LCD.Clear();
+        LCD.WriteLine("Moving forward one inch");
+        Sleep(2.0);
+        double afterInches = move(1.0);
+        LCD.Write("Inches moved: ");
+        LCD.WriteLine(afterInches);
+        Sleep(8.0);
+    }
+
+    /*
+    Test: move works for -1 inch
+    */
+    if (true){
+        LCD.Clear();
+        LCD.WriteLine("Moving backwards one inch");
+        Sleep(2.0);
+        double afterInches = move(-1.0);
+        LCD.Write("Inches moved: ");
+        LCD.WriteLine(afterInches);
+        Sleep(8.0);
+    }
+
+    /*
+    Test: turnBoth for 30 degrees
+    */
+    if (true) {
+        LCD.Clear();
+        LCD.Write("Test turnBoth 30 degrees from cur: ");
+        double curDeg = reportAngle();
+        LCD.WriteLine(curDeg);
+        Sleep(2.0);
+        double newDeg = turnBoth(30.0);
+        LCD.Write("New angle: ");
+        LCD.WriteLine(newDeg);
+        LCD.Write("Change: ");
+        LCD.WriteLine((newDeg-curDeg));
+        Sleep(9.0);
+    }
+
+    /*
+    Test: Detect Red start light, then move forward by 0.1 until Detect Red is false, wait on that position for 15 seconds, then move back half the traveled and try to detect red
+    */
+    if (true){
+        do {
+            LCD.Clear();
+            LCD.WriteLine("Waiting to detect red");
+            LCD.WriteLine(lumy.lightValue());
+            Sleep(0.2);
+        } while (!lumy.detectRed());
+        LCD.Clear();
+        LCD.WriteLine("Detected red");
+        LCD.WriteLine(lumy.lightValue());
+        LCD.WriteLine("Inches moved 0.0");
+        Sleep(0.5);
+        double inchesMoved = 0.0;
+        while (lumy.detectRed()){
+            LCD.Clear();
+            LCD.WriteLine("Move 0.2 inches");
+            inchesMoved += move(0.2);
+            LCD.Write("Total Moved: ");
+            LCD.WriteLine(inchesMoved);
+            LCD.Write("LigthValue: ");
+            LCD.WriteLine(lumy.lightValue());
+            Sleep(0.3);
+        }
+        LCD.Clear();
+        LCD.Write("Final inches moved: ");
+        LCD.WriteLine(inchesMoved);
+        LCD.Write("Final lightVal: ");
+        LCD.WriteLine(lumy.lightValue());
+        Sleep(5.0);
+        LCD.WriteLine("move back half of moved");
+        inchesMoved += move(-(inchesMoved/2));
+        LCD.WriteLine(inchesMoved);
+        LCD.Write("Detected Red? ");
+        if (lumy.detectRed()){
+            LCD.WriteLine("yes");
+        } else {
+            LCD.WriteLine("no");
+        }
+        Sleep(5.0);
+    }
+
+    /*
+    Test: determine if using the reportAngle value returned after calling turn, that we can turn back to original position exactly
+    */
+    if (false){
+        LCD.Clear();
+        LCD.WriteLine("Testing how exact we can turn to previous direction");
+        double curAng = reportAngle();
+        LCD.Write("Current Angle: ");
+        LCD.WriteLine(curAng);
+        LCD.WriteLine("Turn 90 degrees on spot");
+        Sleep(4.0);
+        double newAng = turnBoth(90.0);
+        LCD.Clear();
+        LCD.Write("New angle: ");
+        LCD.WriteLine(newAng);
+        //assuming curAng was 0.0, so turn -newAng
+        LCD.WriteLine("Turn the negative of that");
+        Sleep(4.0);
+        newAng = turnBoth(-newAng);
+        LCD.Clear();
+        LCD.Write("New angle: ");
+        LCD.WriteLine(newAng);
+        LCD.WriteLine("End of this");
+        Sleep(8.0);
+    }
 
     /*
     Wait on start light
@@ -237,7 +344,7 @@ double turnBoth(double degrees){
         curDeg = reportAngle();
         cody.archives(l,r);
         SD.FPrintf(output,"curDeg: %0.4d, leftArc: %i, righArc: %i\n",curDeg,l,r);
-    } while (getToDeg - tolerance <= curDeg && getToDeg <= getToDeg + tolerance);
+    } while (getToDeg - tolerance >= curDeg || curDeg >= getToDeg + tolerance);
     moto.stop();
     cody.setDir(true,true);
     //end of turnBoth
@@ -266,7 +373,7 @@ double turnOne(double degrees){
         curDeg = reportAngle();
         cody.archives(l,r);
         SD.FPrintf(output,"curDeg: %0.4d, leftArc: %i, righArc: %i\n",curDeg,l,r);
-    } while (getToDeg - tolerance <= curDeg && getToDeg <= getToDeg + tolerance);
+    } while (getToDeg - tolerance >= curDeg || curDeg >= getToDeg + tolerance);
     moto.stop();
     //end of turnOne
     return reportAngle();
@@ -277,7 +384,7 @@ double move(double inches){
     double actualInches = 0;
     cody.resetTicks();
     int lefTic, rigTic;
-    const int tolerance = 0.1;
+    const double tolerance = 0.042;
     SD.FPrintf(output,"tolerance %0.2f\n",tolerance);
     if (inches < 0){
         cody.setDir(false, false);
@@ -290,7 +397,7 @@ double move(double inches){
         cody.ticks(lefTic, rigTic);
         actualInches = ((lefTic+rigTic)/2 ) * TICKS_INCHES;
         SD.FPrintf(output,"lefTic: %i, rigTic: %i, actuInch: %0.4d\n",lefTic,rigTic,actualInches);
-    } while (inches - tolerance <= actualInches && actualInches <= inches + tolerance );
+    } while (inches - tolerance >= actualInches || actualInches >= inches + tolerance );
     moto.stop();
     cody.setDir(true,true);
     return actualInches;

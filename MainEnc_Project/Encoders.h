@@ -8,15 +8,24 @@ class Encoders{
     long archive_right;
     bool reverseDirLeft; //true if direction is negative, i.e. opposite of setDir left bool.
     bool reverseDirRight; //true if direction is negative, i.e. opposite of setDir right bool.
+    bool doubleSignal; //defualt is false
     public:
     /**
      * @brief pointer to left encoder.
      */
     AnalogEncoder * left;
     /**
+     * @brief pointer to left double signal encoder
+     */
+    AnalogEncoder * leftDouble;
+    /**
      * @brief pointer to right encoder.
      */
     AnalogEncoder * right;
+    /**
+     * @brief pointer to right double signal encoder
+     */
+    AnalogEncoder * rightDouble;
     /**
      * @brief default constructor
      */
@@ -25,6 +34,7 @@ class Encoders{
      * @brief constructs this with this.left pointing to lef and this.right pointing to rig.
      * @param lef In scope of calling program, AnalogEncoder Object to be pointed at for left encoder.
      * @param rig In scope of calling program, AnalogEncoder Object to be pointed at for right encoder.
+     * @deprecated doesn't work for assigning pointers
      */
     Encoders(AnalogEncoder &lef, AnalogEncoder &rig);
     /**
@@ -33,6 +43,7 @@ class Encoders{
     ~Encoders();
     /**
      * @brief Similar to the constructor for this, but doesn't change the internal values besides the AnalogEncoders.
+     * @deprecated doesn't work for assigning pointers
      */
     void setEncoders(AnalogEncoder &lef, AnalogEncoder &rig);
     /**
@@ -68,6 +79,13 @@ class Encoders{
      * @return (this.archiveLeft + this.left.counts) - (this.archiveRight + this.right.counts) | Affected by setDir, uses archive values i.e. this.archives values
      */
     int getRightDifferLeft();
+
+    /**
+     * @brief enables double signal usage internally, need to assign double pointers as well.
+     * 
+     * Should be called before doing any other sets or getting motors moving. That and pointers should assigned before the rest.
+     */
+    void enableDoubleSignal();
 };
 
 #endif

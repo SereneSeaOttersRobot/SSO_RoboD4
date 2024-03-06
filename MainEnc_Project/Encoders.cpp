@@ -9,8 +9,11 @@ Encoders::Encoders(){
     archive_right = 0l;
     left = nullptr;
     right = nullptr;
+    leftDouble = nullptr;
+    rightDouble = nullptr;
+    doubleSignal = false;
 }
-
+/** @deprecated */
 Encoders::Encoders(AnalogEncoder &lef, AnalogEncoder &rig){
     left = &lef;
     right = &rig;
@@ -35,6 +38,10 @@ void Encoders::archives(long &lef, long &rig){
 void Encoders::setThresholds(float low, float high){
     left->SetThresholds(low, high);
     right->SetThresholds(low, high);
+    if (doubleSignal){
+        leftDouble->SetThresholds(low,high);
+        rightDouble->SetThresholds(low,high);
+    }
 }
 
 void Encoders::resetTicks(){
@@ -44,8 +51,12 @@ void Encoders::resetTicks(){
     archive_right += ri;
     left->ResetCounts();
     right->ResetCounts();
+    if (doubleSignal){
+        leftDouble->ResetCounts();
+        rightDouble->ResetCounts();
+    }
 }
-
+/** @deprecated */
 void Encoders::setEncoders(AnalogEncoder &lef, AnalogEncoder &rig){
     left = &lef;
     right = &rig;
@@ -63,6 +74,10 @@ void Encoders::setDir(bool lefDir, bool rigDir){
 
 void Encoders::ticks(int &lef, int &rig){
     int l = left->Counts(), r = right->Counts();
+    if (doubleSignal){
+        l += leftDouble->Counts();
+        r += rightDouble->Counts();
+    }
     if (reverseDirLeft){
         lef = -l;
     } else {
@@ -87,4 +102,8 @@ int Encoders::getRightDifferLeft(){
     //  In comparison to Igwan Encoders for Expoloration 3, 90 degrees took roughly 400 counts in difference.
     res = (int)(aLef - aRig);
     return res;
+}
+
+void Encoders::enableDoubleSignal(){
+    doubleSignal = true;
 }

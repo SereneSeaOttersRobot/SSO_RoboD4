@@ -164,12 +164,13 @@ servo works
 //     servo.Stop();
 // }
 
+LightSensor lumy;
 
 int main(){
-    LightSensor lumy;
     AnalogInputPin templumy(FEHIO::P1_0);
     lumy.cds_sensor = &templumy;
     lumy.setTolerance(0.15);
+    lumy.setLights(Base_Red_Light,Base_Blue_Light);
     LCD.Clear(BLACK);
     LCD.Write("Start detect blue: ");
     LCD.WriteLine(Base_Blue_Light);
