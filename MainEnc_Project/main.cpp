@@ -90,7 +90,7 @@ int main(){
 
     //  output file open
     output = SD.FOpen("MainEnc.txt","a");
-    SD.FPrintf(output,"\n\nNew Run Section\n");
+    SD.FPrintf(output,"\n*******************************\n\tNew Run Section\n");
 
     /*
     Wait on start light
@@ -151,6 +151,10 @@ int main(){
     * move 10 inches
     * 
     */
+    //*****END OF PROGRAM********
+    SD.FPrintf(output,"\n\tEND OF SECTION\n**********************************\n");
+    SD.FCloseAll();
+    return 1;
 }
 
 double reportAngle(){
