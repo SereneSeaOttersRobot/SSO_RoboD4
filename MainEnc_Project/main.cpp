@@ -43,7 +43,12 @@ double turnBoth(double degrees);
 double turnOne(double degrees);
 
 /**
- * @brief linear movement for the argued number of inches, - backwards + forwards, with in 0.1 inches. IMPT encoders are tick reset. Also adjusts setDir for encoders (reset by end)
+ * @brief linear movement for the argued number of inches, - backwards + forwards, with in 0.1 inches. IMPT encoders are tick reset. Also adjusts setDir for encoders (reset by end) 
+ * 
+ * linear movement for the argued number of inches.
+ * forward is positive values, backwards is negative values.
+ * Resets the tick counts of the encoders, and does setDir or setDirection for the encoders, rebasing to true, true by the end.
+ * 
  * @param inches the number of inches to move
  * @return the actual number of inches moved
  */
