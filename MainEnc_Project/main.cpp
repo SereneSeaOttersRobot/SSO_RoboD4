@@ -9,6 +9,20 @@
 #include <LightSensor.h>
 #include <Encoders.h>
 
+/*
+TODO LIST
+Bumpers need declared
+If servo is important for this round then servo needs to be setup
+Adjust algorithm for servo if needed
+Find out issue with lightsensor and fix it
+Write code translation of algorithm
+Determine exact measurements
+Possibly find work around for imprecise turning, like zigzag
+Encoder class needs changed to be compatible for both single and double signal encoders
+*/
+
+
+
 #define LEFT_MOTOR_PORT FEHMotor::Motor0
 #define RIGHT_MOTOR_PORT FEHMotor::Motor2
 #define VOLTAGE 9.0
