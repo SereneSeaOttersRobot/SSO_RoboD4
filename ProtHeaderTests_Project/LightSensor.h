@@ -68,12 +68,12 @@ class LightSensor{
     bool detectBlue();
     /**
      * @brief sets the tolerance of this to the given parameter/arguement
-     * @param tolerance float value for tolerancing the colored light values
+     * @param toleranc float value for tolerancing the colored light values
      *                  | suggested between 0.1 and 0.01
      * @pre Requires this to have been successfully constructed
      * @post Ensures the tolerance of this is set to the sent tolerance
      */
-    void setTolerance(float tolerance);
+    void setTolerance(float toleranc);
     /**
      * @brief Colors for this class's colors red and blue, with empty for detected not of those two colors.
      * @enum LRED - Light color Red

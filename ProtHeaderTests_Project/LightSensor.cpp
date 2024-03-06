@@ -67,8 +67,8 @@ bool LightSensor::detectBlue(){
     return res;
 }
 
-void LightSensor::setTolerance(float tolerance){
-    LightSensor::tolerance = tolerance;
+void LightSensor::setTolerance(float toleranc){
+    LightSensor::tolerance = toleranc;
 }
 
 LightSensor::LColor LightSensor::detectColor(){

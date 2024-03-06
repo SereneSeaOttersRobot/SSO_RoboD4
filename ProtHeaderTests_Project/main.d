@@ -6,7 +6,7 @@
  Libraries/FEHSD.h Drivers/SDHC.h Drivers/diskio.h Drivers/ff.h \
  Drivers/ffconf.h Drivers/ffconf.h Drivers/diskio.h Libraries/FEHFile.h \
  ../Motors.h ../fehproteusfirmware\Libraries\FEHMotor.h ../LightSensor.h \
- ../fehproteusfirmware\Libraries\FEHIO.h
+ ../fehproteusfirmware\Libraries\FEHIO.h ../Encoders.h
 Libraries/FEHUtility.h:
 Libraries/FEHServo.h:
 Libraries/FEHLCD.h:
@@ -32,3 +32,4 @@ Libraries/FEHFile.h:
 ../fehproteusfirmware\Libraries\FEHMotor.h:
 ../LightSensor.h:
 ../fehproteusfirmware\Libraries\FEHIO.h:
+../Encoders.h:
