@@ -92,6 +92,12 @@ int main(){
     output = SD.FOpen("MainEnc.txt","a");
     SD.FPrintf(output,"\n*******************************\n\tNew Run Section\n");
 
+    move(14.0);
+    turnBoth(-90.0);
+    move(5.0);
+    turnBoth(90.0);
+    move(4.0);
+
     /*
     Wait on start light
     move to shallow ramp
