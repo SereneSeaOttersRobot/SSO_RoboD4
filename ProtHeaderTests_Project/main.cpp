@@ -164,44 +164,48 @@ servo works
 //     servo.Stop();
 // }
 
-LightSensor lumy;
-
-int main(){
-    AnalogInputPin templumy(FEHIO::P1_0);
-    lumy.cds_sensor = &templumy;
-    lumy.setTolerance(0.15);
-    lumy.setLights(Base_Red_Light,Base_Blue_Light);
-    LCD.Clear(BLACK);
-    LCD.Write("Start detect blue: ");
-    LCD.WriteLine(Base_Blue_Light);
-    Sleep(0.4);
-    while (true){
-        LCD.Clear();
-        LCD.Write("Lit val: ");
-        LCD.WriteLine(lumy.lightValue());
-        LCD.Write("Color Detected? ");
-        LightSensor::LColor color = lumy.detectColor();
-        if (color == LightSensor::LRED){
-            LCD.WriteLine("Yes, Red");
-        } else if (color == LightSensor::LBLUE){
-            LCD.WriteLine("Yes, Blue");
-        } else {
-            LCD.WriteLine("No, empty");
-        }
-        Sleep(0.3);
-    }
-}
+// LightSensor lumy;
 
 // int main(){
-//     AnalogEncoder testEncoder(FEHIO::P0_0);
-//     LCD.Clear();
-//     LCD.WriteLine("Starting Encoder Test");
-//     testEncoder.SetThresholds(0.15,2.35);
-//     testEncoder.ResetCounts();
-//     Sleep(0.5);
-//     while(true){
-//         LCD.WriteLine(testEncoder.Counts());
-//         Sleep(0.2);
+//     AnalogInputPin templumy(FEHIO::P1_0);
+//     lumy.cds_sensor = &templumy;
+//     lumy.setTolerance(0.15);
+//     lumy.setLights(Base_Red_Light,Base_Blue_Light);
+//     LCD.Clear(BLACK);
+//     LCD.Write("Start detect blue: ");
+//     LCD.WriteLine(Base_Blue_Light);
+//     Sleep(0.4);
+//     while (true){
 //         LCD.Clear();
+//         LCD.Write("Lit val: ");
+//         LCD.WriteLine(lumy.lightValue());
+//         LCD.Write("Color Detected? ");
+//         LightSensor::LColor color = lumy.detectColor();
+//         if (color == LightSensor::LRED){
+//             LCD.WriteLine("Yes, Red");
+//         } else if (color == LightSensor::LBLUE){
+//             LCD.WriteLine("Yes, Blue");
+//         } else {
+//             LCD.WriteLine("No, empty");
+//         }
+//         Sleep(0.3);
 //     }
 // }
+
+int main(){
+    AnalogEncoder testEncoder(FEHIO::P0_0);
+    AnalogEncoder testEncoder2(FEHIO::P0_2);
+    LCD.Clear();
+    LCD.WriteLine("Starting Encoder Test");
+    testEncoder.SetThresholds(0.15,2.35);
+    testEncoder.ResetCounts();
+    testEncoder2.SetThresholds(0.15,2.35);
+    // testEncoder2.ResetCounts();
+    Sleep(0.5);
+    while(true){
+        LCD.WriteLine(testEncoder.Counts());
+        LCD.WriteLine(testEncoder2.Counts());
+        Sleep(0.2);
+        LCD.Clear();
+    }
+}

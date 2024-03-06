@@ -26,12 +26,12 @@ Encoder class needs changed to be compatible for both single and double signal e
 #define LEFT_MOTOR_PORT FEHMotor::Motor0
 #define RIGHT_MOTOR_PORT FEHMotor::Motor2
 #define VOLTAGE 9.0
-#define LEFT_ENCODER_PORT FEHIO::P0_0
-#define RIGHT_ENCODER_PORT FEHIO::P0_1
+#define LEFT_ENCODER_PORT FEHIO::P3_3
+#define RIGHT_ENCODER_PORT FEHIO::P0_0
 #define LOW_THRESHOLD 0.15
 #define HIGH_THRESHOLD 2.25
 //one tick is 0.07854
-#define TICKS_INCHES 0.07854
+#define TICKS_INCHES 0.21
 #define ONE_TICK_DIF_DEGREE 0.615 /* - /\ + */
 #define CDS_SENSOR_PORT FEHIO::P0_2
 //determine light color values
@@ -97,7 +97,7 @@ int main(){
     FEHMotor tempmotorright(RIGHT_MOTOR_PORT,VOLTAGE);
     moto.left = &tempmotorleft;
     moto.right = &tempmotorright;
-    moto.setMotorDirection(true, false);
+    moto.setMotorDirection(true, true);
     // Lumy
     AnalogInputPin tempcdssensor(CDS_SENSOR_PORT);
     lumy.cds_sensor = &tempcdssensor;
@@ -120,30 +120,69 @@ int main(){
     cody.setThresholds(LOW_THRESHOLD,HIGH_THRESHOLD);
 
     //  output file open
-    output = SD.FOpen("MainEnc.txt","a");
+    output = SD.FOpen("MainEnc.txt","w");
     SD.FPrintf(output,"\n*******************************\n\tNew Run Section\n");
 
     //software problems, file storage may be overloaded with number of report degrees being called by turns
     //tolerances for turns may be too loose
     //...
 
+    if (true){
+        cody.resetTicks();
+        int l,r;
+        LCD.Clear();
+        LCD.WriteLine("TurnRight for 50");
+        moto.setPerc(15,-15);
+        do {
+            cody.ticks(l,r);
+        } while ((l+r)/2 < 15);
+        moto.stop();
+        LCD.WriteLine("move for 25");
+        cody.resetTicks();
+        moto.setPerc(15,15);
+        do {
+            cody.ticks(l,r);
+        } while ((l+r)/2 < 25);
+        moto.stop();
+        LCD.WriteLine("turnleft for 50");
+        cody.resetTicks();
+        moto.setPerc(-15,15);
+        do {
+            cody.ticks(l,r);
+        } while ((l+r)/2 < 15);
+        moto.stop();
+
+        LCD.WriteLine("move for 75");
+        cody.resetTicks();
+        moto.setPerc(-15,15);
+        do {
+            cody.ticks(l,r);
+        } while ((l+r)/2 < 75);
+        moto.stop();
+        
+    }
+
+
     /*
     Test: just that move works for 1 inch
     */
-    if (true){
+    if (false){
         LCD.Clear();
-        LCD.WriteLine("Moving forward one inch");
+        LCD.WriteLine("Moving forward 5 inch");
         Sleep(2.0);
-        double afterInches = move(1.0);
+        double afterInches = move(5.0);
         LCD.Write("Inches moved: ");
         LCD.WriteLine(afterInches);
+        int l,r;
+        cody.ticks(l,r);
+        LCD.WriteLine((l+r)/2);
         Sleep(8.0);
     }
 
     /*
     Test: move works for -1 inch
     */
-    if (true){
+    if (false){
         LCD.Clear();
         LCD.WriteLine("Moving backwards one inch");
         Sleep(2.0);
@@ -156,7 +195,7 @@ int main(){
     /*
     Test: turnBoth for 30 degrees
     */
-    if (true) {
+    if (false) {
         LCD.Clear();
         LCD.Write("Test turnBoth 30 degrees from cur: ");
         double curDeg = reportAngle();
@@ -173,7 +212,7 @@ int main(){
     /*
     Test: Detect Red start light, then move forward by 0.1 until Detect Red is false, wait on that position for 15 seconds, then move back half the traveled and try to detect red
     */
-    if (true){
+    if (false){
         do {
             LCD.Clear();
             LCD.WriteLine("Waiting to detect red");
@@ -188,8 +227,8 @@ int main(){
         double inchesMoved = 0.0;
         while (lumy.detectRed()){
             LCD.Clear();
-            LCD.WriteLine("Move 0.2 inches");
-            inchesMoved += move(0.2);
+            LCD.WriteLine("Move 0.21 inches");
+            inchesMoved += move(0.21);
             LCD.Write("Total Moved: ");
             LCD.WriteLine(inchesMoved);
             LCD.Write("LigthValue: ");
@@ -384,7 +423,7 @@ double move(double inches){
     double actualInches = 0;
     cody.resetTicks();
     int lefTic, rigTic;
-    const double tolerance = 0.042;
+    const double tolerance = 0.11;
     SD.FPrintf(output,"tolerance %0.2f\n",tolerance);
     if (inches < 0){
         cody.setDir(false, false);
