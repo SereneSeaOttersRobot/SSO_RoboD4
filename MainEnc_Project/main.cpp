@@ -92,11 +92,32 @@ int main(){
     output = SD.FOpen("MainEnc.txt","a");
     SD.FPrintf(output,"\n*******************************\n\tNew Run Section\n");
 
+    //Code emulating encoder exploration task
+    LCD.Clear();
+    LCD.WriteLine("Moving 14 inches");
+    Sleep(0.3);
     move(14.0);
+    Sleep(0.3);
+    LCD.Clear();
+    LCD.WriteLine("Turning -90 degrees or left, on spot");
+    Sleep(0.3);
     turnBoth(-90.0);
+    Sleep(0.3);
+    LCD.Clear();
+    LCD.WriteLine("Moving 5 inches");
+    Sleep(0.3);
     move(5.0);
+    Sleep(0.3);
+    LCD.Clear();
+    LCD.WriteLine("Turning 90 degrees or right, on spot");
+    Sleep(0.3);
     turnBoth(90.0);
+    Sleep(0.3);
+    LCD.Clear();
+    LCD.WriteLine("Moving 4 inches");
+    Sleep(0.3);
     move(4.0);
+    Sleep(0.2);
 
     /*
     Wait on start light
