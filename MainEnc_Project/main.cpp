@@ -112,11 +112,7 @@ int main(){
     AnalogEncoder tempencoderrightD(RIGHT_D_ENCODER_PORT);
     cody.left = &tempencoderleft;
     cody.right = &tempencoderright;
-    if (DOUBLE_SIGNAL){
-        cody.enableDoubleSignal();
-        cody.leftDouble = &tempencoderleftD;
-        cody.rightDouble = &tempencoderrightD;
-    }
+    
     cody.setThresholds(LOW_THRESHOLD,HIGH_THRESHOLD);
 
     //  output file open
@@ -127,7 +123,45 @@ int main(){
     //tolerances for turns may be too loose
     //...
 
+
+    // Lukes stuff for checkpoint 2
+
     if (true){
+        cody.resetTicks();
+        int l,r;
+        LCD.Clear();
+
+
+        //turn right towards ramp
+        LCD.WriteLine("turnright for 12 ticks");
+        cody.resetTicks();
+        moto.setPerc(15,-15);
+        do {
+            cody.ticks(l,r);
+        } while ((l+r)/2 < 12);
+        moto.stop();
+
+        // Move Forwards 180 ticks (up the ramp)
+        
+        LCD.WriteLine("forward for 180 ticks");
+        cody.resetTicks();
+        moto.setPerc(30, 30);
+        do {
+            cody.ticks(l,r);
+        } while ((l+r)/2 < 180);
+        moto.stop();
+
+        // Turn left towards light
+        LCD.WriteLine("turnleft for 14 ticks");
+        cody.resetTicks();
+        moto.setPerc(-15,15);
+        do {
+            cody.ticks(l,r);
+        } while ((l+r)/2 < 14);
+        moto.stop();
+  
+    }
+    if (false){
         cody.resetTicks();
         int l,r;
         LCD.Clear();
