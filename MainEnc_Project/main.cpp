@@ -26,6 +26,8 @@ Encoder class needs changed to be compatible for both single and double signal e
 #define LEFT_MOTOR_PORT FEHMotor::Motor0
 #define RIGHT_MOTOR_PORT FEHMotor::Motor2
 #define VOLTAGE 9.0
+
+// We changed the encoder ports there are not accurate 
 #define LEFT_ENCODER_PORT FEHIO::P3_3
 #define RIGHT_ENCODER_PORT FEHIO::P0_0
 #define LOW_THRESHOLD 0.15
@@ -150,6 +152,9 @@ int main(){
         float y=0.1;
         int light = 0;
         int lightColor = 0;
+
+        DigitalInputPin microF(FEHIO::P2_0);
+        int fBump = 0;
         
 
         
@@ -212,18 +217,19 @@ int main(){
         rightEncoder.ResetCounts();
 
 
-
-        /////////////////Drive Forwards for 10 inches or until we find the light //////////////////////////////
-        while( (rightEncoder.Counts() + leftEncoder.Counts() / 2) < (TICKS_PER_INCH*10) || light == 0)
+        moto.setPerc(15,15);
+        fBump = microF.Value();
+        /////////////////Drive Forwards until we find the light or hit wall //////////////////////////////
+        while(light == 0 || fBump == 1)
         {
-            moto.setPerc(15,15);
-
+            
             // check if we detect a light
             lightValue=sensor_cds.Value();
-            if(lightValue < 1.5)
+            if(lightValue < 2)
             {
                 light = 1;
             }
+            fBump = microF.Value();
             Sleep(1);
         }
         // stop everything and reset encoder
@@ -232,6 +238,8 @@ int main(){
         rightEncoder.ResetCounts();
 
 
+
+         /////////////////found light go detect color//////////////////////////////
         if(light == 1)
         {
             /////////////////Drive Forwards for 1/2 inches //////////////////////////////
@@ -248,13 +256,56 @@ int main(){
             if( lightValue > .35 && lightValue < .55)
             {
                 lightColor = 1;
-                LCD.WriteLine("RED");
+                LCD.WriteLine("Found RED light");
             }
             else if(lightValue > .25 && lightValue < .35)
             {
                 lightColor = 2;
-                LCD.WriteLine("BLUE");
+                LCD.WriteLine("Found BLUE light");
             }
+
+        }
+        
+         /////////////////did not find light guess and pray //////////////////////////////
+        if(light == 0)
+        {
+            /////////////////Drive backwards for 10 inches //////////////////////////////
+            while( ((rightEncoder.Counts() + leftEncoder.Counts())/2 ) < (TICKS_PER_INCH*10) )
+            {
+                moto.setPerc(-20,-20);
+                LCD.WriteLine(rightEncoder.Counts());
+                Sleep(1);
+            }
+            // stop everything and reset encoder
+            moto.setPerc(0,0);
+            leftEncoder.ResetCounts();
+            rightEncoder.ResetCounts();
+
+
+
+            //////////////////// Turn right (45 degrees) ////////////////////////////////
+            while( (rightEncoder.Counts() + leftEncoder.Counts() / 2) < (TICKS_PER_DEGREE*50) )
+            {
+                moto.setPerc(15,-15);
+            }
+            // stop everything and reset encoder
+            moto.setPerc(0,0);
+            leftEncoder.ResetCounts();
+            rightEncoder.ResetCounts();
+
+            /////////////////Drive forwards until bump swtich hits //////////////////////////////
+            while( microF.Value() == 1) 
+            {
+                moto.setPerc(-20,-20);
+                LCD.WriteLine(rightEncoder.Counts());
+                Sleep(1);
+            }
+            Sleep(500);
+            // stop everything and reset encoder
+            moto.setPerc(0,0);
+            leftEncoder.ResetCounts();
+            rightEncoder.ResetCounts();
+
 
         }
 
