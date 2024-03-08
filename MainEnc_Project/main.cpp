@@ -26,8 +26,6 @@ Encoder class needs changed to be compatible for both single and double signal e
 #define LEFT_MOTOR_PORT FEHMotor::Motor0
 #define RIGHT_MOTOR_PORT FEHMotor::Motor2
 #define VOLTAGE 9.0
-
-// We changed the encoder ports there are not accurate 
 #define LEFT_ENCODER_PORT FEHIO::P3_3
 #define RIGHT_ENCODER_PORT FEHIO::P0_0
 #define LOW_THRESHOLD 0.15
@@ -36,11 +34,11 @@ Encoder class needs changed to be compatible for both single and double signal e
 #define TICKS_INCHES 0.07854
 //#define TICKS_INCHES 0.21
 #define ONE_TICK_DIF_DEGREE 0.615 /* - /\ + */
-#define CDS_SENSOR_PORT FEHIO::P0_2
+#define CDS_SENSOR_PORT FEHIO::P0_0
 //determine light color values
-#define RED_LIGHT 0.273
+#define RED_LIGHT 0.3
 #define BLUE_LIGHT 0.9
-#define TOLERANCE_LIGHT 0.075
+#define TOLERANCE_LIGHT 0.2
 //use of double encoders
 #define DOUBLE_SIGNAL false
 #define LEFT_D_ENCODER_PORT FEHIO::P0_3
@@ -85,6 +83,10 @@ double turnOne(double degrees);
  * @return the actual number of inches moved
  */
 double move(double inches);
+
+int move(int ticks, float percent);
+
+double move(double inches, float percent);
 
 
 /*
@@ -629,3 +631,41 @@ double move(double inches){
     return actualInches;
 }
 
+double move(double inches, float percent){
+    const int flooredTicks = inches/TICKS_INCHES;
+    double actualInches = 0;
+    cody.resetTicks();
+    int lefTic, rigTic;
+    if (inches < 0){
+        cody.setDir(false, false);
+        moto.setPerc(-percent);
+    } else {
+        cody.setDir(true, true);
+        moto.setPerc(percent);
+    }
+    do {
+        cody.ticks(lefTic, rigTic);
+        actualInches = ((lefTic+rigTic)/2 ) * TICKS_INCHES;
+    } while (((lefTic+rigTic)/2)!=flooredTicks);
+    moto.stop();
+    cody.setDir(true,true);
+    return actualInches;
+}
+
+int move(int ticks, float percent){
+    cody.resetTicks();
+    int left,right;
+    if(ticks<0){
+        cody.setDir(false,false);
+        moto.setPerc(-percent);
+    } else {
+        cody.setDir(true,true);
+        moto.setPerc(percent);
+    }
+    do {
+        cody.ticks(left,right);
+    } while (((left+right)/2)!=ticks);
+    moto.stop();
+    cody.setDir(true,true);
+    return ((left+right)/2);
+}
