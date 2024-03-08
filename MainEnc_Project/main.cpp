@@ -31,7 +31,8 @@ Encoder class needs changed to be compatible for both single and double signal e
 #define LOW_THRESHOLD 0.15
 #define HIGH_THRESHOLD 2.25
 //one tick is 0.07854
-#define TICKS_INCHES 0.21
+#define TICKS_INCHES 0.07854
+//#define TICKS_INCHES 0.21
 #define ONE_TICK_DIF_DEGREE 0.615 /* - /\ + */
 #define CDS_SENSOR_PORT FEHIO::P0_2
 //determine light color values
@@ -42,6 +43,13 @@ Encoder class needs changed to be compatible for both single and double signal e
 #define DOUBLE_SIGNAL false
 #define LEFT_D_ENCODER_PORT FEHIO::P0_3
 #define RIGHT_D_ENCODER_PORT FEHIO::P0_4
+
+
+#define TICKS_PER_INCH 12.732
+//12.73239545 ticks/in
+
+#define TICKS_PER_DEGREE 0.88888
+// 0.8888889222 ticks/degree
 
 
 /**
@@ -127,39 +135,133 @@ int main(){
     // Lukes stuff for checkpoint 2
 
     if (true){
-        cody.resetTicks();
-        int l,r;
+        //set up encoders and CDS Cell
+        AnalogEncoder rightEncoder(FEHIO::P0_3);
+        AnalogEncoder leftEncoder(FEHIO::P3_0);
         LCD.Clear();
+        LCD.WriteLine("Starting Test");
+        rightEncoder.SetThresholds(0.15,2.35);
+        rightEncoder.ResetCounts();
+        leftEncoder.SetThresholds(0.15,2.35);
+        leftEncoder.ResetCounts();
 
-
-        //turn right towards ramp
-        LCD.WriteLine("turnright for 12 ticks");
-        cody.resetTicks();
-        moto.setPerc(15,-15);
-        do {
-            cody.ticks(l,r);
-        } while ((l+r)/2 < 12);
-        moto.stop();
-
-        // Move Forwards 180 ticks (up the ramp)
+        AnalogInputPin sensor_cds(FEHIO::P0_0);
+        float x=0.5;
+        float y=0.1;
+        int light = 0;
+        int lightColor = 0;
         
-        LCD.WriteLine("forward for 180 ticks");
-        cody.resetTicks();
-        moto.setPerc(30, 30);
-        do {
-            cody.ticks(l,r);
-        } while ((l+r)/2 < 180);
-        moto.stop();
 
-        // Turn left towards light
-        LCD.WriteLine("turnleft for 14 ticks");
-        cody.resetTicks();
-        moto.setPerc(-15,15);
-        do {
-            cody.ticks(l,r);
-        } while ((l+r)/2 < 14);
-        moto.stop();
-  
+        
+        ///////////////// Wait for red //////////////////////////////
+        float lightValue = sensor_cds.Value();
+
+        while (lightValue > x || lightValue < y )
+        {
+        lightValue=sensor_cds.Value();
+        LCD.WriteLine(lightValue);
+        Sleep (0.1);
+        }
+        LCD.Clear();
+        
+
+
+        //////////////////// Turn right (45 degrees) ////////////////////////////////
+        while( (rightEncoder.Counts() + leftEncoder.Counts() / 2) < (TICKS_PER_DEGREE*50) )
+        {
+            moto.setPerc(15,-15);
+        }
+        // stop everything and reset encoder
+        moto.setPerc(0,0);
+        leftEncoder.ResetCounts();
+        rightEncoder.ResetCounts();
+
+
+        /////////////////Drive Forwards for 24 inches //////////////////////////////
+        while( ((rightEncoder.Counts() + leftEncoder.Counts())/2 ) < (TICKS_PER_INCH*24) )
+        {
+            moto.setPerc(30,30);
+            LCD.WriteLine(rightEncoder.Counts());
+            Sleep(1);
+        }
+        // stop everything and reset encoder
+        moto.setPerc(0,0);
+        leftEncoder.ResetCounts();
+        rightEncoder.ResetCounts();
+
+
+        //////////////////// Turn left (45 degrees) ////////////////////////////////
+        while( (rightEncoder.Counts() + leftEncoder.Counts() / 2) < (TICKS_PER_DEGREE*45) )
+        {
+            moto.setPerc(-15,15);
+        }
+        // stop everything and reset encoder
+        moto.setPerc(0,0);
+        leftEncoder.ResetCounts();
+        rightEncoder.ResetCounts();
+        
+
+        /////////////////Drive Forwards for 15 inches //////////////////////////////
+        while( (rightEncoder.Counts() + leftEncoder.Counts() / 2) < (TICKS_PER_INCH*15) )
+        {
+            moto.setPerc(30,30);
+        }
+        // stop everything and reset encoder
+        moto.setPerc(0,0);
+        leftEncoder.ResetCounts();
+        rightEncoder.ResetCounts();
+
+
+
+        /////////////////Drive Forwards for 10 inches or until we find the light //////////////////////////////
+        while( (rightEncoder.Counts() + leftEncoder.Counts() / 2) < (TICKS_PER_INCH*10) || light == 0)
+        {
+            moto.setPerc(15,15);
+
+            // check if we detect a light
+            lightValue=sensor_cds.Value();
+            if(lightValue < 1.5)
+            {
+                light = 1;
+            }
+            Sleep(1);
+        }
+        // stop everything and reset encoder
+        moto.setPerc(0,0);
+        leftEncoder.ResetCounts();
+        rightEncoder.ResetCounts();
+
+
+        if(light == 1)
+        {
+            /////////////////Drive Forwards for 1/2 inches //////////////////////////////
+            while( (rightEncoder.Counts() + leftEncoder.Counts() / 2) < (TICKS_PER_INCH*.5) )
+            {
+                moto.setPerc(15,15);
+            }
+            // stop everything and reset encoder
+            moto.setPerc(0,0);
+            leftEncoder.ResetCounts();
+            rightEncoder.ResetCounts();
+
+            lightValue = sensor_cds.Value();
+            if( lightValue > .35 && lightValue < .55)
+            {
+                lightColor = 1;
+                LCD.WriteLine("RED");
+            }
+            else if(lightValue > .25 && lightValue < .35)
+            {
+                lightColor = 2;
+                LCD.WriteLine("BLUE");
+            }
+
+        }
+
+
+
+
+
     }
     if (false){
         cody.resetTicks();
@@ -475,3 +577,4 @@ double move(double inches){
     cody.setDir(true,true);
     return actualInches;
 }
+
