@@ -1,6 +1,7 @@
 #include <FEHLCD.h>
 #include <FEHIO.h>
 #include <FEHSD.h>
+#include <FEHMotor.h>
 #include <Motors.h>
 
 // Declarations for analog optosensors
@@ -10,7 +11,7 @@ AnalogInputPin left_opto(FEHIO::P1_6);
 
 FEHMotor leftTemp(FEHMotor::Motor1,9.0);
 FEHMotor rightTemp(FEHMotor::Motor0,9.0);
-Motors motors(FEHMotor::Motor0,FEHMotor::Motor1,9.0);
+Motors motors;
 
 
 //Defines for 'yes' values with opto_sensors
