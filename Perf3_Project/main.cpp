@@ -62,6 +62,15 @@ enum LineStates {
 Function prototypes
 */
 
+/**
+ * @brief determines if x is equal to y within linefollower tolerance toler
+ * @param x linefollower returned value
+ * @param y linefollower acceptable value
+ * @param toler linefollower tolerance (+-)
+ * @return true if x is with toler of y.
+ */
+bool lineEqual(float x, float y, float toler);
+
 /*
 Global objects
 */
@@ -82,12 +91,103 @@ int main(){
     FEHMotor temporay_rightMotor(MOTOR_RIGHT_PORT,VOLTAGE_MOTORS);
     motors.left = &temporay_leftMotor;
     motors.right = &temporay_rightMotor;
-    
+    motors.setMotorDirection(true,true);
+    //LightSensor
+    AnalogInputPin temporay_cds(LIGHTSENSOR_CDS_PORT);
+    lsensor.cds_sensor = &temporay_cds;
+    lsensor.setLights(CV_CDS_RED,CV_CDS_BLUE);
+    lsensor.setTolerance(TOLERA_CDS_COLOR);
 
 
     //****Main algorithm*****
 
+    //wait on red
+    LCD.Clear();
+    LCD.WriteLine("Waiting on red");
+    do {
+        LCD.Clear();
+        LCD.Write("Detected: ");
+        LCD.WriteLine(lsensor.lightValue());
+        LCD.WriteLine("Waiting on Red");
+        Sleep(0.2);
+    } while (!lsensor.detectRed());
+    LCD.Clear();
+    LCD.Write("Detected: ");
+    LCD.WriteLine(lsensor.lightValue());
+    LCD.WriteLine("Found Red");
+    Sleep(2.0);
+    //move sleep
+    //move until detect line
+    //center on line
+    //line follow to head (all detect line, stop here)
+        //assuming current state is Middle and has been set to Middle
+    int state = MIDDLE, stateCount = 0; //if stateCount reaches three...
+    do {
+        switch(state){
+            case MIDDLE:
+                {
+                    stateCount = 0;
+                    motors.setPerc(15.0);
+                    if (lineEqual(lf_left.Value(),LEFT_LF_YLW,TOLERA_LF_YLW)){
+                        state = LEFT;
+                        stateCount++;
+                    }
+                    if (lineEqual(lf_right.Value(),RIGHT_LF_YLW,TOLERA_LF_YLW)){
+                        state = RIGHT;
+                        stateCount++;
+                    }
+                    if (stateCount == 2 && lineEqual(lf_middle.Value(),MIDDLE_LF_YLW,TOLERA_LF_YLW)){
+                        stateCount = 3;
+                    }
+                    break;
+                }
+            case LEFT:
+                {
+                    stateCount = 0;
+                    motors.setPerc(4.0, 15.0);
+                    if (lineEqual(lf_middle.Value(),MIDDLE_LF_YLW,TOLERA_LF_YLW)){
+                        state = MIDDLE;
+                        stateCount++;
+                    }
+                    if (lineEqual(lf_right.Value(),RIGHT_LF_YLW,TOLERA_LF_YLW)){
+                        state = RIGHT;
+                        stateCount++;
+                    }
+                    if (stateCount == 2 && lineEqual(lf_left.Value(),LEFT_LF_YLW,TOLERA_LF_YLW)){
+                        stateCount = 3;
+                    }
+                    break;
+                }
+            case RIGHT:
+                {
+                    stateCount = 0;
+                    motors.setPerc(15.0, 4.0);
+                    if (lineEqual(lf_left.Value(),LEFT_LF_YLW,TOLERA_LF_YLW)){
+                        state = LEFT;
+                        stateCount++;
+                    }
+                    if (lineEqual(lf_middle.Value(),MIDDLE_LF_YLW,TOLERA_LF_YLW)){
+                        state = MIDDLE;
+                        stateCount++;
+                    }
+                    if (stateCount == 2 && lineEqual(lf_right.Value(),RIGHT_LF_YLW,TOLERA_LF_YLW)){
+                        stateCount = 3;
+                    }
+                    break;
+                }
+        }
+    } while (stateCount < 3);
+    motors.stop();
+    //further logic
 
 
 
+}
+
+bool lineEqual(float x, float y, float toler){
+    bool res = false;
+    if (y-toler <= x && x <= y+toler){
+        res = true;
+    }
+    return res;
 }
