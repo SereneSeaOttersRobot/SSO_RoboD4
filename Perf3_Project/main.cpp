@@ -14,9 +14,9 @@ hashtag defines
 */
 //color values
 //name_linefollower_color value
-#define LEFT_LF_YLW 0.00
-#define RIGHT_LF_YLW 0.00
-#define MIDDLE_LF_YLW 0.00
+#define LEFT_LF_YLW 0.15
+#define RIGHT_LF_YLW 1.65
+#define MIDDLE_LF_YLW 0.86
 #define TOLERA_LF_YLW 0.1
 //name_cds_color value
 #define CV_CDS_RED 0.3
@@ -27,16 +27,16 @@ hashtag defines
 //ports
 //objecttype_name_port port_value
 #define MOTOR_LEFT_PORT FEHMotor::Motor0
-#define MOTOR_RIGHT_PORT FEHMotor::Motor1
-#define MOTOR_FORKLIFT_PORT FEHMotor::Motor2
-#define ENCODER_LEFTS_PORT FEHIO::P0_0
+#define MOTOR_RIGHT_PORT FEHMotor::Motor2
+#define MOTOR_FORKLIFT_PORT FEHMotor::Motor3
+#define ENCODER_LEFTS_PORT FEHIO::P3_0
 #define ENCODER_LEFTD_PORT FEHIO::P0_1
-#define ENCODER_RIGHTS_PORT FEHIO::P0_2
-#define ENCODER_RIGHTD_PORT FEHIO::P0_3
-#define LIGHTSENSOR_CDS_PORT FEHIO::P0_4
-#define LIGHTFOLLOWER_LEFT_PORT FEHIO::P0_5
-#define LIGHTFOLLOWER_RIGHT_PORT FEHIO::P0_6
-#define LIGHTFOLLOWER_MIDDLE_PORT FEHIO::P0_7
+#define ENCODER_RIGHTS_PORT FEHIO::P0_3
+#define ENCODER_RIGHTD_PORT FEHIO::P0_2
+#define LIGHTSENSOR_CDS_PORT FEHIO::P0_0
+#define LIGHTFOLLOWER_LEFT_PORT FEHIO::P1_6
+#define LIGHTFOLLOWER_MIDDLE_PORT FEHIO::P1_3
+#define LIGHTFOLLOWER_RIGHT_PORT FEHIO::P1_0
 //same needs done for microswitchs
 
 //Voltages
@@ -71,6 +71,17 @@ Function prototypes
  */
 bool lineEqual(float x, float y, float toler);
 
+/**
+ * @brief Moves the robot by the given number of ticks and at the given percent speed.
+ * @param ticks the amount of ticks to move this by, can be negative to move backwards.
+ * @param percent the percent SPEED to move this by, not velocity. 
+ * @return void, however encoders and motors objects will be updated by end of this.
+ *  Encoders will have direction updated then updated again to 'forward' by the end of this.
+ *  Robot will stop at the end of this. ticks travel = ticks sent + 1, as it runs while ticks are 'less' than or equal
+ *  to the sent ticks. 
+ */
+void move(int ticks, float percent);
+
 /*
 Global objects
 */
@@ -97,8 +108,30 @@ int main(){
     lsensor.cds_sensor = &temporay_cds;
     lsensor.setLights(CV_CDS_RED,CV_CDS_BLUE);
     lsensor.setTolerance(TOLERA_CDS_COLOR);
+    //Encoders
+    AnalogEncoder temporay_leftEncoderS(ENCODER_LEFTS_PORT);
+    AnalogEncoder temporay_rightEncoderS(ENCODER_RIGHTS_PORT);
+
+    encoders.left = &temporay_leftEncoderS;
+    encoders.right = &temporay_rightEncoderS;
+
+    encoders.setThresholds(ENCODER_LOW,ENCODER_HIGH);
+
+    //***Test Code*****
+
+    while (0){
+        LCD.Clear();
+        LCD.Write("Left: ");
+        LCD.WriteLine(lf_left.Value());
+        LCD.Write("Middle: ");
+        LCD.WriteLine(lf_middle.Value());
+        LCD.Write("Right: ");
+        LCD.WriteLine(lf_right.Value());
+        Sleep(0.2);
+    }
 
 
+    //return 1; //Test code
     //****Main algorithm*****
 
     //wait on red
@@ -117,16 +150,59 @@ int main(){
     LCD.WriteLine("Found Red");
     Sleep(2.0);
     //move sleep
+        //should moving straight forward, not actually sleeping just move certain number of ticks.
+    //move(40, 20.0); //move forward 
+    motors.setPerc(20,15);
+    Sleep(5.0);
+    motors.stop();
     //move until detect line
+    bool haveDetectedMiddle = false;
+    encoders.setDir(true,true);
+    motors.setPerc(15.0,20.0);
+    do {
+        haveDetectedMiddle = lineEqual(lf_middle.Value(),MIDDLE_LF_YLW,TOLERA_LF_YLW);
+        //display to screen current status?
+        LCD.Clear();
+        LCD.Write("Left: ");
+        LCD.WriteLine(lf_left.Value());
+        LCD.Write("Middle: ");
+        LCD.WriteLine(lf_middle.Value());
+        LCD.Write("Right: ");
+        LCD.WriteLine(lf_right.Value());
+        Sleep(0.2);
+
+    } while (!haveDetectedMiddle);
     //center on line
+        //continue while detecting middle, until detect left, then enter linefollower logic with initial state as left.
+    bool haveDetectedLeft = false;
+    do {
+        haveDetectedMiddle = lineEqual(lf_middle.Value(),MIDDLE_LF_YLW,TOLERA_LF_YLW);
+        haveDetectedLeft = lineEqual(lf_left.Value(),LEFT_LF_YLW,TOLERA_LF_YLW);
+        LCD.Clear();
+        LCD.Write("Left: ");
+        LCD.WriteLine(lf_left.Value());
+        LCD.Write("Middle: ");
+        LCD.WriteLine(lf_middle.Value());
+        LCD.Write("Right: ");
+        LCD.WriteLine(lf_right.Value());
+        Sleep(0.2);
+    } while (haveDetectedMiddle && !haveDetectedLeft);
     //line follow to head (all detect line, stop here)
-        //assuming current state is Middle and has been set to Middle
-    int state = MIDDLE, stateCount = 0; //if stateCount reaches three...
+        //assuming current state is Middle (nope) and has been set to Middle (left)
+    int state = LEFT, stateCount = 0; //if stateCount reaches three...
     do {
         switch(state){
             case MIDDLE:
                 {
+                    LCD.Clear();
+                    LCD.Write("Left: ");
+                    LCD.WriteLine(lf_left.Value());
+                    LCD.Write("Middle: ");
+                    LCD.WriteLine(lf_middle.Value());
+                    LCD.Write("Right: ");
+                    LCD.WriteLine(lf_right.Value());
                     stateCount = 0;
+                    encoders.setDir(true,true);
                     motors.setPerc(15.0);
                     if (lineEqual(lf_left.Value(),LEFT_LF_YLW,TOLERA_LF_YLW)){
                         state = LEFT;
@@ -142,9 +218,17 @@ int main(){
                     break;
                 }
             case LEFT:
-                {
+                {   
+                    LCD.Clear();
+                    LCD.Write("Left: ");
+                    LCD.WriteLine(lf_left.Value());
+                    LCD.Write("Middle: ");
+                    LCD.WriteLine(lf_middle.Value());
+                    LCD.Write("Right: ");
+                    LCD.WriteLine(lf_right.Value());
                     stateCount = 0;
-                    motors.setPerc(4.0, 15.0);
+                    encoders.setDir(false, true);
+                    motors.setPerc(-30.0, 10.0);
                     if (lineEqual(lf_middle.Value(),MIDDLE_LF_YLW,TOLERA_LF_YLW)){
                         state = MIDDLE;
                         stateCount++;
@@ -159,9 +243,17 @@ int main(){
                     break;
                 }
             case RIGHT:
-                {
+                {   
+                    LCD.Clear();
+                    LCD.Write("Left: ");
+                    LCD.WriteLine(lf_left.Value());
+                    LCD.Write("Middle: ");
+                    LCD.WriteLine(lf_middle.Value());
+                    LCD.Write("Right: ");
+                    LCD.WriteLine(lf_right.Value());
                     stateCount = 0;
-                    motors.setPerc(15.0, 4.0);
+                    encoders.setDir(true, false);
+                    motors.setPerc(20.0, -10.0);
                     if (lineEqual(lf_left.Value(),LEFT_LF_YLW,TOLERA_LF_YLW)){
                         state = LEFT;
                         stateCount++;
@@ -190,4 +282,33 @@ bool lineEqual(float x, float y, float toler){
         res = true;
     }
     return res;
+}
+
+void move(int ticks, float percent){
+    int leftTicks = 0, rightTicks = 0;
+    bool beforeGoal; //true when currentTicks comes before sent Ticks, i.e. -ticks < curTicks or ticks > curticks
+    encoders.resetTicks();
+    if (ticks < 0){
+        encoders.setDir(false, false);
+        //expression for negative direction.
+        beforeGoal = (leftTicks+rightTicks)/2 >= ticks;
+        motors.setPerc(-percent);
+    } else {
+        encoders.setDir(true, true);
+        //expression for positive direction.
+        beforeGoal = (leftTicks+rightTicks)/2 <= ticks;
+        motors.setPerc(percent);
+    }
+    do {
+        encoders.ticks(leftTicks,rightTicks);
+        //display ticks here if needed
+        if (ticks<0){
+            beforeGoal = (leftTicks+rightTicks)/2 >= ticks;
+        } else {
+            beforeGoal = (leftTicks+rightTicks)/2 <= ticks;
+        }
+
+    } while (beforeGoal);
+    motors.stop();
+
 }
