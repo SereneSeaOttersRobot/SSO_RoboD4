@@ -268,6 +268,7 @@ int main(){
                     break;
                 }
         }
+        Sleep(0.2);
     } while (stateCount < 3);
     motors.stop();
     //further logic
