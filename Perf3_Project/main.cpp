@@ -34,10 +34,12 @@ hashtag defines
 #define ENCODER_RIGHTS_PORT FEHIO::P0_3
 #define ENCODER_RIGHTD_PORT FEHIO::P0_2
 #define LIGHTSENSOR_CDS_PORT FEHIO::P0_0
-#define LIGHTFOLLOWER_LEFT_PORT FEHIO::P1_6
-#define LIGHTFOLLOWER_MIDDLE_PORT FEHIO::P1_3
+#define LIGHTFOLLOWER_LEFT_PORT FEHIO::P3_2
+#define LIGHTFOLLOWER_MIDDLE_PORT FEHIO::P1_2
 #define LIGHTFOLLOWER_RIGHT_PORT FEHIO::P1_0
 //same needs done for microswitchs
+#define BUTTON_FORKTOP_PORT FEHIO::P0_0
+#define BUTTON_FORKBOT_PORT FEHIO::P0_0
 
 //Voltages
 //voltage_name values
@@ -92,6 +94,7 @@ Encoders encoders;
 AnalogInputPin lf_left(LIGHTFOLLOWER_LEFT_PORT);
 AnalogInputPin lf_middle(LIGHTFOLLOWER_MIDDLE_PORT);
 AnalogInputPin lf_right(LIGHTFOLLOWER_RIGHT_PORT);
+FEHMotor forklift(MOTOR_FORKLIFT_PORT,VOLTAGE_FORKLIFT);
 
 int main(){
     /*
@@ -118,7 +121,7 @@ int main(){
     encoders.setThresholds(ENCODER_LOW,ENCODER_HIGH);
 
     //***Test Code*****
-
+    //finding line light values
     while (0){
         LCD.Clear();
         LCD.Write("Left: ");
@@ -130,8 +133,28 @@ int main(){
         Sleep(0.2);
     }
 
+    //working the forklift
+    while (0){
+        //use bummpers to determine direction of forklift motor
+        DigitalInputPin bottom(BUTTON_FORKBOT_PORT);
+        DigitalInputPin top(BUTTON_FORKTOP_PORT);
+        const float percent = 90.0;
+        while(1){
+            if (!bottom.Value()){
+                forklift.SetPercent(-percent);
+            } else if (!top.Value()){
+                forklift.SetPercent(percent);
+            } else {
+                forklift.Stop();
+            }
+        }
+    }
 
-    //return 1; //Test code
+
+    if (0){
+        //Test code number
+        return 2;
+    }
     //****Main algorithm*****
 
     //wait on red
@@ -193,7 +216,8 @@ int main(){
     do {
         switch(state){
             case MIDDLE:
-                {
+                {   
+                    //display
                     LCD.Clear();
                     LCD.Write("Left: ");
                     LCD.WriteLine(lf_left.Value());
@@ -201,9 +225,11 @@ int main(){
                     LCD.WriteLine(lf_middle.Value());
                     LCD.Write("Right: ");
                     LCD.WriteLine(lf_right.Value());
+                    //intialize
                     stateCount = 0;
                     encoders.setDir(true,true);
                     motors.setPerc(15.0);
+                    //logic
                     if (lineEqual(lf_left.Value(),LEFT_LF_YLW,TOLERA_LF_YLW)){
                         state = LEFT;
                         stateCount++;
