@@ -38,8 +38,8 @@ hashtag defines
 #define LIGHTFOLLOWER_MIDDLE_PORT FEHIO::P1_2
 #define LIGHTFOLLOWER_RIGHT_PORT FEHIO::P1_0
 //same needs done for microswitchs
-#define BUTTON_FORKTOP_PORT FEHIO::P0_0
-#define BUTTON_FORKBOT_PORT FEHIO::P0_0
+#define BUTTON_FORKTOP_PORT FEHIO::P0_7
+#define BUTTON_FORKBOT_PORT FEHIO::P3_5
 
 //Voltages
 //voltage_name values
@@ -121,7 +121,7 @@ int main(){
     encoders.setThresholds(ENCODER_LOW,ENCODER_HIGH);
 
     //***Test Code*****
-    /*
+    
     //finding line light values
     while (0){
         LCD.Clear();
@@ -135,7 +135,7 @@ int main(){
     }
 
     //working the forklift
-    while (0){
+    while (1){
         //use bummpers to determine direction of forklift motor
         DigitalInputPin bottom(BUTTON_FORKBOT_PORT);
         DigitalInputPin top(BUTTON_FORKTOP_PORT);
@@ -152,11 +152,11 @@ int main(){
     }
 
 
-    if (0){
+    if (1){
         //Test code number
         return 2;
     }
-    */
+    
     //****Main algorithm*****
 
     //wait on red

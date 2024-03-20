@@ -88,6 +88,13 @@ bool lineEqual(float x, float y, float toler);
  */
 void move(int ticks, float percent);
 
+void turnRight(double degree, float percent);
+void turnLeft(double degree, float percent);
+/**
+ * @brief move forward or backwards by the given inches, velocity is determine by sent percent. 
+ */
+void move(double inches, float percent);
+
 /*
 Global objects
 */
@@ -186,4 +193,15 @@ bool lineEqual(float x, float y, float toler){
         res = true;
     }
     return res;
+}
+
+void move(double inches, float percent){
+    leftEncoder.ResetCounts();
+    rightEncoder.ResetCounts();
+    int ticks = (int) (inches*TICKS_PER_INCH);
+    leftMotor.SetPercent(percent);
+    rightMotor.SetPercent(percent);
+    while((leftEncoder.Counts() + rightEncoder.Counts())/2 < ticks);
+    leftMotor.Stop();
+    rightMotor.Stop();
 }
