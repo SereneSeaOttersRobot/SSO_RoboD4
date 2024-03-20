@@ -121,6 +121,7 @@ int main(){
     encoders.setThresholds(ENCODER_LOW,ENCODER_HIGH);
 
     //***Test Code*****
+    /*
     //finding line light values
     while (0){
         LCD.Clear();
@@ -155,6 +156,7 @@ int main(){
         //Test code number
         return 2;
     }
+    */
     //****Main algorithm*****
 
     //wait on red
@@ -176,7 +178,7 @@ int main(){
         //should moving straight forward, not actually sleeping just move certain number of ticks.
     //move(40, 20.0); //move forward 
     motors.setPerc(20,15);
-    Sleep(5.0);
+    Sleep(4.0);
     motors.stop();
     //move until detect line
     bool haveDetectedMiddle = false;
@@ -254,7 +256,7 @@ int main(){
                     LCD.WriteLine(lf_right.Value());
                     stateCount = 0;
                     encoders.setDir(false, true);
-                    motors.setPerc(-30.0, 10.0);
+                    motors.setPerc(-15.0, 15.0);
                     if (lineEqual(lf_middle.Value(),MIDDLE_LF_YLW,TOLERA_LF_YLW)){
                         state = MIDDLE;
                         stateCount++;
@@ -279,7 +281,7 @@ int main(){
                     LCD.WriteLine(lf_right.Value());
                     stateCount = 0;
                     encoders.setDir(true, false);
-                    motors.setPerc(20.0, -10.0);
+                    motors.setPerc(15.0, -15.0);
                     if (lineEqual(lf_left.Value(),LEFT_LF_YLW,TOLERA_LF_YLW)){
                         state = LEFT;
                         stateCount++;
