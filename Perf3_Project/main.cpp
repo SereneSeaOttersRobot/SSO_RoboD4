@@ -123,7 +123,7 @@ int main(){
     //***Test Code*****
     
     //finding line light values
-    while (0){
+    while (1){
         LCD.Clear();
         LCD.Write("Left: ");
         LCD.WriteLine(lf_left.Value());
@@ -135,7 +135,7 @@ int main(){
     }
 
     //working the forklift
-    while (1){
+    while (0){
         //use bummpers to determine direction of forklift motor
         DigitalInputPin bottom(BUTTON_FORKBOT_PORT);
         DigitalInputPin top(BUTTON_FORKTOP_PORT);

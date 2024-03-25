@@ -111,14 +111,7 @@ int main()
     leftEncoder.SetThresholds(0.15, 2.35);
     leftEncoder.ResetCounts();
 
-    //bounce between forklift buttons
-    if (1){
-        float percent = 90.0;
-        forklift.SetPercent(90.0);
-        while (1){
-            
-        }
-    }
+    
 
 
 }
