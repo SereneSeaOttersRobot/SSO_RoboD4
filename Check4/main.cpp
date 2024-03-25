@@ -151,7 +151,15 @@ int main()
                 }
                 break;
             }
-            
+            case MIDDLE:{
+                //move middle - needs done
+                if(left){
+                    state = LEFT;
+                } else if(right){
+                    state = RIGHT;
+                }
+                break;
+            }
         }
     } while (!(left && right && middle));
 }
