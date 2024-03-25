@@ -5,6 +5,7 @@
 #include <FEHMotor.h>
 #include <FEHAccel.h>
 #include <FEHSD.h>
+#include <FEHRCS.h>
 
 
 /*
@@ -58,9 +59,9 @@ hashtag defines
 Enumerations
 */
 enum LineStates {
-    LEFT = -1,
-    MIDDLE = 0,
-    RIGHT = 1
+    LEFT = 0,
+    MIDDLE = 1,
+    RIGHT = 2
 
 };
 
@@ -77,23 +78,14 @@ Function prototypes
  */
 bool lineEqual(float x, float y, float toler);
 
-/**
- * @brief Moves the robot by the given number of ticks and at the given percent speed.
- * @param ticks the amount of ticks to move this by, can be negative to move backwards.
- * @param percent the percent SPEED to move this by, not velocity. 
- * @return void, however encoders and motors objects will be updated by end of this.
- *  Encoders will have direction updated then updated again to 'forward' by the end of this.
- *  Robot will stop at the end of this. ticks travel = ticks sent + 1, as it runs while ticks are 'less' than or equal
- *  to the sent ticks. 
- */
-void move(int ticks, float percent);
 
 void turnRight(double degree, float percent);
 void turnLeft(double degree, float percent);
 /**
  * @brief move forward or backwards by the given inches, velocity is determine by sent percent. 
  */
-void move(double inches, float percent);
+void moveForward(double inches, float percent);
+void moveBackward(double inches, float percent);
 
 /*
 Global objects
@@ -111,6 +103,7 @@ FEHMotor forklift(MOTOR_FORKLIFT_PORT,VOLTAGE_FORKLIFT);
 
 int main(){
 
+        
         LCD.Clear();
         LCD.WriteLine("Starting Test");
         rightEncoder.SetThresholds(0.15,2.35);
@@ -123,9 +116,27 @@ int main(){
         float y=0.1;
         int light = 0;
         int lightColor = 0;
+    
 
         
+        /*
+        //move (5.,15.);
+        while( ((rightEncoder.Counts() + leftEncoder.Counts())/2 ) < (TICKS_PER_INCH*(10)/1.2) )
+        {
+            leftMotor.SetPercent(15);
+            rightMotor.SetPercent(15);
+            LCD.WriteLine(rightEncoder.Counts());
+            Sleep(1);
+        }
+        leftMotor.SetPercent(0);
+        rightMotor.SetPercent(0);
+        leftEncoder.ResetCounts();
+        rightEncoder.ResetCounts();
+        */
 
+        
+        RCS.InitializeTouchMenu("D4JZ1MbPn");
+        const int lever = RCS.GetCorrectLever();
         
         ///////////////// Wait for red //////////////////////////////
         float lightValue = sensor_cds.Value();
@@ -136,8 +147,63 @@ int main(){
         LCD.WriteLine(lightValue);
         Sleep (0.1);
         }
-        LCD.Clear();
         
+        LCD.Clear();
+        // determine lever arm
+        if (0){
+            forklift.SetPercent(90.0);
+            Sleep(1.0);
+            forklift.Stop();
+        }
+        
+        moveForward(18.,30.);  //moving to allign with first lever
+        
+        if (lever == LEFT){
+            moveForward(0.25,15.);
+            turnLeft(138.,15.);
+            moveForward(1.25,15.);
+        }
+        else if (lever == MIDDLE){
+            turnLeft(45.,15.);
+            moveForward(4.0,15.);
+            turnLeft(90.,15.);
+            moveForward(1.,15.);
+        }
+        else if (lever == RIGHT){
+            turnLeft(45.,15.);
+            moveForward(5.75,15.);
+            turnLeft(75.,15.);
+            moveForward(1.5,15.);
+        }
+
+       // moveForward(0.75,15.);   //moving to lever
+        
+    
+        //Template code for forklift
+        float forkperc = 90.0;
+        //at lever now move it down
+        forklift.SetPercent(-forkperc);
+        Sleep(2.0);
+        forklift.Stop();
+        //move backwards
+        moveBackward(2.,15.0);
+        //wait 5 seconds
+        Sleep(3.5);
+        //move arm lower than fuel lever.
+        forklift.SetPercent(-forkperc);
+        Sleep(1.0);
+        forklift.Stop();
+        //move forward again
+        moveForward(2.25, 15.0);
+        //move forlift up again
+        forklift.SetPercent(forkperc);
+        Sleep(2.0);
+        forklift.Stop();
+
+        moveBackward(2.0,15.);
+        
+        
+        /*
 
          /////////////////Drive Forwards for 23 inches //////////////////////////////
         while( ((rightEncoder.Counts() + leftEncoder.Counts())/2 ) < (TICKS_PER_INCH*17.5) )
@@ -181,8 +247,8 @@ int main(){
         leftEncoder.ResetCounts();
         rightEncoder.ResetCounts();
 
-       
-
+       */
+    
 
       
 }
@@ -195,13 +261,46 @@ bool lineEqual(float x, float y, float toler){
     return res;
 }
 
-void move(double inches, float percent){
+void moveForward(double inches, float percent){
     leftEncoder.ResetCounts();
     rightEncoder.ResetCounts();
-    int ticks = (int) (inches*TICKS_PER_INCH);
+    int ticks = (int) (inches*TICKS_PER_INCH/1.22);
     leftMotor.SetPercent(percent);
-    rightMotor.SetPercent(percent);
+    rightMotor.SetPercent(percent+0.9);
     while((leftEncoder.Counts() + rightEncoder.Counts())/2 < ticks);
     leftMotor.Stop();
     rightMotor.Stop();
+}
+
+void moveBackward(double inches, float percent){
+    leftEncoder.ResetCounts();
+    rightEncoder.ResetCounts();
+    int ticks = (int) (inches*TICKS_PER_INCH/1.22);
+    leftMotor.SetPercent(-percent-1.4);
+    rightMotor.SetPercent(-percent+0.5);
+    while((leftEncoder.Counts() + rightEncoder.Counts())/2 < ticks);
+    leftMotor.Stop();
+    rightMotor.Stop();
+}
+
+void turnLeft(double degree, float percent){
+    leftEncoder.ResetCounts();
+    rightEncoder.ResetCounts();
+    int ticks = (int) (degree*TICKS_PER_DEGREE);
+    leftMotor.SetPercent(-percent);
+    rightMotor.SetPercent(percent);
+    while ((rightEncoder.Counts() + leftEncoder.Counts()/2) < ticks);
+    rightMotor.Stop();
+    leftMotor.Stop();
+}
+
+void turnRight(double degree, float percent){
+    leftEncoder.ResetCounts();
+    rightEncoder.ResetCounts();
+    int ticks = (int) (degree*TICKS_PER_DEGREE);
+    leftMotor.SetPercent(percent);
+    rightMotor.SetPercent(-percent);
+    while ((leftEncoder.Counts() + rightEncoder.Counts()/2) < ticks);
+    rightMotor.Stop();
+    leftMotor.Stop();
 }
