@@ -346,7 +346,7 @@ int main()
     ////////////////// Lifting and Pushing Stamp Arm //////////////////////
 
     //forklift up for a few seconds
-    forklift.SetPercent(-percent);
+    forklift.SetPercent(-percent); //currently percent = -90.0
     Sleep(2.0);
     forklift.Stop();
 
