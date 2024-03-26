@@ -159,7 +159,7 @@ int main(){
         int fBump = 0;
         
 
-        
+        /*
         ///////////////// Wait for red //////////////////////////////
         float lightValue = sensor_cds.Value();
 
@@ -170,6 +170,7 @@ int main(){
         Sleep (0.1);
         }
         LCD.Clear();
+        
         
 
 
@@ -182,14 +183,12 @@ int main(){
         moto.setPerc(0,0);
         leftEncoder.ResetCounts();
         rightEncoder.ResetCounts();
-
+        */
 
         /////////////////Drive Forwards for 24 inches //////////////////////////////
         while( ((rightEncoder.Counts() + leftEncoder.Counts())/2 ) < (TICKS_PER_INCH*24) )
         {
             moto.setPerc(30,30);
-            LCD.WriteLine(rightEncoder.Counts());
-            Sleep(1);
         }
         // stop everything and reset encoder
         moto.setPerc(0,0);
@@ -197,8 +196,8 @@ int main(){
         rightEncoder.ResetCounts();
 
 
-        //////////////////// Turn left (45 degrees) ////////////////////////////////
-        while( (rightEncoder.Counts() + leftEncoder.Counts() / 2) < (TICKS_PER_DEGREE*45) )
+        //////////////////// Turn left (43 degrees) ////////////////////////////////
+        while( (rightEncoder.Counts() + leftEncoder.Counts() / 2) < (TICKS_PER_DEGREE*43) )
         {
             moto.setPerc(-15,15);
         }
@@ -222,7 +221,7 @@ int main(){
         moto.setPerc(15,15);
         fBump = microF.Value();
         /////////////////Drive Forwards until we find the light or hit wall //////////////////////////////
-        while(light == 0 || fBump == 1)
+        while(light == 0 && fBump == 1)
         {
             
             // check if we detect a light
@@ -230,6 +229,9 @@ int main(){
             if(lightValue < 2)
             {
                 light = 1;
+                LCD.WriteLine("LIGHT FOUND!");
+                moto.setPerc(0,0);
+                Sleep(500);
             }
             fBump = microF.Value();
             Sleep(1);
@@ -238,7 +240,6 @@ int main(){
         moto.setPerc(0,0);
         leftEncoder.ResetCounts();
         rightEncoder.ResetCounts();
-
 
 
          /////////////////found light go detect color//////////////////////////////
@@ -255,6 +256,7 @@ int main(){
             rightEncoder.ResetCounts();
 
             lightValue = sensor_cds.Value();
+            LCD.WriteLine(lightValue);
             if( lightValue > .35 && lightValue < .55)
             {
                 lightColor = 1;
@@ -265,14 +267,15 @@ int main(){
                 lightColor = 2;
                 LCD.WriteLine("Found BLUE light");
             }
+            else{
+                LCD.WriteLine("Its Red");
+                lightColor = 1;
+            }
 
         }
-        
-         /////////////////did not find light guess and pray //////////////////////////////
-        if(light == 0)
+        if(lightColor == 1)
         {
-            /////////////////Drive backwards for 10 inches //////////////////////////////
-            while( ((rightEncoder.Counts() + leftEncoder.Counts())/2 ) < (TICKS_PER_INCH*10) )
+             while( ((rightEncoder.Counts() + leftEncoder.Counts())/2 ) < (TICKS_PER_INCH*10) )
             {
                 moto.setPerc(-20,-20);
                 LCD.WriteLine(rightEncoder.Counts());
@@ -298,7 +301,7 @@ int main(){
             /////////////////Drive forwards until bump swtich hits //////////////////////////////
             while( microF.Value() == 1) 
             {
-                moto.setPerc(-20,-20);
+                moto.setPerc(20,20);
                 LCD.WriteLine(rightEncoder.Counts());
                 Sleep(1);
             }
@@ -307,12 +310,120 @@ int main(){
             moto.setPerc(0,0);
             leftEncoder.ResetCounts();
             rightEncoder.ResetCounts();
+        }
+        
+        
+         /////////////////did not find light guess and pray //////////////////////////////
+        if(fBump == 0)
+        {
+            LCD.WriteLine("ITS BLUE");
+            /////////////////Drive backwards for 10 inches //////////////////////////////
+            while( ((rightEncoder.Counts() + leftEncoder.Counts())/2 ) < (TICKS_PER_INCH*10) )
+            {
+                moto.setPerc(-20,-20);
+                
+            }
+            // stop everything and reset encoder
+            moto.setPerc(0,0);
+            leftEncoder.ResetCounts();
+            rightEncoder.ResetCounts();
 
+
+
+            //////////////////// Turn right (45 degrees) ////////////////////////////////
+            while( (rightEncoder.Counts() + leftEncoder.Counts() / 2) < (TICKS_PER_DEGREE*50) )
+            {
+                moto.setPerc(15,-15);
+            }
+            // stop everything and reset encoder
+            moto.setPerc(0,0);
+            leftEncoder.ResetCounts();
+            rightEncoder.ResetCounts();
+
+            /////////////////Drive forwards until bump swtich hits //////////////////////////////
+            while( microF.Value() == 1) 
+            {
+                moto.setPerc(20,20);
+                
+            }
+            Sleep(500);
+            // stop everything and reset encoder
+            moto.setPerc(0,0);
+            leftEncoder.ResetCounts();
+            rightEncoder.ResetCounts();
 
         }
 
+ while( ((rightEncoder.Counts() + leftEncoder.Counts())/2 ) < (TICKS_PER_INCH*5) )
+            {
+                moto.setPerc(-20,-20);
+                LCD.WriteLine(rightEncoder.Counts());
+                Sleep(1);
+            }
+            // stop everything and reset encoder
+            moto.setPerc(0,0);
+            leftEncoder.ResetCounts();
+            rightEncoder.ResetCounts();
 
 
+
+            //////////////////// Turn right (3 degrees) ////////////////////////////////
+            while( (rightEncoder.Counts() + leftEncoder.Counts() / 2) < (TICKS_PER_DEGREE*7) )
+            {
+                moto.setPerc(15,-15);
+            }
+            // stop everything and reset encoder
+            moto.setPerc(0,0);
+            leftEncoder.ResetCounts();
+            rightEncoder.ResetCounts();
+
+            /////////////////Drive forwards until bump swtich hits //////////////////////////////
+            while( microF.Value() == 1) 
+            {
+                moto.setPerc(20,20);
+                
+            Sleep(500);
+            // stop everything and reset encoder
+            moto.setPerc(0,0);
+            leftEncoder.ResetCounts();
+            rightEncoder.ResetCounts();
+
+
+             while( ((rightEncoder.Counts() + leftEncoder.Counts())/2 ) < (TICKS_PER_INCH*5) )
+            {
+                moto.setPerc(-20,-20);
+                
+            }
+            // stop everything and reset encoder
+            moto.setPerc(0,0);
+            leftEncoder.ResetCounts();
+            rightEncoder.ResetCounts();
+
+
+
+            //////////////////// Turn right (3 degrees) ////////////////////////////////
+            while( (rightEncoder.Counts() + leftEncoder.Counts() / 2) < (TICKS_PER_DEGREE*7) )
+            {
+                moto.setPerc(15,-15);
+            }
+            // stop everything and reset encoder
+            moto.setPerc(0,0);
+            leftEncoder.ResetCounts();
+            rightEncoder.ResetCounts();
+
+            /////////////////Drive forwards until bump swtich hits //////////////////////////////
+            while( microF.Value() == 1) 
+            {
+                moto.setPerc(20,20);
+            
+            }
+            Sleep(500);
+            // stop everything and reset encoder
+            moto.setPerc(0,0);
+            leftEncoder.ResetCounts();
+            rightEncoder.ResetCounts();
+
+            }
 
 
     }

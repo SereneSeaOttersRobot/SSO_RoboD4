@@ -166,6 +166,8 @@ DigitalInputPin forktop(BUTTON_FORKTOP_PORT);           //micro switch button ob
  */
 int main()
 {   
+
+    
     //open file to output collected testing data
     FEHFile *fout = SD.FOpen("PERFTR.txt","w");
 
@@ -189,7 +191,8 @@ int main()
         moveForward(10.0,15.0);
         return 1;
     }
-
+    
+    if(1){
     ///////////////// Wait for red //////////////////////////////
     float lightValue = sensor_cds.Value();
 
@@ -227,14 +230,18 @@ int main()
     //Turn robot by 50 degrees in direction of the shallow ramp
     turnRight(50.0, 20.0);
 
-    //Move robot forward by 10 inches to the ramp
-    moveForward(10.0, 20.0);
 
-    //Counter turn the robot left to be Normal to the ramp
-    turnLeft(5.0, 20.0);
+    //Move robot forward
+    moveForward(10.0, 30.0);
 
-    //Move robot forward up the ramp at a high speed
-    moveForward(22.0, 30.0);
+    // Left to correct up ramo
+    turnLeft(7.5,30.0);
+
+    // Drive up ramp
+
+    moveForward(22.0,30.0);
+
+
     
     ////////////////// Finding Line //////////////////////
 
@@ -350,35 +357,57 @@ int main()
     Sleep(2.0);
     forklift.Stop();
 
-    //move forward 1.0 inches, to get further under stamp arm
-    moveForward(1.0, 15.0);
+    //move forward 1.15 inches, to get further under stamp arm
+    moveForward(1.15, 15.0);
 
     //turn a little left so to stay under stamp arm when near top of forklift height.
     turnLeft(5.0,15.0);
 
-    //forklift to top
+    //forklift go up for two seconds
+    forklift.SetPercent(-percent);
+    Sleep(2.0);
+    forklift.Stop();
+    
+    // Turn slightly and go forward more to get more under
+    turnLeft(5.0,15.0);
+    moveForward(0.5,15.0);
+    
+    // Raise forklift all the way up
     forklift.SetPercent(-percent);
     while(forktop.Value() != BP){
     }
     forklift.Stop();
 
     //turn left to push stamp arm
-    turnLeft(30.0,15.0);
+    turnLeft(25.0,30.0);
     //Move forward to push stamp arm more
-    moveForward(0.5,15.0);
+    moveForward(.75,50.0);
 
     ////////////////// Getting Stamp Arm Back Down /////////////////
 
-    //robot hasn't pushed it so far as to get lever arm stuck in up position.
-    //move back to get out of the way of the stamp arm
-    moveBackward(0.5,15.0);
-    //turn right to get out of the way of the stamp arm
-    turnRight(40.0,15.0);
 
+    
+    //move back to get out of the way of the stamp arm
+    moveBackward(2,30.0);
+
+    // turn to get to left of stamp
+    turnLeft(30.0,30);
+
+    //Drive forwards to get back in plane with arm
+    moveForward(3.5,30.0);
+
+    //turn right to hit stamp down
+    turnRight(45.0,30);
+
+    // Move back to let it fall
+    moveBackward(5.0,30.0);
+
+    
     //END
     LCD.Clear();
     LCD.WriteLine("Finished");
     return 1;
+    }
 }
 
 bool lineEqual(float x, float y, float toler)
@@ -396,12 +425,14 @@ void moveForward(double inches, float percent)
     leftEncoder.ResetCounts();
     rightEncoder.ResetCounts();
     int ticks = (int)(inches * TICKS_PER_INCH / 1.22);
-    leftMotor.SetPercent(percent);
+    leftMotor.SetPercent(percent + 0.75);
     rightMotor.SetPercent(percent);
-    while ((leftEncoder.Counts() + rightEncoder.Counts()) / 2 < ticks)
+    while (((leftEncoder.Counts() + rightEncoder.Counts()))/2  < ticks)
         ;
     leftMotor.Stop();
     rightMotor.Stop();
+    
+
 }
 
 void moveBackward(double inches, float percent)
@@ -455,7 +486,7 @@ void move(double inches, float percent){
     leftMotor.SetPercent(percent);
     rightMotor.SetPercent(percent);
     int l, r;
-    while ((rightEncoder.Counts() < ticks) && (leftEncoder.Counts() < ticks)){
+    while ((rightEncoder.Counts() < (ticks/2)) && (leftEncoder.Counts() < (ticks)/2)){
         l = leftEncoder.Counts();
         r = rightEncoder.Counts();
         //idea if shaft encoders update on different times, then can error tolerate with...
