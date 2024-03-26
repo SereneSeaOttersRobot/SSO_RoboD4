@@ -9,6 +9,11 @@
 /*
 hashtag defines
 */
+// Button pressed
+#define BP 0
+// Button not pressed
+#define BNP 1
+
 // color values
 // name_linefollower_color value
 #define LEFT_LF_YLW 0.15
@@ -16,9 +21,9 @@ hashtag defines
 #define MIDDLE_LF_YLW 0.86
 #define TOLERA_LF_YLW 0.1
 #define LEFT_LF_WH 0.159
-#define RIGHT_LF_WH 1.890
-#define MIDDLE_LF_WH 1.123
-#define TOLERA_LF_Wh 0.1
+#define RIGHT_LF_WH 2.00
+#define MIDDLE_LF_WH 1.25
+#define TOLERA_LF_Wh 0.15
 // name_cds_color value
 #define CV_CDS_RED 0.3
 #define CV_CDS_BLUE 0.9
@@ -44,8 +49,8 @@ hashtag defines
 #define LIGHTFOLLOWER_MIDDLE_PORT FEHIO::P1_2
 #define LIGHTFOLLOWER_RIGHT_PORT FEHIO::P1_0
 // same needs done for microswitchs
-#define BUTTON_FORKTOP_PORT FEHIO::P0_0
-#define BUTTON_FORKBOT_PORT FEHIO::P0_0
+#define BUTTON_FORKTOP_PORT FEHIO::P0_7
+#define BUTTON_FORKBOT_PORT FEHIO::P3_5
 
 // Voltages
 // voltage_name values
@@ -83,10 +88,13 @@ bool lineEqual(float x, float y, float toler);
 void turnRight(double degree, float percent);
 void turnLeft(double degree, float percent);
 /**
- * @brief move forward or backwards by the given inches, velocity is determine by sent percent. 
+ * @brief move forward or backwards by the given inches, velocity is determine by sent percent.
  */
 void moveForward(double inches, float percent);
 void moveBackward(double inches, float percent);
+
+//smart move forward
+void move(double inches, float percent);
 
 /*
 Global objects
@@ -101,9 +109,12 @@ AnalogInputPin lf_left(LIGHTFOLLOWER_LEFT_PORT);
 AnalogInputPin lf_middle(LIGHTFOLLOWER_MIDDLE_PORT);
 AnalogInputPin lf_right(LIGHTFOLLOWER_RIGHT_PORT);
 FEHMotor forklift(MOTOR_FORKLIFT_PORT, VOLTAGE_FORKLIFT);
+DigitalInputPin forkbottom(BUTTON_FORKBOT_PORT);
+DigitalInputPin forktop(BUTTON_FORKTOP_PORT);
 
 int main()
 {
+    FEHFile *fout = SD.FOpen("PERFTR.txt","w");
 
     LCD.Clear();
     LCD.WriteLine("Starting Test");
@@ -117,6 +128,13 @@ int main()
     int light = 0;
     int lightColor = 0;
 
+    //Test code
+    //move forward 10inches and stop
+    if (0){
+        moveForward(10.0,15.0);
+        return 1;
+    }
+
     ///////////////// Wait for red //////////////////////////////
     float lightValue = sensor_cds.Value();
 
@@ -128,73 +146,143 @@ int main()
     }
     LCD.Clear();
 
-    //***********Turn Right 45 degrees, perp to Ramp************
-    turnRight(45.0, 20.0);
+    //************** Get forklift to bottom state *********************
+    float percent = -90.0;
+    forklift.SetPercent(percent);
+    if (forktop.Value() == BP){
+        Sleep(0.2);
+    }
+    while (forkbottom.Value() == BNP)
+    {
+        // if forklift is going up with percent, then top hit, switching direction of motor.
+        if (forktop.Value() == BP)
+        {
+            forklift.SetPercent(-percent);
+        }
+    }
+    forklift.Stop();
 
-    //***********Move Forward ? inches, to, up, and pass ramp, onto line***
-    moveForward(10.0,20.0);
+    //***********Turn Right  60 degrees, perp to Ramp************
+    turnRight(50.0, 20.0);
+
+    //***********Move Forward 15 inches, to ramp***
+    moveForward(10.0, 20.0);
+
+    // Counter turn?
+    turnLeft(5.0, 20.0);
+
+    // Alt: up ramp *********** move up ramp on right(?) side *******
+    moveForward(22.0, 30.0);
+    
+    
+    // move up ramp (continue to move until line) trying to detect line
+    while (!lineEqual(lf_middle.Value(), MIDDLE_LF_WH, TOLERA_LF_Wh))
+    {
+        SD.FPrintf(fout,"leftv: %f, midv: %f, rigv: %f\n",lf_left.Value(),lf_middle.Value(),lf_right.Value());
+        turnLeft(2.0, 15.0);
+    }
+    // stop for 5 seconds to say line was detected enter line following
+    leftMotor.Stop();
+    rightMotor.Stop();
 
     // after waiting from red needs to turn right towards the ramp and move up it
     // consider using arrows on ramp somehow to center robot?
     // control line follower either through time or T end
 
     int state = MIDDLE;
-    bool left, right, middle;
-    do {
+    bool left = false, right = false, middle = false;
+    do
+    {
+
+        switch (state)
+        {
+        case LEFT:
+        {
+            // move left
+            leftMotor.SetPercent(5.0);
+            rightMotor.SetPercent(15.0);
+            if (right)
+            {
+                state = RIGHT;
+            }
+            else if (middle)
+            {
+                state = MIDDLE;
+            }
+            break;
+        }
+        case RIGHT:
+        {
+            // move right
+            leftMotor.SetPercent(15.0);
+            rightMotor.SetPercent(5.0);
+            if (left)
+            {
+                state = LEFT;
+            }
+            else if (middle)
+            {
+                state = MIDDLE;
+            }
+            break;
+        }
+        case MIDDLE:
+        {
+            // move middle
+            leftMotor.SetPercent(15.0);
+            rightMotor.SetPercent(15.0);
+            if (left)
+            {
+                state = LEFT;
+            }
+            else if (right)
+            {
+                state = RIGHT;
+            }
+            break;
+        }
+        }
+        // Sleep for 0.2 seconds to stop instant switching between 2 cases when 2 linefollowers detecting
+        Sleep(0.2);
+        int l = left, m = middle, r = right;
+        SD.FPrintf(fout,"left: %d, middle: %d, right: %d\n",l,m,r);
+        SD.FPrintf(fout,"leftv: %f, midv: %f, rigv: %f\n",lf_left.Value(),lf_middle.Value(),lf_right.Value());
         left = lineEqual(lf_left.Value(), LEFT_LF_WH, TOLERA_LF_Wh);
         right = lineEqual(lf_right.Value(), RIGHT_LF_WH, TOLERA_LF_Wh);
         middle = lineEqual(lf_middle.Value(), MIDDLE_LF_WH, TOLERA_LF_Wh);
-        switch (state){
-            case LEFT:{
-                //move left
-                leftMotor.SetPercent(5.0);
-                rightMotor.SetPercent(20.0);
-                if (right){
-                    state = RIGHT;
-                } else if (middle){
-                    state = MIDDLE;
-                }
-                break;
-            }
-            case RIGHT:{
-                //move right
-                leftMotor.SetPercent(20.0);
-                rightMotor.SetPercent(5.0);
-                if (left){
-                    state = LEFT;
-                } else if (middle){
-                    state = MIDDLE;
-                }
-                break;
-            }
-            case MIDDLE:{
-                //move middle
-                leftMotor.SetPercent(20.0);
-                rightMotor.SetPercent(20.0);
-                if(left){
-                    state = LEFT;
-                } else if(right){
-                    state = RIGHT;
-                }
-                break;
-            }
-        }
-        //Sleep for 0.2 seconds to stop instant switching between 2 cases when 2 linefollowers detecting
-        Sleep(0.2);
-        //if all three are true, then exit line following. !(left && right && middle)
-        //exits if no line follower is detecting a line
+        // if all three are true, then exit line following. !(left && right && middle)
+        // exits if no line follower is detecting a line left || right || middle
     } while (left || right || middle);
+    SD.FClose(fout);
     leftMotor.Stop();
     rightMotor.Stop();
-    //near vulcrum of stamp arm
-
-    //get into position
-
-    //move forklift up to lift stamp
-
-    //move to position to get forklift down
-
-
+    Sleep(1.5);
+    // near vulcrum of stamp arm
+    //move forward to setup for turn
+    moveForward(2.0,15.0);
+    //turn to stamp arm
+    turnRight(80.0,15.0);
+    //forklift semi-up
+    forklift.SetPercent(-percent);
+    Sleep(2.0);
+    forklift.Stop();
+    //move forward 0.5 inches
+    moveForward(1.0, 15.0);
+    //turn a little left to stay under at top
+    turnLeft(5.0,15.0);
+    //forklift to top
+    forklift.SetPercent(-percent);
+    while(forktop.Value() != BP){
+    }
+    forklift.Stop();
+    //turn left
+    turnLeft(30.0,15.0);
+    //Move to push
+    moveForward(0.5,15.0);
+    //move back to get out of way
+    moveBackward(0.5,15.0);
+    // move to position to get forklift down
+    turnRight(40.0,15.0);
 }
 
 bool lineEqual(float x, float y, float toler)
@@ -207,46 +295,86 @@ bool lineEqual(float x, float y, float toler)
     return res;
 }
 
-void moveForward(double inches, float percent){
+void moveForward(double inches, float percent)
+{
     leftEncoder.ResetCounts();
     rightEncoder.ResetCounts();
-    int ticks = (int) (inches*TICKS_PER_INCH/1.22);
+    int ticks = (int)(inches * TICKS_PER_INCH / 1.22);
     leftMotor.SetPercent(percent);
-    rightMotor.SetPercent(percent+0.9);
-    while((leftEncoder.Counts() + rightEncoder.Counts())/2 < ticks);
+    rightMotor.SetPercent(percent);
+    while ((leftEncoder.Counts() + rightEncoder.Counts()) / 2 < ticks)
+        ;
     leftMotor.Stop();
     rightMotor.Stop();
 }
 
-void moveBackward(double inches, float percent){
+void moveBackward(double inches, float percent)
+{
     leftEncoder.ResetCounts();
     rightEncoder.ResetCounts();
-    int ticks = (int) (inches*TICKS_PER_INCH/1.22);
-    leftMotor.SetPercent(-percent-1.4);
-    rightMotor.SetPercent(-percent+0.5);
-    while((leftEncoder.Counts() + rightEncoder.Counts())/2 < ticks);
+    int ticks = (int)(inches * TICKS_PER_INCH / 1.22);
+    leftMotor.SetPercent(-percent - 1.4);
+    rightMotor.SetPercent(-percent + 0.5);
+    while ((leftEncoder.Counts() + rightEncoder.Counts()) / 2 < ticks)
+        ;
     leftMotor.Stop();
     rightMotor.Stop();
 }
 
-void turnLeft(double degree, float percent){
+void turnLeft(double degree, float percent)
+{
     leftEncoder.ResetCounts();
     rightEncoder.ResetCounts();
-    int ticks = (int) (degree*TICKS_PER_DEGREE);
+    int ticks = (int)(degree * TICKS_PER_DEGREE);
     leftMotor.SetPercent(-percent);
     rightMotor.SetPercent(percent);
-    while ((rightEncoder.Counts() + leftEncoder.Counts()/2) < ticks);
+    while ((rightEncoder.Counts() + leftEncoder.Counts() / 2) < ticks)
+        ;
     rightMotor.Stop();
     leftMotor.Stop();
 }
 
-void turnRight(double degree, float percent){
+void turnRight(double degree, float percent)
+{
     leftEncoder.ResetCounts();
     rightEncoder.ResetCounts();
-    int ticks = (int) (degree*TICKS_PER_DEGREE);
+    int ticks = (int)(degree * TICKS_PER_DEGREE);
     leftMotor.SetPercent(percent);
     rightMotor.SetPercent(-percent);
-    while ((leftEncoder.Counts() + rightEncoder.Counts()/2) < ticks);
+    while ((leftEncoder.Counts() + rightEncoder.Counts() / 2) < ticks)
+        ;
     rightMotor.Stop();
     leftMotor.Stop();
+}
+
+void move(double inches, float percent){
+    leftEncoder.ResetCounts();
+    rightEncoder.ResetCounts();
+    int dir = 1;
+    if (percent < 0){
+        dir = -1;
+    }
+    int ticks = (int)(inches * TICKS_PER_INCH / 1.22);
+    int modifier = 1.0;
+    leftMotor.SetPercent(percent);
+    rightMotor.SetPercent(percent);
+    int l, r;
+    while ((rightEncoder.Counts() < ticks) && (leftEncoder.Counts() < ticks)){
+        l = leftEncoder.Counts();
+        r = rightEncoder.Counts();
+        //idea if shaft encoders update on different times, then can error tolerate with...
+        //r == l being r==l || r-1==l || r==l-1
+        if (r == l){
+            leftMotor.SetPercent(percent);
+            rightMotor.SetPercent(percent);
+        } else if (l<r) {
+            leftMotor.SetPercent(percent + dir*modifier);
+            rightMotor.SetPercent(percent - dir*modifier);
+        } else if (r<l){
+            rightMotor.SetPercent(percent + dir*modifier);
+            leftMotor.SetPercent(percent - dir*modifier);
+        }
+    }
+    leftMotor.Stop();
+    rightMotor.Stop();
 }
