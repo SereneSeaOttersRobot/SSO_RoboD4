@@ -397,7 +397,7 @@ int main()
     moveForward(3.5,30.0);
 
     //turn right to hit stamp down
-    turnRight(45.0,30);
+    turnRight(50.0,30);
 
     // Move back to let it fall
     moveBackward(5.0,30.0);

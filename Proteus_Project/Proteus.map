@@ -362,7 +362,7 @@ Discarded input sections
  .debug_macinfo
                 0x00000000    0x63f62 Drivers/mcg.o
  .debug_line    0x00000000      0x8c7 Drivers/mcg.o
- .debug_str     0x00000000      0x69a Drivers/mcg.o
+ .debug_str     0x00000000      0x6b1 Drivers/mcg.o
  .comment       0x00000000       0x4a Drivers/mcg.o
  .debug_frame   0x00000000      0x2b4 Drivers/mcg.o
  .ARM.attributes
@@ -637,7 +637,7 @@ Discarded input sections
  .debug_macinfo
                 0x00000000    0x65391 Libraries/FEHServo.o
  .debug_line    0x00000000      0x6b8 Libraries/FEHServo.o
- .debug_str     0x00000000     0x12c9 Libraries/FEHServo.o
+ .debug_str     0x00000000     0x12e0 Libraries/FEHServo.o
  .comment       0x00000000       0x4a Libraries/FEHServo.o
  .debug_frame   0x00000000      0x174 Libraries/FEHServo.o
  .ARM.attributes
@@ -4131,51 +4131,51 @@ LOAD linker stubs
  .debug_line    0x00009013      0x808 Libraries/FEHSD.o
  .debug_line    0x0000981b      0x485 Libraries/FEHRandom.o
 
-.debug_str      0x00000000     0x4fc3
- .debug_str     0x00000000      0x51b ../main.o
-                                0x5a5 (size before relaxing)
- .debug_str     0x0000051b     0x1bb7 Startup/startup_mk60d10.o
-                               0x2047 (size before relaxing)
- .debug_str     0x000020d2       0x52 Libraries/FEHMotor.o
-                                0x3f6 (size before relaxing)
- .debug_str     0x00002124      0x14e Drivers/i2c.o
-                                0x30b (size before relaxing)
- .debug_str     0x00002272      0x18b Drivers/spi.o
-                                0x499 (size before relaxing)
- .debug_str     0x000023fd      0x188 Drivers/uart.o
-                                0x426 (size before relaxing)
- .debug_str     0x00002585      0x618 Drivers/ff.o
-                                0x8e9 (size before relaxing)
- .debug_str     0x00002b9d      0x54b Drivers/SDHC.o
-                                0x907 (size before relaxing)
- .debug_str     0x000030e8       0x5a Drivers/lptmr.o
-                                0x2e7 (size before relaxing)
- .debug_str     0x00003142       0x6c FEHProteus.o
-                                0x32c (size before relaxing)
- .debug_str     0x000031ae       0x3b Drivers/FEHPropeller.o
-                                0x498 (size before relaxing)
- .debug_str     0x000031e9       0xc0 Libraries/FEHUtility.o
-                                0x2b8 (size before relaxing)
- .debug_str     0x000032a9      0xe59 Libraries/FEHIO.o
-                               0x16bf (size before relaxing)
- .debug_str     0x00004102       0xd7 Drivers/adc16.o
-                                0x37b (size before relaxing)
- .debug_str     0x000041d9      0x1de Libraries/FEHBuzzer.o
-                                0x49b (size before relaxing)
- .debug_str     0x000043b7      0x38a Libraries/FEHLCD.o
-                               0x1124 (size before relaxing)
- .debug_str     0x00004741       0xad Libraries/FEHAccel.o
-                                0x2a9 (size before relaxing)
- .debug_str     0x000047ee       0xa5 Libraries/FEHBattery.o
+.debug_str      0x00000000     0x4fda
+ .debug_str     0x00000000      0x532 ../main.o
+                                0x5bc (size before relaxing)
+ .debug_str     0x00000532     0x1bb7 Startup/startup_mk60d10.o
+                               0x205e (size before relaxing)
+ .debug_str     0x000020e9       0x52 Libraries/FEHMotor.o
+                                0x40d (size before relaxing)
+ .debug_str     0x0000213b      0x14e Drivers/i2c.o
+                                0x322 (size before relaxing)
+ .debug_str     0x00002289      0x18b Drivers/spi.o
                                 0x4b0 (size before relaxing)
- .debug_str     0x00004893      0x231 Drivers/FEHXBee.o
-                                0x656 (size before relaxing)
- .debug_str     0x00004ac4      0x40e Libraries/FEHRCS.o
-                               0x1911 (size before relaxing)
- .debug_str     0x00004ed2       0xbb Libraries/FEHSD.o
-                               0x12d1 (size before relaxing)
- .debug_str     0x00004f8d       0x36 Libraries/FEHRandom.o
-                                0x4b5 (size before relaxing)
+ .debug_str     0x00002414      0x188 Drivers/uart.o
+                                0x43d (size before relaxing)
+ .debug_str     0x0000259c      0x618 Drivers/ff.o
+                                0x900 (size before relaxing)
+ .debug_str     0x00002bb4      0x54b Drivers/SDHC.o
+                                0x91e (size before relaxing)
+ .debug_str     0x000030ff       0x5a Drivers/lptmr.o
+                                0x2fe (size before relaxing)
+ .debug_str     0x00003159       0x6c FEHProteus.o
+                                0x343 (size before relaxing)
+ .debug_str     0x000031c5       0x3b Drivers/FEHPropeller.o
+                                0x4af (size before relaxing)
+ .debug_str     0x00003200       0xc0 Libraries/FEHUtility.o
+                                0x2cf (size before relaxing)
+ .debug_str     0x000032c0      0xe59 Libraries/FEHIO.o
+                               0x16d6 (size before relaxing)
+ .debug_str     0x00004119       0xd7 Drivers/adc16.o
+                                0x392 (size before relaxing)
+ .debug_str     0x000041f0      0x1de Libraries/FEHBuzzer.o
+                                0x4b2 (size before relaxing)
+ .debug_str     0x000043ce      0x38a Libraries/FEHLCD.o
+                               0x113b (size before relaxing)
+ .debug_str     0x00004758       0xad Libraries/FEHAccel.o
+                                0x2c0 (size before relaxing)
+ .debug_str     0x00004805       0xa5 Libraries/FEHBattery.o
+                                0x4c7 (size before relaxing)
+ .debug_str     0x000048aa      0x231 Drivers/FEHXBee.o
+                                0x66d (size before relaxing)
+ .debug_str     0x00004adb      0x40e Libraries/FEHRCS.o
+                               0x1928 (size before relaxing)
+ .debug_str     0x00004ee9       0xbb Libraries/FEHSD.o
+                               0x12e8 (size before relaxing)
+ .debug_str     0x00004fa4       0x36 Libraries/FEHRandom.o
+                                0x4cc (size before relaxing)
 
 .debug_frame    0x00000000     0x3de0
  .debug_frame   0x00000000       0x30 ../main.o
