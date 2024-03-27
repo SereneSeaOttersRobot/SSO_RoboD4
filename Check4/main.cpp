@@ -105,6 +105,8 @@ FEHMotor forklift(MOTOR_FORKLIFT_PORT, VOLTAGE_FORKLIFT);
 int main()
 {
 
+    moveForward(5.0,15.0);
+    /*
     LCD.Clear();
     LCD.WriteLine("Starting Test");
     rightEncoder.SetThresholds(0.15, 2.35);
@@ -193,7 +195,7 @@ int main()
     //move forklift up to lift stamp
 
     //move to position to get forklift down
-
+    */
 
 }
 

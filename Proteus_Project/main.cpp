@@ -41,12 +41,12 @@ int main(void)
             
             direction=-1*direction;
             forklift.SetPercent(direction);
-            Sleep (0.2);
+            Sleep (0.4);
         } else if (microTop.Value()==0){
             
             direction=-1*direction;
             forklift.SetPercent(direction);
-            Sleep (0.2);
+            Sleep (0.4);
         }
     }
     /*
