@@ -154,22 +154,14 @@ DigitalInputPin forktop(BUTTON_FORKTOP_PORT);           //micro switch button ob
 
 
 /**
- * @brief Main function for performance checkpoint 4.
  * 
- * Waits until it detects red at the start light.
- * Moves to and up the shallow ramp.
- * Finds the white line.
- * Line follows the line over to the Stamp Task.
- * Moves underneath and lifts/pushes the Stamp arm to Stamp the passport.
- * Moves to let the Stamp arm back down.
- * And ends...
  */
 int main()
 {   
 
     
     //open file to output collected testing data
-    FEHFile *fout = SD.FOpen("PERFTR.txt","w");
+    FEHFile *fout = SD.FOpen("perffv.txt","w");
 
     LCD.Clear();
     LCD.WriteLine("Starting Test");
@@ -349,66 +341,142 @@ int main()
     //visual cue for linefollowing has ended by sleeping for 1.5 seconds. ? Use buzzer class for sounds instead ?
     Sleep(1.5);
     
-    /////////////////// Moving to and under Stamp Arm ///////////////////
+    //STAMP CODE REMOVED
 
-    //move forward to setup for turn
-    moveForward(2.0,15.0);
-    //turn to stamp arm
-    turnRight(80.0,15.0);
+    /////// Move to luggage drop off ///////
 
-    ////////////////// Lifting and Pushing Stamp Arm //////////////////////
+    //turn left until parrallel with luggage drop off
+    turnLeft(100.0,15.0);
 
-    //forklift up for a few seconds
-    forklift.SetPercent(-percent); //currently percent = -90.0
-    Sleep(2.0);
-    forklift.Stop();
+    //move forward until in line with top luggage drop off
+    moveForward(6.0,15.0);
 
-    //move forward 1.15 inches, to get further under stamp arm
-    moveForward(1.15, 15.0);
+    //turn left to face straight on to luggage drop off
+    turnLeft(90.0, 15.0);
 
-    //turn a little left so to stay under stamp arm when near top of forklift height.
-    turnLeft(5.0,15.0);
+    //move to luggage drop off
+    moveForward(10.0, 15.0);
 
-    //forklift go up for two seconds
-    forklift.SetPercent(-percent);
-    Sleep(2.0);
-    forklift.Stop();
-    
-    // Turn slightly and go forward more to get more under
-    turnLeft(5.0,15.0);
-    moveForward(0.5,15.0);
-    
-    // Raise forklift all the way up
+    /////// Drop off luggage //////
+
+    //move forward until front bumper is hit
+
+    //move back a little so bumper doesn't grind
+    moveBackward(0.2, 15.0);
+
+    //lift forklift so to drop luggage
     forklift.SetPercent(-percent);
     while(forktop.Value() != BP){
     }
     forklift.Stop();
 
-    //turn left to push stamp arm
-    turnLeft(25.0,30.0);
-    //Move forward to push stamp arm more
-    moveForward(.75,50.0);
+    //move back 1 inch
+    moveBackward(1.0, 15.0);
 
-    ////////////////// Getting Stamp Arm Back Down /////////////////
+    /////// Move back on line and follow it back ///////
 
-
+    //turn towards line
+    turnLeft(110.0,15.0);
     
-    //move back to get out of the way of the stamp arm
-    moveBackward(2,30.0);
+    //move forward until white line is found
+    leftMotor.SetPercent(15.0);
+    rightMotor.SetPercent(15.0);
+    while(!lineEqual(lf_middle.Value(), MIDDLE_LF_WH, TOLERA_LF_Wh));
+    rightMotor.Stop();
+    leftMotor.Stop();
 
-    // turn to get to left of stamp
-    turnLeft(30.0,30);
+    //move past it to setup for right turn
+    moveForward(3.0, 15.0);
 
-    //Drive forwards to get back in plane with arm
-    moveForward(3.5,30.0);
+    //turn right until line is found again with middle
+    while (!lineEqual(lf_middle.Value(), MIDDLE_LF_WH, TOLERA_LF_Wh)) //while middle has not detected line
+    {   
+        //move two degrees to the left
+        turnLeft(2.0, 15.0);
+        //in while condition, check if middle detected line yet
+    }
 
-    //turn right to hit stamp down
-    turnRight(50.0,30);
+    //follow line back to ramp
+    //state is the current line position state, determined by line follower values and updated during non-self states.
+    state = MIDDLE;
+    //initially in middle state as coming from 'Finding Line' where middle was used to find the line.
+    //boolean variables to hold line follower detection statuses.
+    left = false, right = false, middle = false;
+    //do...while any line follower boolean variables are not false. i.e. while any line follower is detecting a line.
+    do
+    {
+        //switch statement that executes LEFT, MIDDLE, or RIGHT.
+        switch (state)
+        {
+        case LEFT: //move left, update state to right or middle if applicable.
+        {
+            //move forward while leaning to the left
+            leftMotor.SetPercent(5.0);
+            rightMotor.SetPercent(15.0);
+            //update state based on current detection of right and/or middle line followers. Bias for right
+            if (right)
+            {
+                state = RIGHT;
+            }
+            else if (middle)
+            {
+                state = MIDDLE;
+            }
+            break;
+        }
+        case RIGHT: //move right, update state to left or middle if applicable
+        {
+            //move forward while leaning to the right
+            leftMotor.SetPercent(15.0);
+            rightMotor.SetPercent(5.0);
+            //update state based on current detection of left and/or middle line followers. Bias for left
+            if (left)
+            {
+                state = LEFT;
+            }
+            else if (middle)
+            {
+                state = MIDDLE;
+            }
+            break;
+        }
+        case MIDDLE: //move forward, update state to left or right if applicable
+        {
+            //move straight forward
+            leftMotor.SetPercent(15.0);
+            rightMotor.SetPercent(15.0);
+            //update state based on current detection of left and/or right line followers. Unintentional bias for left
+            if (left)
+            {
+                state = LEFT;
+            }
+            else if (right)
+            {
+                state = RIGHT;
+            }
+            break;
+        }
+        }
+        // Sleep for 0.2 seconds to stop instant switching between 2 cases when 2 linefollowers detecting
+        Sleep(0.2);
+        //Updating boolean variables with current linefollowers' detection statuses
+        left = lineEqual(lf_left.Value(), LEFT_LF_WH, TOLERA_LF_Wh);
+        right = lineEqual(lf_right.Value(), RIGHT_LF_WH, TOLERA_LF_Wh);
+        middle = lineEqual(lf_middle.Value(), MIDDLE_LF_WH, TOLERA_LF_Wh);
 
-    // Move back to let it fall
-    moveBackward(5.0,30.0);
-
+        // if all three are true, then exit line following. !(left && right && middle)
+        // exits if no line follower is detecting a line left || right || middle
+    } while (left || right || middle);
     
+
+    //////////// Move down ramp and back to button ///////////
+
+    //adjustment turn?
+
+    //straight on shot
+    moveForward(30.0,15.0);
+
+
     //END
     LCD.Clear();
     LCD.WriteLine("Finished");
