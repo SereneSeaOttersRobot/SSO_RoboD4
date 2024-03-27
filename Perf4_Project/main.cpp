@@ -51,7 +51,8 @@ hashtag defines
 #define LINEFOLLOWER_RIGHT_PORT FEHIO::P1_0
 // same needs done for microswitchs
 #define BUTTON_FORKTOP_PORT FEHIO::P0_7
-#define BUTTON_FORKBOT_PORT FEHIO::P3_5
+#define BUTTON_FORKBOT_PORT FEHIO::P3_4
+#define BUTTON_FORKLIFT_PORT FEHIO::P3_5
 
 // Voltages
 // voltage_name values
@@ -150,6 +151,7 @@ AnalogInputPin lf_right(LINEFOLLOWER_RIGHT_PORT);       //right line follower ob
 FEHMotor forklift(MOTOR_FORKLIFT_PORT, VOLTAGE_FORKLIFT); //Forklift servo/motor object
 DigitalInputPin forkbottom(BUTTON_FORKBOT_PORT);        //micro switch button object at bottom of forklift
 DigitalInputPin forktop(BUTTON_FORKTOP_PORT);           //micro switch button object at top of forklift
+DigitalInputPin forkbumper(BUTTON_FORKLIFT_PORT);       //micro switch button on the forklift
 
 
 
