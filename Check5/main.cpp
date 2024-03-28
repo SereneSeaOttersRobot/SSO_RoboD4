@@ -51,7 +51,8 @@ hashtag defines
 #define LINEFOLLOWER_RIGHT_PORT FEHIO::P1_0
 // same needs done for microswitchs
 #define BUTTON_FORKTOP_PORT FEHIO::P0_7
-#define BUTTON_FORKBOT_PORT FEHIO::P3_5
+#define BUTTON_FORKBOT_PORT FEHIO::P3_4
+#define BUTTON_FORKLIFT_PORT FEHIO::P3_5
 
 // Voltages
 // voltage_name values
@@ -150,7 +151,7 @@ AnalogInputPin lf_right(LINEFOLLOWER_RIGHT_PORT);       //right line follower ob
 FEHMotor forklift(MOTOR_FORKLIFT_PORT, VOLTAGE_FORKLIFT); //Forklift servo/motor object
 DigitalInputPin forkbottom(BUTTON_FORKBOT_PORT);        //micro switch button object at bottom of forklift
 DigitalInputPin forktop(BUTTON_FORKTOP_PORT);           //micro switch button object at top of forklift
-
+DigitalInputPin forkbumper(BUTTON_FORKLIFT_PORT);       //micro switch button on the forklift
 
 
 /**
@@ -360,15 +361,21 @@ int main()
     /////// Drop off luggage //////
 
     //move forward until front bumper is hit
+    while (forkbumper.Value() != BP){
+        moveForward(0.1, 15.0);
+    }
 
     //move back a little so bumper doesn't grind
-    moveBackward(0.2, 15.0);
+    moveBackward(0.4, 15.0);
 
     //lift forklift so to drop luggage
     forklift.SetPercent(-percent);
     while(forktop.Value() != BP){
     }
     forklift.Stop();
+
+    //move forward to 'shove' luggage
+    moveForward(0.3, 20.0);
 
     //move back 1 inch
     moveBackward(1.0, 15.0);
