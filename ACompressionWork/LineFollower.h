@@ -5,7 +5,6 @@
 #include <Constants.h>
 
 class LineFollower: public AnalogInputPin{
-    using AnalogInputPin::AnalogInputPin;
 
     public:
     /**

@@ -1,14 +1,20 @@
 #include <Constants.h>
 #include <CdSensor.h>
 #include <LineFollower.h>
+#include <ForkLift.h>
 //#include <FEHIO.h>
 
 CdSensor CdS(CdS_Port);
 LineFollower lf_left(LF_Left_Port, LEFT);
 LineFollower lf_middle(LF_Middle_Port, MIDDLE);
 LineFollower lf_right(LF_Right_Port, RIGHT);
+ForkLift forklift(Motor_Forklift_Port, Forklift_Voltage);
 
 int main() {
+    //setup forklift buttons
+    forklift.setButtonPins(Button_ForkTop_Port,Button_ForkBot_Port,Button_ForkFront_Port);
+    
+
     //wait on red
     while(CdS.notRed());
 

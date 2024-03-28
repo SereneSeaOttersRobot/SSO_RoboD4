@@ -5,7 +5,7 @@
 #include <FEHMotor.h>
 
 /**
- * hashtag defines for all known constants.
+ * hashtag defines for all known constants and enumerations
 */
 
 /************** Ports **************/
@@ -25,6 +25,8 @@
 #define Button_ForkTop_Port FEHIO::P0_7
 #define Button_ForkBot_Port FEHIO::P3_4
 #define Button_ForkFront_Port FEHIO::P3_5
+//reserved null port
+#define Null_Port FEHIO::P3_7
 
 
 /**** Line Follower Line Values ****/
@@ -71,5 +73,13 @@ enum Side{
     RIGHT = 2
 };
 
+/********* ForkLift ***********/
+//signage for up
+#define ForkLift_Sign_Up 1
+
+/****** Encoders / Motors ********/
+//encoder thresholds
+#define Encoder_Low_Threshold 0.15
+#define Encoder_High_Threshold 2.25
 
 #endif
