@@ -46,9 +46,53 @@ class DriveMotor: private FEHMotor, private AnalogEncoder{
     */
     float CurrentPercent();
 
+    void ResetPIDVars(double startTime);
+
+    void setPIDConstants(double Pvar, double Ivar, double Dvar);
+
+    /**
+     * returns an adjusted motor percentage to match expectedSpeed
+     * @param expectedSpeed the speed to traverse at, inches/sec
+     * @return motor power percentage.
+    */
+    float PIDAdjustment(double expectedSpeed);
+
     private :
     float currentPercent;
+    int lastCounts;
+    double lastTime;
+    double sumError;
+    double preError;
+    double Pconst;
+    double Iconst;
+    double Dconst;
     
+};
+
+class DriveTrain{
+    
+    public:
+    /**
+     * Creates a drivetrain object with left and right drive motors.
+    */
+    DriveTrain(DriveMotor leftMotor, DriveMotor rightMotor);
+
+    double getExpectedSpeed();
+
+    void setExpectedSpeed(double speed);
+
+    void ResetPIDVars();
+
+    void setPIDConstants(double Pvar, double Ivar, double Dvar);
+
+    void Drive(double distance);
+
+    private:
+    DriveMotor LeftMotor;
+    DriveMotor RightMotor;
+    double expectedSpeed;
+    double startTime;
+
 };
 
 #endif

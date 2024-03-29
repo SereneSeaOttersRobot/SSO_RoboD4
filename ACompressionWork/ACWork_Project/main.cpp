@@ -16,14 +16,6 @@
 Function prototypes
 */
 
-/**
- * @brief determines if x is equal to y within linefollower tolerance toler
- * @param x linefollower returned value
- * @param y linefollower acceptable value
- * @param toler linefollower tolerance (+-)
- * @return true if x is with y+toler and y-toler
- */
-bool lineEqual(float x, float y, float toler);
 
 /**
  * @brief turns robot right by the given degrees at given percent speed.
@@ -109,15 +101,8 @@ int main()
     return 1;
 }
 
-bool lineEqual(float x, float y, float toler)
-{
-    bool res = false;
-    if (y - toler <= x && x <= y + toler)
-    {
-        res = true;
-    }
-    return res;
-}
+
+
 
 void moveForward(double inches, float percent)
 {
