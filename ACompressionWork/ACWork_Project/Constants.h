@@ -27,6 +27,7 @@
 #define Button_ForkFront_Port FEHIO::P3_5
 //reserved null port
 #define Null_Port FEHIO::P3_7
+#define Null_Motor_Port FEHMotor::Motor1
 
 
 /**** Line Follower Line Values ****/

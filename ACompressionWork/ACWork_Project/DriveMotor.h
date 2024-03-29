@@ -88,8 +88,8 @@ class DriveTrain{
     void Drive(double distance);
 
     private:
-    DriveMotor LeftMotor;
-    DriveMotor RightMotor;
+    DriveMotor LeftMotor = DriveMotor(Null_Motor_Port, 0.0, Null_Port);
+    DriveMotor RightMotor = DriveMotor(Null_Motor_Port, 0.0, Null_Port);
     double expectedSpeed;
     double startTime;
 
