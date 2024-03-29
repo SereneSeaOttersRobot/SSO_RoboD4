@@ -29,14 +29,25 @@ class DriveMotor: private FEHMotor, private AnalogEncoder{
     */
     void Stop();
 
+    /**
+     * Overriden method: Resets the encoder counts.
+    */
     void ResetCounts();
 
+    /**
+     * Overriden method: Returns the number of counts recorded by the encoder.
+     * @return counts recorded since last reset.
+    */
     int Counts();
 
+    /**
+     * Returns the current motor percent.
+     * @return the current motor percentage.
+    */
     float CurrentPercent();
 
-    
-
+    private :
+    float currentPercent;
     
 };
 

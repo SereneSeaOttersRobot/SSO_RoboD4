@@ -23,7 +23,7 @@ bool LineFollower::onWhite(){
             break;
         }
         default: {
-            throw -2001;
+            
         }
     }
     return result;
@@ -46,7 +46,7 @@ bool LineFollower::onYellow(){
             break;
         }
         default: {
-            throw -2002;
+            
         }
     }
     return result;

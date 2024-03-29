@@ -361,7 +361,7 @@ int main()
     moveForward(3.7,15.0);
 
     //turn left to face straight on to luggage drop off
-    turnLeft(113.0, 15.0);
+    turnLeft(109.0, 15.0);
 
     //move to luggage drop off
     moveForward(5.0, 15.0);
@@ -370,8 +370,11 @@ int main()
 
     //move forward until front bumper is hit
     while (forkbumper.Value() != BP){
-        moveForward(0.1, 15.0);
+        leftMotor.SetPercent(15.0);
+        rightMotor.SetPercent(15.0);
     }
+    leftMotor.Stop();
+    rightMotor.Stop();
 
     //move back a little so bumper doesn't grind
     moveBackward(0.2, 15.0);
@@ -527,15 +530,18 @@ int main()
     moveForward(10.0, 15.0);
 
     //turn to align
-    turnLeft(100.0,15);
+    turnLeft(102.0,15);
 
     //straight on shot, use fork button to find hit
     while (forkbumper.Value() != BP){
-        moveForward(0.5,15.0);
+        leftMotor.SetPercent(15.0);
+        rightMotor.SetPercent(15.0);
     }
+    leftMotor.Stop();
+    rightMotor.Stop();
 
     //hit button harder
-    moveForward(0.2,15.0);
+    moveForward(0.5,30.0);
 
 
     //END

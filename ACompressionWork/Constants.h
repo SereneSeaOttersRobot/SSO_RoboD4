@@ -31,28 +31,28 @@
 
 /**** Line Follower Line Values ****/
 //LF_Left
-#define LF_Left_White_Upper 0
-#define LF_Left_White_Lower 0
-#define LF_Left_Yellow_Upper 0
-#define LF_Left_Yellow_Lower 0
+#define LF_Left_White_Upper 0.3
+#define LF_Left_White_Lower 0.08
+#define LF_Left_Yellow_Upper 0.26
+#define LF_Left_Yellow_Lower 0.08
 //LF_Right 
-#define LF_Right_White_Upper 0
-#define LF_Right_White_Lower 0
-#define LF_Right_Yellow_Upper 0
-#define LF_Right_Yellow_Lower 0
+#define LF_Right_White_Upper 2.2
+#define LF_Right_White_Lower 1.8
+#define LF_Right_Yellow_Upper 1.8
+#define LF_Right_Yellow_Lower 1.5
 //LF_Middle
-#define LF_Middle_White_Upper 0
-#define LF_Middle_White_Lower 0
-#define LF_Middle_Yellow_Upper 0
-#define LF_Middle_Yellow_Lower 0
+#define LF_Middle_White_Upper 1.5
+#define LF_Middle_White_Lower 1.1
+#define LF_Middle_Yellow_Upper 1.05
+#define LF_Middle_Yellow_Lower 0.7
 
 /****** CdS Sensor Color Values ******/
 //Red
-#define CdS_Red_Upper 3.3
-#define CdS_Red_Lower 0.0
+#define CdS_Red_Upper 0.5
+#define CdS_Red_Lower 0.1
 //Blue
-#define CdS_Blue_Upper 3.3
-#define CdS_Blue_Lower 0.0
+#define CdS_Blue_Upper 1.1
+#define CdS_Blue_Lower 0.7
 
 /******* Motor Voltages **********/
 //DriveTrain Motors
@@ -81,5 +81,11 @@ enum Side{
 //encoder thresholds
 #define Encoder_Low_Threshold 0.15
 #define Encoder_High_Threshold 2.25
+
+// 12.73239545 ticks/in
+#define TICKS_PER_INCH 12.732
+
+// 0.8888889222 ticks/degree
+#define TICKS_PER_DEGREE 0.88888
 
 #endif
