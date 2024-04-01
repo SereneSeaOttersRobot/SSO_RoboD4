@@ -2,7 +2,9 @@
 #define CDSENSOR_H
 
 #include <FEHIO.h>
-
+/**
+ * CdSensor extends AnalogInputPin and adds additional functions in context of CdS sensors and their use.
+*/
 class CdSensor: public AnalogInputPin {
     using AnalogInputPin::AnalogInputPin;
 

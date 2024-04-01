@@ -9,6 +9,7 @@ LineFollower::LineFollower(FEHIO::FEHIOPin pin, Side side):AnalogInputPin(pin){
 bool LineFollower::onWhite(){
     bool result = false;
     int value = Value();
+    //switch to side that this is designated as and use those values.
     switch(thisSide){
         case LEFT:{
             result = (LF_Left_White_Lower <= value && value <= LF_Left_White_Upper);
@@ -23,7 +24,7 @@ bool LineFollower::onWhite(){
             break;
         }
         default: {
-            
+            //Should never be used.
         }
     }
     return result;
@@ -32,6 +33,7 @@ bool LineFollower::onWhite(){
 bool LineFollower::onYellow(){
     bool result = false;
     int value = Value();
+    //switch to side that this is designated as and use those values.
     switch(thisSide){
         case LEFT:{
             result = (LF_Left_Yellow_Lower <= value && value <= LF_Left_Yellow_Upper);
@@ -46,7 +48,7 @@ bool LineFollower::onYellow(){
             break;
         }
         default: {
-            
+            //Should never be used.
         }
     }
     return result;

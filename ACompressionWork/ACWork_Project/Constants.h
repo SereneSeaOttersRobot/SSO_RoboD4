@@ -8,6 +8,15 @@
  * hashtag defines for all known constants and enumerations
 */
 
+/*********** Team Key **************/
+#define Team_Key "D4JZ1MbPn"
+
+/************** PID *****************/
+float P = 0.7;
+float I = 0.1;
+float D = 0.25;
+//turn into #define s later after successful testing.
+
 /************** Ports **************/
 //FEHMotors - Motor
 #define Motor_Left_Port FEHMotor::Motor0
@@ -85,8 +94,10 @@ enum Side{
 
 // 12.73239545 ticks/in
 #define TICKS_PER_INCH 12.732
+#define INCHES_PER_TICK 0.0785398163234
 
 // 0.8888889222 ticks/degree
 #define TICKS_PER_DEGREE 0.88888
+#define DEGREES_PER_TICK 1.0/TICKS_PER_DEGREE
 
 #endif

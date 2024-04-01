@@ -5,6 +5,10 @@
 #include <FEHMotor.h>
 #include <Constants.h>
 
+/**
+ * Forklift object extends FEHMotor and uses DigitalInputPin.
+ * Forklift object affects the movement of the Forklift and reports the values of buttons associated with the forklift.
+*/
 class ForkLift: private FEHMotor{
 
     public:
@@ -22,17 +26,19 @@ class ForkLift: private FEHMotor{
     /**
      * Moves forklift up at hundred percent motor speed.
      * Does not stop at top if left alone.
+     * Will not move if already at top.
     */
     void up();
 
     /**
      * Moves forklift down at hundred percent motor speed.
      * Does not stop at bottom if left alone.
+     * Will not move if already at bottom.
     */
     void down();
 
     /**
-     * Stops forklift movement
+     * Stops forklift movement.
     */
     void Stop();
 
@@ -62,6 +68,7 @@ class ForkLift: private FEHMotor{
     bool front();
 
     private:
+    //DigitalInputPin objects are initially created with garbage ports.
     DigitalInputPin topButton = DigitalInputPin(Null_Port);
     DigitalInputPin bottomButton = DigitalInputPin(Null_Port);
     DigitalInputPin frontButton = DigitalInputPin(Null_Port);

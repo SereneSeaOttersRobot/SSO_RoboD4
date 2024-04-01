@@ -5,93 +5,61 @@
 #include <FEHIO.h>
 #include <Constants.h>
 
-class DriveMotor: private FEHMotor, private AnalogEncoder{
+
+
+class DriveMotor: public FEHMotor{
 
     public :
 
-    /**
-     * Creates a DriveMotor object with motor and encoder capibalities.
-     * @param motorPort I/O port to interact with physical motor
-     * @param voltage voltage level to run motor at.
-     * @param encoderPin I/O pin to interact with physical encoder
-    */
-    DriveMotor(FEHMotorPort motorPort, float voltage, FEHIO::FEHIOPin encoderPin);
+    DriveMotor(FEHMotorPort motorPort, float voltage);
 
-    /**
-     * Overriden method: Sets Motor percent to the provided agrument. 
-     * Requires -100 <= percent <= 100 .
-     * @param percent motor percentage
-    */
-    void SetPercent(float percent);
+    DriveMotor();
 
+    /***** Overriden funcitons ******/
     /**
-     * Overriden method: Stops motor movement.
+     * Ovrriden function of FEHMotor. Sets motor percentage to the argued perc.
+     * @param perc float percentage to set motor percentage to. Between -100 and 100
+    */
+    void SetPercent(float perc);
+    /**
+     * Overriden function of FEHMotor. Stops the motor movement.
     */
     void Stop();
 
-    /**
-     * Overriden method: Resets the encoder counts.
-    */
-    void ResetCounts();
+    void resetin(AnalogEncoder &encoder);
 
-    /**
-     * Overriden method: Returns the number of counts recorded by the encoder.
-     * @return counts recorded since last reset.
-    */
-    int Counts();
+    /******* Functions added for PID ********/
 
-    /**
-     * Returns the current motor percent.
-     * @return the current motor percentage.
-    */
-    float CurrentPercent();
+    void resetPIDVars();
 
-    void ResetPIDVars(double startTime);
+    float adjustPID(float expectedSpeed, int counts);
 
-    void setPIDConstants(double Pvar, double Ivar, double Dvar);
-
-    /**
-     * returns an adjusted motor percentage to match expectedSpeed
-     * @param expectedSpeed the speed to traverse at, inches/sec
-     * @return motor power percentage.
-    */
-    float PIDAdjustment(double expectedSpeed);
-
-    private :
+    private:
+    //Data members
     float currentPercent;
+    float lastTime;
     int lastCounts;
-    double lastTime;
-    double sumError;
-    double preError;
-    double Pconst;
-    double Iconst;
-    double Dconst;
-    
+    float lastError;
+    float errorSum;
 };
 
 class DriveTrain{
     
     public:
-    /**
-     * Creates a drivetrain object with left and right drive motors.
-    */
-    DriveTrain(DriveMotor leftMotor, DriveMotor rightMotor);
 
-    double getExpectedSpeed();
+    DriveTrain(DriveMotor &leftMotor, DriveMotor &rightMotor);
 
-    void setExpectedSpeed(double speed);
+    void setEncoders(AnalogEncoder &leftEncoder, AnalogEncoder &rightEncoder);
 
-    void ResetPIDVars();
+    void testDriveRight();
 
-    void setPIDConstants(double Pvar, double Ivar, double Dvar);
-
-    void Drive(double distance);
+    
 
     private:
-    DriveMotor LeftMotor = DriveMotor(Null_Motor_Port, 0.0, Null_Port);
-    DriveMotor RightMotor = DriveMotor(Null_Motor_Port, 0.0, Null_Port);
-    double expectedSpeed;
-    double startTime;
+    DriveMotor LeftMotor = DriveMotor();
+    DriveMotor RightMotor = DriveMotor();
+    AnalogEncoder LeftEncoder;
+    AnalogEncoder RightEncoder;
 
 };
 
