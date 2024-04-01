@@ -51,7 +51,7 @@ int main()
 
     leftEncoder.SetThresholds(Encoder_Low_Threshold, Encoder_High_Threshold);
     rightEncoder.SetThresholds(Encoder_Low_Threshold, Encoder_High_Threshold);
-    drivetrain.setEncoders(leftEncoder, rightEncoder); //should change name to assign... as thats what it is actually doing.
+    
 
     LCD.Clear();
     LCD.WriteLine("Starting Test");
@@ -68,7 +68,8 @@ int main()
     }
 
     LCD.WriteLine("Trying inside driveTrain");
-    drivetrain.testDriveRight();
+    drivetrain.setSpeed(1.5);
+    drivetrain.Drive(6.0, leftEncoder, rightEncoder);
     /*
     If this doesn' work ideas to fix
     set encoders outside of constructor for setup for assignment operator
@@ -78,6 +79,13 @@ int main()
     set encoders as reference into needed functions
     transfer the function over to here
 
+    */
+
+    /*
+    Develop drivetrain function to handle forward, backward, left, and right.
+    Create a less complicated version for this main
+    Create LineFollow function
+    Be ready to explain how function works.
     */
     
 

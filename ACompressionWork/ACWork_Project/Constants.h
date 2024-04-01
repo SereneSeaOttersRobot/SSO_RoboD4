@@ -12,9 +12,11 @@
 #define Team_Key "D4JZ1MbPn"
 
 /************** PID *****************/
-float P = 0.7;
+struct {
+float P = 0.5;
 float I = 0.1;
 float D = 0.25;
+} PID;
 //turn into #define s later after successful testing.
 
 /************** Ports **************/

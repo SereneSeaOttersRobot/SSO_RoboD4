@@ -34,6 +34,8 @@ class DriveMotor: public FEHMotor{
 
     float adjustPID(float expectedSpeed, int counts);
 
+    float currentPerc();
+
     private:
     //Data members
     float currentPercent;
@@ -49,17 +51,35 @@ class DriveTrain{
 
     DriveTrain(DriveMotor &leftMotor, DriveMotor &rightMotor);
 
-    void setEncoders(AnalogEncoder &leftEncoder, AnalogEncoder &rightEncoder);
+    /**
+     * Reset the PID vars (not contants)
+    */
+    void resetPIDVars();
 
-    void testDriveRight();
+    /**
+     * Drives the given inch amount at the set speed.
+     * @param inches the distance in inches to drive
+     * @param leftEncoder the pass-by-ref left encoder object
+     * @param rightEncoder the pass-by-ref right encoder object
+    */
+    void Drive(float inches, AnalogEncoder &leftEncoder, AnalogEncoder &rightEncoder);
 
-    
+    /**
+     * Reports the current Speed this is set to.
+     * @return float inches/sec
+    */
+    float currentSpeed();
+
+    /**
+     * Sets the speed of this.
+     * @param speed the inches/secs speed to set this to.
+    */
+    void setSpeed(float speed);
 
     private:
     DriveMotor LeftMotor = DriveMotor();
     DriveMotor RightMotor = DriveMotor();
-    AnalogEncoder LeftEncoder;
-    AnalogEncoder RightEncoder;
+    float expSpeed;
 
 };
 
