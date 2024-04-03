@@ -72,11 +72,11 @@ float D = 0.25;
 
 /****** CdS Sensor Color Values ******/
 //Red
-#define CdS_Red_Upper 0.5
+#define CdS_Red_Upper 0.59
 #define CdS_Red_Lower 0.1
 //Blue
 #define CdS_Blue_Upper 1.1
-#define CdS_Blue_Lower 0.7
+#define CdS_Blue_Lower 0.6
 
 //shorten the definition to just Color
 typedef FEHLCD::FEHLCDColor Color;
@@ -110,11 +110,11 @@ enum Side{
 #define Encoder_High_Threshold 2.25
 
 // 12.73239545 ticks/in
-#define TICKS_PER_INCH 12.732
-#define INCHES_PER_TICK 0.0785398163234
+#define TICKS_PER_INCH 9.9731
+#define INCHES_PER_TICK 0.1003
 
 // 0.8888889222 ticks/degree
 #define TICKS_PER_DEGREE 0.88888
-#define DEGREES_PER_TICK 1.0/TICKS_PER_DEGREE
+#define DEGREES_PER_TICK 1.0
 
 #endif

@@ -6,7 +6,7 @@
  Libraries/FEHSD.h Drivers/SDHC.h Drivers/diskio.h Drivers/ff.h \
  Drivers/ffconf.h Drivers/ffconf.h Drivers/diskio.h Libraries/FEHFile.h \
  ../Constants.h ../CdSensor.h ../LineFollower.h ../ForkLift.h \
- ../DriveMotor.h
+ ../DriveMotor.h Libraries/FEHRCS.h Drivers/FEHXBee.h
 Libraries/FEHUtility.h:
 Libraries/FEHServo.h:
 Libraries/FEHLCD.h:
@@ -33,3 +33,5 @@ Libraries/FEHFile.h:
 ../LineFollower.h:
 ../ForkLift.h:
 ../DriveMotor.h:
+Libraries/FEHRCS.h:
+Drivers/FEHXBee.h:

@@ -80,6 +80,8 @@ int main()
     // RCS.InitializeTouchMenu(Team_Key);
     // const int Lever = RCS.GetCorrectLever(); //follows the side enumeration
 
+    
+
     LCD.Clear();
     LCD.WriteLine("Starting Test");
     Sleep(2.0);
@@ -94,10 +96,6 @@ int main()
         }
     }
 
-    LCD.WriteLine("Trying inside driveTrain");
-    //drivetrain.setSpeed(-1.5); //tests showed that the PID does correct from initially going forward, but unsure if it will actually stop as all tests led to high speeds in backwards directions.
-    drivetrain.setSpeed(1.5);
-    drivetrain.Drive(6.0, leftEncoder, rightEncoder);
     /*
     If this doesn' work ideas to fix
     set encoders outside of constructor for setup for assignment operator
@@ -109,12 +107,9 @@ int main()
 
     */
 
-    /*
-    Develop drivetrain function to handle forward, backward, left, and right.
-    Create a less complicated version for this main
-    Create LineFollow function
-    Be ready to explain how function works.
-    */
+    LCD.WriteLine("Starting PID testing");
+    Sleep(1.5);
+    PIDTesting();
     
 
     LCD.WriteLine("Test is over");
@@ -204,19 +199,19 @@ void PIDTesting(){
     float items[6] = {PID.P, PID.I, PID.D, drivetrain.currentSpeed(), 0.0, 0.0};
     char labels[6][10] = {"P","I","D","Spe","Dis", "Start"};
     int view = 0;
-    while (view < 5 && forklift.front()){
+    while (view < 5 && forklift.front() == BNP){
         leftEncoder.ResetCounts();
         rightEncoder.ResetCounts();
         bool nextPressed = false;
         float save = items[view];
         while (!nextPressed){
-            if (forklift.front()){
+            if (forklift.front() == BP){
                 items[view] = save;
                 nextPressed = true;
-            } else if (forklift.top()){
+            } else if (forklift.top() == BP){
                 view++;
                 nextPressed = true;
-            } else if (forklift.bottom()){
+            } else if (forklift.bottom() == BP){
                 view--;
                 nextPressed = true;
             } else {
