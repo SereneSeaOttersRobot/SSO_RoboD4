@@ -105,12 +105,14 @@ void DriveTrain::Turn(float degrees, AnalogEncoder &leftEncoder, AnalogEncoder &
     this->RightMotor.SetPercent(5.0*-expSpeed);
     do {
         //sleep for time discretion in calculations
+        Sleep(0.2);
+        //get counts from encoders
         left = leftEncoder.Counts();
         right = rightEncoder.Counts();
         //set percentages based on PID returns
-        this->LeftMotor.SetPercent(this->RightMotor.adjustPID(expSpeed, dir*left));
-        this->RightMotor.SetPercent(this->LeftMotor.adjustPID(-expSpeed, dir*right));
-    } while ((left+right)/2 < ticks);
+        this->LeftMotor.SetPercent(this->LeftMotor.adjustPID(expSpeed, dir*left));
+        this->RightMotor.SetPercent(this->RightMotor.adjustPID(-expSpeed, -dir*right));
+    } while ((left+right)/2 < ticks && LeftMotor.currentPercent < 30.0);
     this->LeftMotor.Stop();
     this->RightMotor.Stop();
     //tries to handle momentum overshoot by recalling itself for the opposite direction by the offshoot amount
