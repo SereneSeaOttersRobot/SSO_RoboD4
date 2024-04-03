@@ -53,3 +53,13 @@ bool LineFollower::onYellow(){
     }
     return result;
 }
+
+bool LineFollower::onColor(Color color){
+    bool result;
+    if (color == WHITE){
+        result = this->onWhite();
+    } else {
+        result = this->onYellow();
+    }
+    return result;
+}

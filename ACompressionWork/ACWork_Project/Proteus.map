@@ -2070,34 +2070,34 @@ LOAD c:/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb
                 0x0000c480                CdSensor::AnalogInputPin(FEHIO::FEHIOPin)
                 0x0000c480                CdSensor::AnalogInputPin(FEHIO::FEHIOPin)
  *fill*         0x0000c4a2        0x6 
- .text.main     0x0000c4a8      0x104 ../main.o
+ .text.main     0x0000c4a8      0x100 ../main.o
                 0x0000c4a8                main
  .text._Z41__static_initialization_and_destruction_0ii
-                0x0000c5ac       0xcc ../main.o
+                0x0000c5a8       0xcc ../main.o
  .text._GLOBAL__sub_I_lf_left
-                0x0000c678       0x10 ../main.o
+                0x0000c674       0x10 ../main.o
  .text._ZN12LineFollowerC2EN5FEHIO8FEHIOPinE4Side
-                0x0000c688       0x2c ../LineFollower.o
-                0x0000c688                LineFollower::LineFollower(FEHIO::FEHIOPin, Side)
-                0x0000c688                LineFollower::LineFollower(FEHIO::FEHIOPin, Side)
+                0x0000c684       0x2c ../LineFollower.o
+                0x0000c684                LineFollower::LineFollower(FEHIO::FEHIOPin, Side)
+                0x0000c684                LineFollower::LineFollower(FEHIO::FEHIOPin, Side)
  .text._ZN10DriveMotorC2EN8FEHMotor12FEHMotorPortEf
-                0x0000c6b4       0x2c ../DriveMotor.o
-                0x0000c6b4                DriveMotor::DriveMotor(FEHMotor::FEHMotorPort, float)
-                0x0000c6b4                DriveMotor::DriveMotor(FEHMotor::FEHMotorPort, float)
+                0x0000c6b0       0x2c ../DriveMotor.o
+                0x0000c6b0                DriveMotor::DriveMotor(FEHMotor::FEHMotorPort, float)
+                0x0000c6b0                DriveMotor::DriveMotor(FEHMotor::FEHMotorPort, float)
  .text._ZN10DriveMotorC2Ev
-                0x0000c6e0       0x20 ../DriveMotor.o
-                0x0000c6e0                DriveMotor::DriveMotor()
-                0x0000c6e0                DriveMotor::DriveMotor()
+                0x0000c6dc       0x20 ../DriveMotor.o
+                0x0000c6dc                DriveMotor::DriveMotor()
+                0x0000c6dc                DriveMotor::DriveMotor()
  .text._ZN10DriveMotor10SetPercentEf
-                0x0000c700       0x22 ../DriveMotor.o
-                0x0000c700                DriveMotor::SetPercent(float)
+                0x0000c6fc       0x22 ../DriveMotor.o
+                0x0000c6fc                DriveMotor::SetPercent(float)
  .text._ZN10DriveMotor4StopEv
-                0x0000c722       0x20 ../DriveMotor.o
-                0x0000c722                DriveMotor::Stop()
+                0x0000c71e       0x20 ../DriveMotor.o
+                0x0000c71e                DriveMotor::Stop()
  .text._ZN10DriveMotor12resetPIDVarsEv
-                0x0000c742       0x3c ../DriveMotor.o
-                0x0000c742                DriveMotor::resetPIDVars()
- *fill*         0x0000c77e        0x2 
+                0x0000c73e       0x3c ../DriveMotor.o
+                0x0000c73e                DriveMotor::resetPIDVars()
+ *fill*         0x0000c77a        0x6 
  .text._ZN10DriveMotor9adjustPIDEfi
                 0x0000c780      0x114 ../DriveMotor.o
                 0x0000c780                DriveMotor::adjustPID(float, int)
@@ -4547,32 +4547,32 @@ LOAD linker stubs
  .debug_macinfo
                 0x009250cf    0x69789 Libraries/FEHRandom.o
 
-.debug_line     0x00000000     0xa806
- .debug_line    0x00000000      0x3d0 ../main.o
- .debug_line    0x000003d0      0x2d1 ../LineFollower.o
- .debug_line    0x000006a1      0x434 ../DriveMotor.o
- .debug_line    0x00000ad5      0x33b ../ForkLift.o
- .debug_line    0x00000e10      0xf49 Startup/startup_mk60d10.o
- .debug_line    0x00001d59      0x2c1 Libraries/FEHMotor.o
- .debug_line    0x0000201a      0x2ec Drivers/i2c.o
- .debug_line    0x00002306      0x339 Drivers/spi.o
- .debug_line    0x0000263f      0x298 Drivers/uart.o
- .debug_line    0x000028d7     0x1d5b Drivers/ff.o
- .debug_line    0x00004632      0xd9b Drivers/SDHC.o
- .debug_line    0x000053cd      0x1fd Drivers/lptmr.o
- .debug_line    0x000055ca      0x20c FEHProteus.o
- .debug_line    0x000057d6      0x2b3 Drivers/FEHPropeller.o
- .debug_line    0x00005a89      0x322 Libraries/FEHUtility.o
- .debug_line    0x00005dab      0xc96 Libraries/FEHIO.o
- .debug_line    0x00006a41      0x326 Drivers/adc16.o
- .debug_line    0x00006d67      0x360 Libraries/FEHBuzzer.o
- .debug_line    0x000070c7     0x1796 Libraries/FEHLCD.o
- .debug_line    0x0000885d      0x2fd Libraries/FEHAccel.o
- .debug_line    0x00008b5a      0x255 Libraries/FEHBattery.o
- .debug_line    0x00008daf      0x42a Drivers/FEHXBee.o
- .debug_line    0x000091d9      0x9a0 Libraries/FEHRCS.o
- .debug_line    0x00009b79      0x808 Libraries/FEHSD.o
- .debug_line    0x0000a381      0x485 Libraries/FEHRandom.o
+.debug_line     0x00000000     0xa807
+ .debug_line    0x00000000      0x3d1 ../main.o
+ .debug_line    0x000003d1      0x2d1 ../LineFollower.o
+ .debug_line    0x000006a2      0x434 ../DriveMotor.o
+ .debug_line    0x00000ad6      0x33b ../ForkLift.o
+ .debug_line    0x00000e11      0xf49 Startup/startup_mk60d10.o
+ .debug_line    0x00001d5a      0x2c1 Libraries/FEHMotor.o
+ .debug_line    0x0000201b      0x2ec Drivers/i2c.o
+ .debug_line    0x00002307      0x339 Drivers/spi.o
+ .debug_line    0x00002640      0x298 Drivers/uart.o
+ .debug_line    0x000028d8     0x1d5b Drivers/ff.o
+ .debug_line    0x00004633      0xd9b Drivers/SDHC.o
+ .debug_line    0x000053ce      0x1fd Drivers/lptmr.o
+ .debug_line    0x000055cb      0x20c FEHProteus.o
+ .debug_line    0x000057d7      0x2b3 Drivers/FEHPropeller.o
+ .debug_line    0x00005a8a      0x322 Libraries/FEHUtility.o
+ .debug_line    0x00005dac      0xc96 Libraries/FEHIO.o
+ .debug_line    0x00006a42      0x326 Drivers/adc16.o
+ .debug_line    0x00006d68      0x360 Libraries/FEHBuzzer.o
+ .debug_line    0x000070c8     0x1796 Libraries/FEHLCD.o
+ .debug_line    0x0000885e      0x2fd Libraries/FEHAccel.o
+ .debug_line    0x00008b5b      0x255 Libraries/FEHBattery.o
+ .debug_line    0x00008db0      0x42a Drivers/FEHXBee.o
+ .debug_line    0x000091da      0x9a0 Libraries/FEHRCS.o
+ .debug_line    0x00009b7a      0x808 Libraries/FEHSD.o
+ .debug_line    0x0000a382      0x485 Libraries/FEHRandom.o
 
 .debug_str      0x00000000     0x5670
  .debug_str     0x00000000     0x1729 ../main.o

@@ -3,6 +3,7 @@
 
 #include <FEHIO.h>
 #include <FEHMotor.h>
+#include <FEHLCD.h>
 
 /**
  * hashtag defines for all known constants and enumerations
@@ -58,6 +59,17 @@ float D = 0.25;
 #define LF_Middle_Yellow_Upper 1.05
 #define LF_Middle_Yellow_Lower 0.7
 
+/**** Line Follower Motor Percentage ****/
+#define LF_Turn_MaxPerc 30.0
+//Left
+#define LF_Left_LeftMotor LF_Turn_MaxPerc/3.0
+#define LF_Left_RightMotor LF_Turn_MaxPerc
+//Middle
+#define LF_Middle_Motor 30.0
+//Right
+#define LF_Right_LeftMotor LF_Turn_MaxPerc
+#define LF_Right_RightMotor LF_Turn_MaxPerc/3.0
+
 /****** CdS Sensor Color Values ******/
 //Red
 #define CdS_Red_Upper 0.5
@@ -65,6 +77,9 @@ float D = 0.25;
 //Blue
 #define CdS_Blue_Upper 1.1
 #define CdS_Blue_Lower 0.7
+
+//shorten the definition to just Color
+typedef FEHLCD::FEHLCDColor Color;
 
 /******* Motor Voltages **********/
 //DriveTrain Motors

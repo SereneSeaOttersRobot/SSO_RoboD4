@@ -10,6 +10,7 @@
 #include <LineFollower.h>
 #include <ForkLift.h>
 #include <DriveMotor.h>
+#include <FEHRCS.h>
 
 
 /*
@@ -17,8 +18,34 @@ Function prototypes
 */
 
 
+/**
+ * Drives by the given number of inches with velocity given by the speed.
+ * @param inches the distance to traverse as inches
+ * @param speed the velocity at which to travel, negative to go backwards.
+*/
+void Drive(float inches, float speed);
 
-void DriveTrainConstantTesting();
+/**
+ * Turns this by the given degrees at the given speed in the given direction.
+ * Turns left if direction is set to left and right if direction is set to right.
+ * Direction can't be set to middle
+ * @param degrees the amount of degrees to turn this by.
+ * @param speed the speed at which to turn this
+ * @param direction the side to turn into.
+*/
+void Turn(float degrees, float speed, Side direction);
+
+/**
+ * Starts line following on the given color.
+ * Requires lf_middle to be on line.
+ * @param colorToFollow white or yellow colored line to follow
+*/
+void LineFollow(Color colorToFollow);
+
+/**
+ * Test function for supporting maneul determination of PID constant values
+*/
+void PIDTesting();
 
 /*
 Global objects
@@ -48,10 +75,10 @@ ForkLift forklift = ForkLift(Motor_Forklift_Port, Forklift_Voltage);
 int main()
 {   
     forklift.setButtonPins(Button_ForkTop_Port, Button_ForkBot_Port, Button_ForkFront_Port);
-
     leftEncoder.SetThresholds(Encoder_Low_Threshold, Encoder_High_Threshold);
     rightEncoder.SetThresholds(Encoder_Low_Threshold, Encoder_High_Threshold);
-    
+    // RCS.InitializeTouchMenu(Team_Key);
+    // const int Lever = RCS.GetCorrectLever(); //follows the side enumeration
 
     LCD.Clear();
     LCD.WriteLine("Starting Test");
@@ -68,6 +95,7 @@ int main()
     }
 
     LCD.WriteLine("Trying inside driveTrain");
+    //drivetrain.setSpeed(-1.5); //tests showed that the PID does correct from initially going forward, but unsure if it will actually stop as all tests led to high speeds in backwards directions.
     drivetrain.setSpeed(1.5);
     drivetrain.Drive(6.0, leftEncoder, rightEncoder);
     /*
@@ -93,6 +121,130 @@ int main()
     return 1;
 }
 
+void Drive(float inches, float speed){
+    drivetrain.setSpeed(speed);
+    drivetrain.Drive(inches, leftEncoder, rightEncoder);
+}
+
+void Turn(float degrees, float speed, Side direction){
+    float actual = 0;
+    if (direction == LEFT){
+        actual = -speed;
+    } else if (direction == RIGHT) {
+        actual = speed; 
+    }
+    drivetrain.setSpeed(actual);
+    drivetrain.Turn(degrees, leftEncoder, rightEncoder);
+}
+
+void LineFollow(Color colorToFollow){
+    Color line = colorToFollow;
+    bool left = false, middle = true, right = false;
+    int state = MIDDLE;
+    do {
+        switch(state){
+            case LEFT:{
+                //set motors
+                leftMotor.SetPercent(LF_Left_LeftMotor);
+                rightMotor.SetPercent(LF_Left_RightMotor);
+                //update state
+                if (right){
+                    state = RIGHT;
+                } else if (middle){
+                    state = MIDDLE;
+                }
+                break;
+            }
+            case MIDDLE:{
+                //set motors
+                leftMotor.SetPercent(LF_Middle_Motor);
+                rightMotor.SetPercent(LF_Middle_Motor);
+                //update state
+                if (right){
+                    state = RIGHT;
+                } else if (left){
+                    state = LEFT;
+                }
+                break;
+            }
+            case RIGHT:{
+                //set motors
+                leftMotor.SetPercent(LF_Right_LeftMotor);
+                rightMotor.SetPercent(LF_Right_RightMotor);
+                //update state
+                if (left){
+                    state = LEFT;
+                } else if (middle){
+                    state = MIDDLE;
+                }
+                break;
+            }
+            default:{
+                //never gets run
+            }
+        }
+        Sleep(0.1);
+        left = lf_left.onColor(line);
+        middle = lf_middle.onColor(line);
+        right = lf_right.onColor(line);
+    } while (left || middle || right);
+    leftMotor.Stop();
+    rightMotor.Stop();
+
+}
+
+void PIDTesting(){
+    //use encoders to set PID values, use forklift buttons to select and set
+    LCD.Clear();
+    LCD.WriteLine("Use right encoder to add, left encoder to subtract");
+    LCD.WriteLine("Use bottom to select previous, top to select next");
+    LCD.WriteLine("Use front to accept ");
+    Sleep(5.0);
+
+    float items[6] = {PID.P, PID.I, PID.D, drivetrain.currentSpeed(), 0.0, 0.0};
+    char labels[6][10] = {"P","I","D","Spe","Dis", "Start"};
+    int view = 0;
+    while (view < 5 && forklift.front()){
+        leftEncoder.ResetCounts();
+        rightEncoder.ResetCounts();
+        bool nextPressed = false;
+        float save = items[view];
+        while (!nextPressed){
+            if (forklift.front()){
+                items[view] = save;
+                nextPressed = true;
+            } else if (forklift.top()){
+                view++;
+                nextPressed = true;
+            } else if (forklift.bottom()){
+                view--;
+                nextPressed = true;
+            } else {
+                int left = leftEncoder.Counts(), right = rightEncoder.Counts();
+                if (view == 3){
+                    save = items[view] + 0.1*(right - left);
+                } else if (view == 4){
+                    save = items[view] + 0.5*(right - left);
+                } else {
+                    save = items[view] + 0.01*(right - left);
+                }
+            }
+            LCD.Clear();
+            LCD.Write(labels[view]);
+            LCD.Write(" : ");
+            LCD.Write(items[view]);
+            LCD.Write(" : ");
+            LCD.WriteLine(save);
+            Sleep(0.2);
+        }
+    }
+    PID.P = items[0];
+    PID.I = items[1];
+    PID.D = items[2];
+    Drive(items[4], items[3]);
+    //no ending for you, recur call, end with power button
+    PIDTesting();
+}
 
 
 

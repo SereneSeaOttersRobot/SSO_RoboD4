@@ -15,6 +15,8 @@ class DriveMotor: public FEHMotor{
 
     DriveMotor();
 
+    friend class DriveTrain;
+
     /***** Overriden funcitons ******/
     /**
      * Ovrriden function of FEHMotor. Sets motor percentage to the argued perc.
@@ -26,17 +28,34 @@ class DriveMotor: public FEHMotor{
     */
     void Stop();
 
+    /**
+     * Test function for determining level of manipulation for encoder objects.
+     * Resets the counts for the given encoder.
+    */
     void resetin(AnalogEncoder &encoder);
 
-    /******* Functions added for PID ********/
-
-    void resetPIDVars();
-
-    float adjustPID(float expectedSpeed, int counts);
-
+    /**
+     * Reports the current percent this is set to.
+     * @return current motor percentage.
+    */
     float currentPerc();
 
     private:
+    /******* Functions added for PID ********/
+
+    /**
+     * Resets the related PID variables
+    */
+    void resetPIDVars();
+
+    /**
+     * Returns an adjusted motor percentage based on the given inputs, other information, and current motor percentage.
+     * @param expectedSpeed expected velocity for this to travel at.
+     * @param counts the counts from the associated encoder
+     * @return percentage for motor
+    */
+    float adjustPID(float expectedSpeed, int counts);
+
     //Data members
     float currentPercent;
     float lastTime;
@@ -63,6 +82,15 @@ class DriveTrain{
      * @param rightEncoder the pass-by-ref right encoder object
     */
     void Drive(float inches, AnalogEncoder &leftEncoder, AnalogEncoder &rightEncoder);
+
+    /**
+     * Turns this based on the given degrees, left and right is determined by the setSpeed.
+     * Negative turns left, while Positive turns right.
+     * @param degrees the amount of degrees to turn.
+     * @param leftEncoder pass-by-ref encoder object for the left encoder
+     * @param rightEncoder pass-by-ref encoder object for the right encoder
+    */
+    void Turn(float degrees, AnalogEncoder &leftEncoder, AnalogEncoder &rightEncoder);
 
     /**
      * Reports the current Speed this is set to.

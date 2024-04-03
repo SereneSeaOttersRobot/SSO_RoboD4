@@ -62,22 +62,65 @@ void DriveTrain::resetPIDVars(){
 
 
 void DriveTrain::Drive(float inches, AnalogEncoder &leftEncoder, AnalogEncoder &rightEncoder){
+    //reset PIDvars and encoder counts
     this->resetPIDVars();
     leftEncoder.ResetCounts();
     rightEncoder.ResetCounts();
+    //find needed travel distance as integer ticks instead
     const int ticks = inches*TICKS_PER_INCH;
+    //create variables to hold onto encoder counts
     int left, right;
-    this->RightMotor.SetPercent(15.0);
-    this->LeftMotor.SetPercent(15.0);
+    //set initial motor percent based on 5*expSpeed
+    this->RightMotor.SetPercent(5*expSpeed);
+    this->LeftMotor.SetPercent(5*expSpeed);
+    //set signage for counts sent through adjustPID
+    int dir = -1 + 2*(expSpeed>0.0); //use boolean to integer for -1 vs 1
     do {
+        //sleep for time discretion in calculations
         Sleep(0.2);
+        //get counts
         left = leftEncoder.Counts();
         right = rightEncoder.Counts();
-        this->RightMotor.SetPercent(this->RightMotor.adjustPID(this->expSpeed, right));
-        this->LeftMotor.SetPercent(this->LeftMotor.adjustPID(this->expSpeed, left));
+        //set percentages based on PID returns
+        this->RightMotor.SetPercent(this->RightMotor.adjustPID(this->expSpeed, dir*right));
+        this->LeftMotor.SetPercent(this->LeftMotor.adjustPID(this->expSpeed, dir*left));
     } while ((left + right)/2 < ticks);
     this->LeftMotor.Stop();
     this->RightMotor.Stop();
+}
+
+void DriveTrain::Turn(float degrees, AnalogEncoder &leftEncoder, AnalogEncoder &rightEncoder){
+    //reset PIDVars and encoder counts
+    this->resetPIDVars();
+    leftEncoder.ResetCounts();
+    rightEncoder.ResetCounts();
+    //find needed rotation distance as integer ticks insteads
+    const int ticks = degrees*TICKS_PER_DEGREE;
+    //create vars to hold counts
+    int left, right;
+    //set signage based on expectedSpeed, dir * left, -dir*right
+    int dir = 1 - 2*(expSpeed<0.0);
+    //set initial motor percents based on expSpeed
+    this->LeftMotor.SetPercent(5.0*expSpeed);
+    this->RightMotor.SetPercent(5.0*-expSpeed);
+    do {
+        //sleep for time discretion in calculations
+        left = leftEncoder.Counts();
+        right = rightEncoder.Counts();
+        //set percentages based on PID returns
+        this->LeftMotor.SetPercent(this->RightMotor.adjustPID(expSpeed, dir*left));
+        this->RightMotor.SetPercent(this->LeftMotor.adjustPID(-expSpeed, dir*right));
+    } while ((left+right)/2 < ticks);
+    this->LeftMotor.Stop();
+    this->RightMotor.Stop();
+    //tries to handle momentum overshoot by recalling itself for the opposite direction by the offshoot amount
+    Sleep(0.2);
+    int offTicks = (left+right)/2 - ticks;
+    if (offTicks > 2){
+        expSpeed = -expSpeed/2.0;
+        this->Turn(offTicks*DEGREES_PER_TICK, leftEncoder, rightEncoder);
+    }
+
 }
 
 
