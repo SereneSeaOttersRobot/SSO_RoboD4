@@ -46,6 +46,7 @@ void LineFollow(Color colorToFollow);
  * Test function for supporting maneul determination of PID constant values
 */
 void PIDTesting();
+void PIDTestingTurn();
 
 /*
 Global objects
@@ -109,7 +110,7 @@ int main()
 
     LCD.WriteLine("Starting PID testing");
     Sleep(1.5);
-    PIDTesting();
+    PIDTestingTurn();
     
 
     LCD.WriteLine("Test is over");
@@ -241,77 +242,65 @@ void PIDTesting(){
     PIDTesting();
 }
 
-
-
-
-/*void DriveTrainConstantTesting(){
-    float tx = 0.0, ty = 0.0;
+void PIDTestingTurn(){
     LCD.Clear();
-    using namespace FEHIcon;
-    Icon kbsw[15]; //knobbles and switchs
-    char label[15][20] = {"+","+","+","+","+","P","I","D","v","d","-","-","-","-","-"};
-    DrawIconArray(kbsw,3,5,20,20,60,60,label,WHITE,WHITE);
-    //get touchs for icons 0-4 ad 10-14
-    //update labels for icons 5-9
-    double p = 0.75, i=0.1, d=0.25, dis=1.0, spe=0.02;
-    forklift.toBottom();
-    forklift.up();
-    Sleep(1.0);
-    forklift.Stop();
-    kbsw[5].ChangeLabelFloat((float)p);
-    kbsw[6].ChangeLabelFloat((float)i);
-    kbsw[7].ChangeLabelFloat((float)d);
-    kbsw[8].ChangeLabelFloat((float)spe);
-    kbsw[9].ChangeLabelFloat((float)dis);
-    bool exitFlag = false;
-    do {
-        for (Icon k : kbsw){
-            k.Draw();
-        }
-        if (forklift.top() == BP){
-            exitFlag = true;
-        } else {
-            LCD.ClearBuffer();
-            bool pressed = false;
-            while (!LCD.Touch(&tx,&ty));
-            while (LCD.Touch(&tx,&ty));
-            
-                if (kbsw[0].Pressed(tx,ty,1)){
-                    p += 0.05;
-                } else if (kbsw[1].Pressed(tx,ty,1)){
-                    i += 0.05;
-                } else if (kbsw[2].Pressed(tx,ty,1)){
-                    d += 0.05;
-                } else if (kbsw[3].Pressed(tx,ty,1)){
-                    spe += 0.5;
-                } else if (kbsw[4].Pressed(tx,ty,1)){
-                    dis += 1.0;
-                } else if (kbsw[10].Pressed(tx,ty,1)){
-                    p -= 0.05;
-                } else if (kbsw[11].Pressed(tx,ty,1)){
-                    i -= 0.05;
-                } else if (kbsw[12].Pressed(tx,ty,1)){
-                    d -= 0.05;
-                } else if (kbsw[13].Pressed(tx,ty,1)){
-                    spe -= 0.5;
-                } else if (kbsw[14].Pressed(tx,ty,1)){
-                    dis -= 1.0;
-                }
-                kbsw[5].ChangeLabelFloat((float)p);
-                kbsw[6].ChangeLabelFloat((float)i);
-                kbsw[7].ChangeLabelFloat((float)d);
-                kbsw[8].ChangeLabelFloat((float)spe);
-                kbsw[9].ChangeLabelFloat((float)dis);
-            
-            
-            Sleep(0.4);
-            LCD.Clear();
-            
-            drivetrain.setExpectedSpeed(spe);
-            drivetrain.setPIDConstants(p,i,d);
+    LCD.WriteLine("Use right encoder to add, left encoder to subtract");
+    LCD.WriteLine("Use bottom to select previous, top to select next");
+    LCD.WriteLine("Use front to accept ");
+    Sleep(5.0);
+
+    float items[6] = {PID.P, PID.I, PID.D, drivetrain.currentSpeed(), 0.0, 0.0};
+    char labels[6][10] = {"P","I","D","Spe","Deg", "Start"};
+    int view = 0;
+    while (view < 5 && forklift.front() == BNP){
+        leftEncoder.ResetCounts();
+        rightEncoder.ResetCounts();
+        bool nextPressed = false;
+        float save = items[view];
+        while (!nextPressed){
             if (forklift.front() == BP){
-                drivetrain.Drive(dis);
+                items[view] = save;
+            } else if (forklift.top() == BP){
+                view++;
+                nextPressed = true;
+            } else if (forklift.bottom() == BP){
+                view--;
+                nextPressed = true;
+            } else {
+                int left = leftEncoder.Counts(), right = rightEncoder.Counts();
+                if (view == 3){
+                    save = items[view] + 0.1*(right - left);
+                } else if (view == 4){
+                    save = items[view] + 0.5*(right - left);
+                } else {
+                    save = items[view] + 0.01*(right - left);
+                }
             }
+            LCD.Clear();
+            LCD.Write(labels[view]);
+            LCD.Write(" : ");
+            LCD.Write(items[view]);
+            LCD.Write(" : ");
+            LCD.WriteLine(save);
+            Sleep(0.2);
         }
-    } while (!exitFlag);
-}*/
+    }
+    PID.P = items[0];
+    PID.I = items[1];
+    PID.D = items[2];
+    LCD.Clear();
+    LCD.WriteLine("Press bottom for left turn, Press front for right turn");
+    Side turnDir = MIDDLE;
+    do {
+        bool left = forklift.bottom() == BP;
+        bool right = forklift.front() == BP;
+        if (left){
+            turnDir = LEFT;
+        } else if (right) {
+            turnDir = RIGHT;
+        }
+    } while (turnDir == MIDDLE);
+    Turn(items[4], items[3], turnDir);
+    //no ending for you, recur call, end with power button
+    PIDTestingTurn();
+}

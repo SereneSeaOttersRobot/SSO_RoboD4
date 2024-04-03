@@ -98,19 +98,22 @@ void DriveTrain::Turn(float degrees, AnalogEncoder &leftEncoder, AnalogEncoder &
     const int ticks = degrees*TICKS_PER_DEGREE;
     //create vars to hold counts
     int left, right;
-    //set signage based on expectedSpeed, dir * left, -dir*right
+    //set signage based on expectedSpeed, dir ++ when expSpeed ++, negative when exp --
     int dir = 1 - 2*(expSpeed<0.0);
     //set initial motor percents based on expSpeed
-    this->LeftMotor.SetPercent(5.0*expSpeed);
-    this->RightMotor.SetPercent(5.0*-expSpeed);
+    this->LeftMotor.SetPercent(5.0*expSpeed); //turn left, left --, exp -, so just exp to -, already + for turn right
+    this->RightMotor.SetPercent(5.0*-expSpeed); //turn left, right ++, exp -, so -exp to get +, turn right, right --, exp +, so -exp to get -
     do {
+
         //sleep for time discretion in calculations
+        Sleep(0.2);
+        //get the coundts from the encoders.
         left = leftEncoder.Counts();
         right = rightEncoder.Counts();
         //set percentages based on PID returns
-        this->LeftMotor.SetPercent(this->RightMotor.adjustPID(expSpeed, dir*left));
-        this->RightMotor.SetPercent(this->LeftMotor.adjustPID(-expSpeed, dir*right));
-    } while ((left+right)/2 < ticks);
+        this->LeftMotor.SetPercent(this->LeftMotor.adjustPID(expSpeed, dir*left));
+        this->RightMotor.SetPercent(this->RightMotor.adjustPID(-expSpeed, -dir*right));
+    } while ((left+right)/2 < ticks && LeftMotor.currentPercent < 30.0);
     this->LeftMotor.Stop();
     this->RightMotor.Stop();
     //tries to handle momentum overshoot by recalling itself for the opposite direction by the offshoot amount

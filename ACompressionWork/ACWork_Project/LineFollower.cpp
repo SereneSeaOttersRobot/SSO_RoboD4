@@ -8,7 +8,7 @@ LineFollower::LineFollower(FEHIO::FEHIOPin pin, Side side):AnalogInputPin(pin){
 
 bool LineFollower::onWhite(){
     bool result = false;
-    int value = Value();
+    float value = Value();
     //switch to side that this is designated as and use those values.
     switch(thisSide){
         case LEFT:{
@@ -32,7 +32,7 @@ bool LineFollower::onWhite(){
 
 bool LineFollower::onYellow(){
     bool result = false;
-    int value = Value();
+    float value = Value();
     //switch to side that this is designated as and use those values.
     switch(thisSide){
         case LEFT:{
@@ -56,7 +56,7 @@ bool LineFollower::onYellow(){
 
 bool LineFollower::onColor(Color color){
     bool result;
-    if (color == WHITE){
+    if (color == Color::White){
         result = this->onWhite();
     } else {
         result = this->onYellow();
