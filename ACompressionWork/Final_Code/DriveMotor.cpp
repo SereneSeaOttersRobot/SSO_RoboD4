@@ -71,8 +71,8 @@ void DriveTrain::Drive(float inches, AnalogEncoder &leftEncoder, AnalogEncoder &
     //create variables to hold onto encoder counts
     int left, right;
     //set initial motor percent based on 5*expSpeed
-    this->RightMotor.SetPercent(5*expSpeed);
-    this->LeftMotor.SetPercent(5*expSpeed);
+    this->RightMotor.SetPercent(7*expSpeed);
+    this->LeftMotor.SetPercent(7*expSpeed);
     //set signage for counts sent through adjustPID
     int dir = -1 + 2*(expSpeed>0.0); //use boolean to integer for -1 vs 1
     do {
@@ -101,8 +101,8 @@ void DriveTrain::Turn(float degrees, AnalogEncoder &leftEncoder, AnalogEncoder &
     //set signage based on expectedSpeed, dir * left, -dir*right
     int dir = 1 - 2*(expSpeed<0.0);
     //set initial motor percents based on expSpeed
-    this->LeftMotor.SetPercent(5.0*expSpeed);
-    this->RightMotor.SetPercent(5.0*-expSpeed);
+    this->LeftMotor.SetPercent(7.0*expSpeed);
+    this->RightMotor.SetPercent(7.0*-expSpeed);
     do {
         //sleep for time discretion in calculations
         Sleep(0.2);
