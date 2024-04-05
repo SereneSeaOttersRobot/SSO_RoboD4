@@ -353,7 +353,7 @@ int main()
 
     //move back 1 inch
     Drive(1.3, -SLOWSPEED);
-    /*
+    
     ///////////////////STEP 7 Moving to passport and completing passport/////////////////////////////
     //turn towards line
     Turn(120.0,TURNSPEED,LEFT);
@@ -374,7 +374,7 @@ int main()
     rightMotor.Stop();
     //following the line
     LineFollow(color);  //stops one if doesnt find the line
-
+    /*
     //maneuver to flip passport stamp
     //move forward to setup for turn
     Drive(2.0,SLOWSPEED);
