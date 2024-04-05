@@ -179,6 +179,7 @@ int main()
             Drive(6.,FASTSPEED);
             
             
+            
             // Turn(45.,TURNSPEED,LEFT);
             // Drive(2.5,SLOWSPEED);
             // Turn(90.,TURNSPEED,LEFT);
@@ -322,9 +323,16 @@ int main()
             Drive(.25,-SLOWSPEED);
             forklift.Stop();
             Drive(2.75,-SLOWSPEED);
-            Turn(130.,TURNSPEED,RIGHT);
-            Drive(4.0,SLOWSPEED);
-            Turn(100.,TURNSPEED,LEFT);
+            if (1) {
+                //backwards until aligned
+                Drive(3.0, -SLOWSPEED);
+                Turn(40.0, TURNSPEED, RIGHT);
+            } else {
+                //original blue
+                Turn(130.,TURNSPEED,RIGHT);
+                Drive(4.0,SLOWSPEED);
+                Turn(100.,TURNSPEED,LEFT);
+            }
             leftMotor.SetPercent(15.);
             rightMotor.SetPercent(15.);
 
