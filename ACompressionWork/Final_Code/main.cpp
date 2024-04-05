@@ -395,7 +395,7 @@ int main()
 
     //move back 1 inch
     Drive(1.3, -SLOWSPEED);
-    /*
+
     ///////////////////STEP 7 Moving to passport and completing passport/////////////////////////////
     //turn towards line
     Turn(120.0,TURNSPEED,LEFT);
@@ -404,74 +404,15 @@ int main()
     //turning left until line is found
     leftMotor.SetPercent(-15.);
     rightMotor.SetPercent(15.);
-    while (!lf_middle.onWhite()) //while middle has not detected line
-    {   
-        //Print line followers' values to output file.
-        //SD.FPrintf(fout,"leftv: %f, midv: %f, rigv: %f\n",lf_left.Value(),lf_middle.Value(),lf_right.Value());
-        //move two degrees to the left
-        //Turn(2.0, 15.0,RIGHT);
-        //in while condition, check if middle detected line yet
-    }
+    while (!lf_middle.onWhite()); //while middle has not detected line
     leftMotor.Stop();
     rightMotor.Stop();
     //following the line
     LineFollow(color);  //stops one if doesnt find the line
 
-    //maneuver to flip passport stamp
-    //move forward to setup for turn
-    Drive(2.0,SLOWSPEED);
-    //turn to stamp arm
-    Turn(80.0,TURNSPEED,RIGHT);
+    StampArm();
 
-    ////////////////// Lifting and Pushing Stamp Arm //////////////////////
-
-    //forklift up for a few seconds
-    forklift.up(); //currently percent = -90.0
-    Sleep(2.0);
-    forklift.Stop();
-
-    //move forward 1.15 inches, to get further under stamp arm
-    Drive(1.15, SLOWSPEED);
-
-    //turn a little left so to stay under stamp arm when near top of forklift height.
-    Turn(5.0,TURNSPEED,LEFT);
-
-    //forklift go up for two seconds
-    forklift.up();
-    Sleep(2.0);
-    forklift.Stop();
-    
-    // Turn slightly and go forward more to get more under
-    Turn(5.0,TURNSPEED,LEFT);
-    Drive(0.5,SLOWSPEED);
-    
-    // Raise forklift all the way up
-    forklift.toTop();
-
-    //turn left to push stamp arm
-    Turn(25.0,TURNSPEED,LEFT);
-    //Move forward to push stamp arm more
-    Drive(.75,FASTSPEED);
-
-    ////////////////// Getting Stamp Arm Back Down /////////////////
-
-
-    
-    //move back to get out of the way of the stamp arm
-    Drive(2,-FASTSPEED);
-
-    // turn to get to left of stamp
-    Turn(30.0,TURNSPEED,LEFT);
-
-    //Drive forwards to get back in plane with arm
-    Drive(3.5,FASTSPEED);
-
-    //turn right to hit stamp down
-    Turn(50.0,TURNSPEED,RIGHT);
-
-    // Move back to let it fall
-    Drive(5.0,-FASTSPEED);
-
+/*
     ////////////////////////////////STEP 8 finding line and going back to stop button//////////////////////////////
     Turn(140.,TURNSPEED,RIGHT);
     Drive(15.,FASTSPEED);
