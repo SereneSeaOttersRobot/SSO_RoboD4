@@ -17,11 +17,49 @@
 #define FASTTURNSPEED 2.5
 #define SUPERSPEED 3.5
 
+#define OLD_T_P_D 0.8888888
+#define OLD_T_P_I 12.732
+
 
 /*
 Function prototypes
 */
-
+/**
+ * @brief turns robot right by the given degrees at given percent speed.
+ * 
+ * Uses global encoder and motor objects
+ * 
+ * @param degree number of degrees to turn
+ * @param percent the percent speed to turn, between 100 and >0 
+ */
+void turnRight(double degree, float percent);
+/**
+ * @brief turns robot left by the given degrees at given percent speed
+ * 
+ * Uses global encoder and motor objects
+ * 
+ * @param degree number of degrees to turn
+ * @param percent the percent speed to turn, between 100 and >0
+ */
+void turnLeft(double degree, float percent);
+/**
+ * @brief move forward until a displacement of the given inches and with a speed percent.
+ * 
+ * Uses global encoder and motor objects
+ * 
+ * @param inches the number of inches to displace the robot forward by. inches>0
+ * @param percent the percent speed to move the robot by. 100>=percent>0
+ */
+void moveForward(double inches, float percent);
+/**
+ * @brief move backward until a displacement of the given inches and with a speed percent.
+ * 
+ * Uses global encoder and motor objects
+ * 
+ * @param inches the number of inches to displace the robot forward by. inches>0
+ * @param percent the percent speed to move the robot by. 100>=percent>0
+ */
+void moveBackward(double inches, float percent);
 
 /**
  * Drives by the given number of inches with velocity given by the speed.
@@ -53,6 +91,10 @@ void LineFollow(Color colorToFollow);
  * Test function for supporting maneul determination of PID constant values
 */
 void PIDTesting();
+/**
+ * StampArm code from prior
+*/
+void StampArm();
 
 /*
 Global objects
@@ -597,7 +639,7 @@ void moveForward(double inches, float percent)
 {
     leftEncoder.ResetCounts();
     rightEncoder.ResetCounts();
-    int ticks = (int)(inches * TICKS_PER_INCH / 1.22);
+    int ticks = (int)(inches * OLD_T_P_I / 1.22);
     leftMotor.SetPercent(percent + 0.75);
     rightMotor.SetPercent(percent);
     while (((leftEncoder.Counts() + rightEncoder.Counts()))/2  < ticks)
@@ -608,77 +650,100 @@ void moveForward(double inches, float percent)
 
 }
 
+void moveBackward(double inches, float percent)
+{
+    leftEncoder.ResetCounts();
+    rightEncoder.ResetCounts();
+    int ticks = (int)(inches * OLD_T_P_I / 1.22);
+    leftMotor.SetPercent(-percent - 1.4);
+    rightMotor.SetPercent(-percent + 0.5);
+    while ((leftEncoder.Counts() + rightEncoder.Counts()) / 2 < ticks)
+        ;
+    leftMotor.Stop();
+    rightMotor.Stop();
+}
+
+void turnLeft(double degree, float percent)
+{
+    leftEncoder.ResetCounts();
+    rightEncoder.ResetCounts();
+    int ticks = (int)(degree * OLD_T_P_D);
+    leftMotor.SetPercent(-percent);
+    rightMotor.SetPercent(percent);
+    while ((rightEncoder.Counts() + leftEncoder.Counts() / 2) < ticks)
+        ;
+    rightMotor.Stop();
+    leftMotor.Stop();
+}
+
+void turnRight(double degree, float percent)
+{
+    leftEncoder.ResetCounts();
+    rightEncoder.ResetCounts();
+    int ticks = (int)(degree * OLD_T_P_D);
+    leftMotor.SetPercent(percent);
+    rightMotor.SetPercent(-percent);
+    while ((leftEncoder.Counts() + rightEncoder.Counts() / 2) < ticks)
+        ;
+    rightMotor.Stop();
+    leftMotor.Stop();
+}
 
 
+void StampArm(){
+    /////////////////// Moving to and under Stamp Arm ///////////////////
 
-/*void DriveTrainConstantTesting(){
-    float tx = 0.0, ty = 0.0;
-    LCD.Clear();
-    using namespace FEHIcon;
-    Icon kbsw[15]; //knobbles and switchs
-    char label[15][20] = {"+","+","+","+","+","P","I","D","v","d","-","-","-","-","-"};
-    DrawIconArray(kbsw,3,5,20,20,60,60,label,WHITE,WHITE);
-    //get touchs for icons 0-4 ad 10-14
-    //update labels for icons 5-9
-    double p = 0.75, i=0.1, d=0.25, dis=1.0, spe=0.02;
-    forklift.toBottom();
-    forklift.up();
-    Sleep(1.0);
+    //move forward to setup for turn
+    moveForward(2.0,15.0);
+    //turn to stamp arm
+    turnRight(80.0,15.0);
+
+    ////////////////// Lifting and Pushing Stamp Arm //////////////////////
+
+    //forklift up for a few seconds
+    forklift.up(); //currently percent = -90.0 90 vs 100
+    Sleep(1.9); //org 2.0
     forklift.Stop();
-    kbsw[5].ChangeLabelFloat((float)p);
-    kbsw[6].ChangeLabelFloat((float)i);
-    kbsw[7].ChangeLabelFloat((float)d);
-    kbsw[8].ChangeLabelFloat((float)spe);
-    kbsw[9].ChangeLabelFloat((float)dis);
-    bool exitFlag = false;
-    do {
-        for (Icon k : kbsw){
-            k.Draw();
-        }
-        if (forklift.top() == BP){
-            exitFlag = true;
-        } else {
-            LCD.ClearBuffer();
-            bool pressed = false;
-            while (!LCD.Touch(&tx,&ty));
-            while (LCD.Touch(&tx,&ty));
-            
-                if (kbsw[0].Pressed(tx,ty,1)){
-                    p += 0.05;
-                } else if (kbsw[1].Pressed(tx,ty,1)){
-                    i += 0.05;
-                } else if (kbsw[2].Pressed(tx,ty,1)){
-                    d += 0.05;
-                } else if (kbsw[3].Pressed(tx,ty,1)){
-                    spe += 0.5;
-                } else if (kbsw[4].Pressed(tx,ty,1)){
-                    dis += 1.0;
-                } else if (kbsw[10].Pressed(tx,ty,1)){
-                    p -= 0.05;
-                } else if (kbsw[11].Pressed(tx,ty,1)){
-                    i -= 0.05;
-                } else if (kbsw[12].Pressed(tx,ty,1)){
-                    d -= 0.05;
-                } else if (kbsw[13].Pressed(tx,ty,1)){
-                    spe -= 0.5;
-                } else if (kbsw[14].Pressed(tx,ty,1)){
-                    dis -= 1.0;
-                }
-                kbsw[5].ChangeLabelFloat((float)p);
-                kbsw[6].ChangeLabelFloat((float)i);
-                kbsw[7].ChangeLabelFloat((float)d);
-                kbsw[8].ChangeLabelFloat((float)spe);
-                kbsw[9].ChangeLabelFloat((float)dis);
-            
-            
-            Sleep(0.4);
-            LCD.Clear();
-            
-            drivetrain.setExpectedSpeed(spe);
-            drivetrain.setPIDConstants(p,i,d);
-            if (forklift.front() == BP){
-                drivetrain.Drive(dis);
-            }
-        }
-    } while (!exitFlag);
-}*/
+
+    //move forward 1.15 inches, to get further under stamp arm
+    moveForward(1.15, 15.0);
+
+    //turn a little left so to stay under stamp arm when near top of forklift height.
+    turnLeft(5.0,15.0);
+
+    //forklift go up for two seconds
+    forklift.up(); //currently percent = -90.0 90 vs 100
+    Sleep(1.9); //org 2.0
+    forklift.Stop();
+    
+    // Turn slightly and go forward more to get more under
+    turnLeft(5.0,15.0);
+    moveForward(0.5,15.0);
+    
+    // Raise forklift all the way up
+    forklift.toTop();
+
+    //turn left to push stamp arm
+    turnLeft(25.0,30.0);
+    //Move forward to push stamp arm more
+    moveForward(.75,50.0);
+
+    ////////////////// Getting Stamp Arm Back Down /////////////////
+
+
+    
+    //move back to get out of the way of the stamp arm
+    moveBackward(2,30.0);
+
+    // turn to get to left of stamp
+    turnLeft(30.0,30);
+
+    //Drive forwards to get back in plane with arm
+    moveForward(3.5,30.0);
+
+    //turn right to hit stamp down
+    turnRight(50.0,30);
+
+    // Move back to let it fall
+    moveBackward(5.0,30.0);
+}
