@@ -174,8 +174,8 @@ int main()
         //moving to correct fuel lever
         if (Lever == LEFT){
             
-            Drive(6.75,FASTSPEED);
-            Turn(42.,TURNSPEED,LEFT);
+            Drive(6.9,FASTSPEED);
+            Turn(41.,TURNSPEED,LEFT);
             Drive(6.,FASTSPEED);
             
             
@@ -276,7 +276,7 @@ int main()
         leftMotor.SetPercent(80.);
         Sleep(0.9);
         rightMotor.SetPercent(90.);
-        Sleep(0.6);
+        Sleep(0.8);
         rightMotor.SetPercent(40.);
         leftMotor.SetPercent(50.);
         while (forklift.front()==BNP){}
@@ -286,7 +286,7 @@ int main()
         Turn(90.,FASTTURNSPEED,LEFT);
         rightMotor.SetPercent(50.);
         leftMotor.SetPercent(50.);
-        Sleep(1.8);
+        Sleep(2.0);
     }
 
     //turning and finding the line
@@ -337,8 +337,8 @@ int main()
 
             //starting to move towards luggage
             Drive(2.,-SLOWSPEED);
-            Turn(90.,TURNSPEED,LEFT);
-            Drive(3.5,SLOWSPEED);
+            Turn(92.3,TURNSPEED,LEFT);
+            Drive(3.25,SLOWSPEED);
             Turn(93.3,TURNSPEED,LEFT);
 
         }
@@ -399,7 +399,7 @@ int main()
     ///////////////////STEP 7 Moving to passport and completing passport/////////////////////////////
     //turn towards line
     Turn(120.0,TURNSPEED,LEFT);
-    Drive(13.,FASTSPEED);
+    Drive(6.5,FASTSPEED);
 
     //turning left until line is found
     leftMotor.SetPercent(-15.);
@@ -409,11 +409,11 @@ int main()
     rightMotor.Stop();
     //following the line
     LineFollow(color);  //stops one if doesnt find the line
-
+    /*
     StampArm();
 
 
-/*
+
     ////////////////////////////////STEP 8 finding line and going back to stop button//////////////////////////////
     Turn(140.,TURNSPEED,RIGHT);
     Drive(15.,FASTSPEED);
