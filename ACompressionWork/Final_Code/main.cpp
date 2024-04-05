@@ -212,11 +212,11 @@ int main()
     forklift.toBottom();
     Drive(2.25, SLOWSPEED);
     forklift.up();
-    Sleep(1.5);
+    Sleep(1.45);
     forklift.Stop();
-    forklift.toBottom();
+    //forklift.toBottom();
     Drive(2.0,-SLOWSPEED);
-
+    forklift.toBottom();
 
     
     /////////////////////////Step 4 moving to ticket kiosk light/////////////////////////////
@@ -236,11 +236,14 @@ int main()
     rightMotor.Stop();
     leftMotor.Stop();
     
-    Turn(88.,FASTTURNSPEED,LEFT);
+    Turn(85.,FASTTURNSPEED,LEFT);
     //forklift.toBottom();
     
     //Drive(30.,SUPERSPEED);
     //moveForward(30.,35.);
+
+    //trying to go consistently up the ramp
+    if (0){
     rightMotor.SetPercent(80.);
     leftMotor.SetPercent(80.);
     Sleep(1.5);
@@ -267,6 +270,25 @@ int main()
     rightMotor.SetPercent(30.);
     leftMotor.SetPercent(30.);
     Sleep(0.25);
+    }
+    if (1){
+        rightMotor.SetPercent(70.);
+        leftMotor.SetPercent(80.);
+        Sleep(0.9);
+        rightMotor.SetPercent(90.);
+        Sleep(0.6);
+        rightMotor.SetPercent(40.);
+        leftMotor.SetPercent(50.);
+        while (forklift.front()==BNP){}
+        rightMotor.SetPercent(-30.);
+        leftMotor.SetPercent(-30.);
+        Sleep(0.6);
+        Turn(90.,FASTTURNSPEED,LEFT);
+        rightMotor.SetPercent(50.);
+        leftMotor.SetPercent(50.);
+        Sleep(1.8);
+    }
+
     //turning and finding the line
     leftMotor.SetPercent(15.);
     rightMotor.SetPercent(-15.);
@@ -297,11 +319,11 @@ int main()
             //moving to blue button
             LCD.WriteLine("Blue light Found");
             forklift.up();
-            Drive(.75,-SLOWSPEED);
+            Drive(.25,-SLOWSPEED);
             forklift.Stop();
-            Drive(2.25,-SLOWSPEED);
+            Drive(2.75,-SLOWSPEED);
             Turn(130.,TURNSPEED,RIGHT);
-            Drive(3.0,SLOWSPEED);
+            Drive(4.0,SLOWSPEED);
             Turn(100.,TURNSPEED,LEFT);
             leftMotor.SetPercent(15.);
             rightMotor.SetPercent(15.);
@@ -311,13 +333,13 @@ int main()
 
             leftMotor.Stop();
             rightMotor.Stop();
-            Drive(0.2,SLOWSPEED);
+            Drive(0.4,SLOWSPEED);
 
             //starting to move towards luggage
             Drive(2.,-SLOWSPEED);
             Turn(90.,TURNSPEED,LEFT);
             Drive(3.5,SLOWSPEED);
-            Turn(90.,TURNSPEED,LEFT);
+            Turn(93.3,TURNSPEED,LEFT);
 
         }
         else if(lightValue<=0.6){
@@ -325,11 +347,11 @@ int main()
             LCD.WriteLine("Red Light Found");
             
             forklift.up();
-            Drive(1.,-SLOWSPEED);
+            Drive(0.5,-SLOWSPEED);
             forklift.Stop();
-            Drive(2.,-SLOWSPEED);
+            Drive(2.5,-SLOWSPEED);
             Turn(130.,SLOWSPEED,RIGHT);
-            Drive(6.,SLOWSPEED);
+            Drive(6.25,SLOWSPEED);
             Turn(100.,SLOWSPEED,LEFT);
 
             leftMotor.SetPercent(15.);
@@ -340,38 +362,40 @@ int main()
 
             leftMotor.Stop();
             rightMotor.Stop();
-            Drive(0.2,SLOWSPEED);
+            Drive(0.4,SLOWSPEED);
 
             //starting to move towards luggage
             Drive(2.,-SLOWSPEED);
             Turn(90.,TURNSPEED,LEFT);
             Drive(8.25,SLOWSPEED);
-            Turn(90.,TURNSPEED,LEFT);
+            Turn(93.3,TURNSPEED,LEFT);
         }
-    /*
+    
     /////////////////////STEP 6 Moving to luggage drop off and dropping the luggage off/////////////////////////////
     //turning and moving towards the luggage drop off
 
     //move forward until front bumper is hit
-    while (forklift.front() != BP){
-        leftMotor.SetPercent(15.0);
-        rightMotor.SetPercent(15.0);
-    }
+    leftMotor.SetPercent(30.0);
+    rightMotor.SetPercent(30.0);
+    while (forklift.front() != BP){}
     leftMotor.Stop();
     rightMotor.Stop();
 
     //move back a little so bumper doesn't grind
-    Drive(0.2, -SLOWSPEED);
+    Drive(0.5, -FASTSPEED);
 
     //lift forklift so to drop luggage
     forklift.toTop();
 
     //move forward to push in
-    Drive(0.3,SLOWSPEED);
+    //Drive(0.3,SLOWSPEED);
+    rightMotor.SetPercent(30.);
+    leftMotor.SetPercent(30.);
+    Sleep(0.25);
 
     //move back 1 inch
     Drive(1.3, -SLOWSPEED);
-
+    /*
     ///////////////////STEP 7 Moving to passport and completing passport/////////////////////////////
     //turn towards line
     Turn(120.0,TURNSPEED,LEFT);
