@@ -13,7 +13,9 @@
 #include <FEHRCS.h>
 #define SLOWSPEED 2.0
 #define FASTSPEED 2.5
-#define TURNSPEED 1.6
+#define TURNSPEED 1.6 
+#define FASTTURNSPEED 2.5
+#define SUPERSPEED 3.5
 
 
 /*
@@ -27,6 +29,8 @@ Function prototypes
  * @param speed the velocity at which to travel, negative to go backwards.
 */
 void Drive(float inches, float speed);
+
+void moveForward(double inches, float percent);
 
 /**
  * Turns this by the given degrees at the given speed in the given direction.
@@ -107,61 +111,120 @@ int main()
     }
 
     //////////////////////////Step 2, moving back to hit starting button/////////////////////////
-    Drive(3.0,-SLOWSPEED);
+    //Drive(1.5,-SLOWSPEED);
+    rightMotor.SetPercent(-30.);
+    leftMotor.SetPercent(-30.);
+    Sleep(0.5);
+    rightMotor.Stop();
+    leftMotor.Stop();
 
     ////////////////////////Step 3 moving to and completing fuel lever///////////////////////////
-    Drive(20.0,FASTSPEED);
+    //Drive(18.0,FASTSPEED);
+
+    ///////testing other method/////////////
+    if (0){
+        leftMotor.SetPercent(15.);
+        rightMotor.SetPercent(-15.);
+        while (!lf_middle.onYellow()){} //while middle has not detected line
+        //following the line until left line follower detects line
+    }
 
         //moving to correct fuel lever
         if (Lever == LEFT){
-            Drive(0.25,SLOWSPEED);
-            Turn(138.,TURNSPEED,LEFT);
-            Drive(1.25,SLOWSPEED);
+            
+            Drive(6.75,FASTSPEED);
+            Turn(42.,TURNSPEED,LEFT);
+            Drive(6.,FASTSPEED);
+            
+            
+            // Turn(45.,TURNSPEED,LEFT);
+            // Drive(2.5,SLOWSPEED);
+            // Turn(90.,TURNSPEED,LEFT);
+            // Drive(1.5,SLOWSPEED);
         }
         else if (Lever == MIDDLE){
+            //////////////////////////////////////not tested enough
+            Drive(18.,FASTSPEED);
             Turn(45.,TURNSPEED,LEFT);
-            Drive(4.0,SLOWSPEED);
+            Drive(6.,SLOWSPEED);
             Turn(90.,TURNSPEED,LEFT);
-            Drive(1.,SLOWSPEED);
+            Drive(1.25,SLOWSPEED);
         }
         else if (Lever == RIGHT){
-            Turn(45.,15.,LEFT);
-            Drive(5.75,SLOWSPEED);
-            Turn(75.,15.,LEFT);
-            Drive(1.5,SLOWSPEED);
+            ////////////////////////////////////////not tested enough
+            Drive(18.,FASTSPEED);
+            Turn(45.,TURNSPEED,LEFT);
+            Drive(7.,SLOWSPEED);
+            Turn(75.,TURNSPEED,LEFT);
+            Drive(2.0,SLOWSPEED);
         }
 
     //moving forklift and maneuvering to flip fuel switch up and down
     forklift.down();
-    Sleep(2.0);
+    Sleep(1.5);
     forklift.Stop();
     Drive(2.,-SLOWSPEED);
     //wait 5 seconds
-    Sleep(3.5);
+    Sleep(3.25);
     //move arm lower than fuel lever.
-    forklift.down();
-    Sleep(1.0);
-    forklift.Stop();
+    forklift.toBottom();
     Drive(2.25, SLOWSPEED);
     forklift.up();
-    Sleep(2.0);
+    Sleep(1.5);
     forklift.Stop();
+    forklift.toBottom();
     Drive(2.0,-SLOWSPEED);
 
+
+    
     /////////////////////////Step 4 moving to ticket kiosk light/////////////////////////////
-    Turn(90.,TURNSPEED,LEFT);
+    if (Lever==RIGHT){
+        Turn(105.,FASTTURNSPEED,LEFT);
+    }
+    else if (Lever==LEFT){
+        Turn(180.,FASTTURNSPEED,RIGHT);
+    }
+    else if (Lever==MIDDLE){
+        Turn(90.,FASTTURNSPEED,LEFT);
+    }
     
     rightMotor.SetPercent(30.);
     leftMotor.SetPercent(30.);
     while (forklift.front()==BNP){}
     rightMotor.Stop();
     leftMotor.Stop();
-
-    Turn(100.,TURNSPEED,LEFT);
-    Drive(34.,FASTSPEED);
-    Turn(60.,TURNSPEED,LEFT);
-    Drive(24.,FASTSPEED);
     
+    Turn(88.,FASTTURNSPEED,LEFT);
+    //forklift.toBottom();
+    
+    //Drive(30.,SUPERSPEED);
+    //moveForward(30.,35.);
+    rightMotor.SetPercent(80.);
+    leftMotor.SetPercent(80.);
+    Sleep(1.5);
+    rightMotor.SetPercent(50.);
+    leftMotor.SetPercent(50.);
+    Sleep(0.85);
+    rightMotor.Stop();
+    leftMotor.Stop();
+    
+    Turn(62.,FASTTURNSPEED,LEFT);
+    
+    //Drive(18.,SUPERSPEED);
+    //moveForward(18.,35.);
+    rightMotor.SetPercent(50.);
+    leftMotor.SetPercent(50.);
+    while (!lf_middle.onWhite()){}
+    rightMotor.SetPercent(30.);
+    leftMotor.SetPercent(30.);
+    Sleep(1.0);
+    while (!lf_middle.onWhite()){}
+    rightMotor.Stop();
+    leftMotor.Stop();
+    
+    rightMotor.SetPercent(30.);
+    leftMotor.SetPercent(30.);
+    Sleep(0.25);
     //turning and finding the line
     leftMotor.SetPercent(15.);
     rightMotor.SetPercent(-15.);
@@ -179,10 +242,10 @@ int main()
     //following the line
     Color color = Color::White;
     LineFollow(color);  //stops one if doesnt find the line
-
+    
     //maneuver to get to light
-    Turn(10.0,TURNSPEED,LEFT);
-    Drive(3.5,SLOWSPEED);
+    Turn(10.0,1.6,LEFT);
+    Drive(3.5,2.0);
     
     ////////////////////////////STEP 5 reading light and moving to and pressing appropriate button/////////////////////////
     //determining blue and red and moving to appropriate button
@@ -192,12 +255,12 @@ int main()
             //moving to blue button
             LCD.WriteLine("Blue light Found");
             forklift.up();
-            Drive(1.,-SLOWSPEED);
+            Drive(.75,-SLOWSPEED);
             forklift.Stop();
-            Drive(2.,-SLOWSPEED);
-            Turn(140.,TURNSPEED,RIGHT);
-            Drive(2.5,SLOWSPEED);
-            Turn(100.,15.,LEFT);
+            Drive(2.25,-SLOWSPEED);
+            Turn(130.,TURNSPEED,RIGHT);
+            Drive(3.0,SLOWSPEED);
+            Turn(100.,TURNSPEED,LEFT);
             leftMotor.SetPercent(15.);
             rightMotor.SetPercent(15.);
 
@@ -211,7 +274,7 @@ int main()
             //starting to move towards luggage
             Drive(2.,-SLOWSPEED);
             Turn(90.,TURNSPEED,LEFT);
-            Drive(3.,SLOWSPEED);
+            Drive(3.5,SLOWSPEED);
             Turn(90.,TURNSPEED,LEFT);
 
         }
@@ -243,7 +306,7 @@ int main()
             Drive(8.25,SLOWSPEED);
             Turn(90.,TURNSPEED,LEFT);
         }
-    
+    /*
     /////////////////////STEP 6 Moving to luggage drop off and dropping the luggage off/////////////////////////////
     //turning and moving towards the luggage drop off
 
@@ -398,6 +461,7 @@ int main()
 
     //hit button harder
     Drive(0.5,SLOWSPEED);
+    */
     
     LCD.WriteLine("Test is over");
     return 1;
@@ -527,6 +591,21 @@ void PIDTesting(){
     Drive(items[4], items[3]);
     //no ending for you, recur call, end with power button
     PIDTesting();
+}
+
+void moveForward(double inches, float percent)
+{
+    leftEncoder.ResetCounts();
+    rightEncoder.ResetCounts();
+    int ticks = (int)(inches * TICKS_PER_INCH / 1.22);
+    leftMotor.SetPercent(percent + 0.75);
+    rightMotor.SetPercent(percent);
+    while (((leftEncoder.Counts() + rightEncoder.Counts()))/2  < ticks)
+        ;
+    leftMotor.Stop();
+    rightMotor.Stop();
+    
+
 }
 
 
