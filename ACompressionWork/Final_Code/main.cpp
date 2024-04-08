@@ -175,8 +175,8 @@ int main()
         if (Lever == LEFT){
             
             Drive(7.0,FASTSPEED);
-            Turn(41.,TURNSPEED,LEFT);
-            Drive(6.,FASTSPEED);
+            Turn(43.,TURNSPEED,LEFT);
+            Drive(7.0,FASTSPEED);
             
             
             
@@ -245,13 +245,13 @@ int main()
 
     //getting up ramp
     if (1){
-        rightMotor.SetPercent(70.);
-        leftMotor.SetPercent(80.);
-        Sleep(0.9);
-        rightMotor.SetPercent(90.);
+        rightMotor.SetPercent(60.);
+        leftMotor.SetPercent(70.);
+        Sleep(1.0);
+        rightMotor.SetPercent(80.);
         Sleep(0.8);
-        rightMotor.SetPercent(40.);
-        leftMotor.SetPercent(50.);
+        rightMotor.SetPercent(30.);
+        leftMotor.SetPercent(40.);
         while (forklift.front()==BNP){}
         rightMotor.SetPercent(-30.);
         leftMotor.SetPercent(-30.);
@@ -299,7 +299,7 @@ int main()
                 //backwards until aligned
                 Turn(15.,TURNSPEED,LEFT);
                 Drive(6.0, -SLOWSPEED);
-                Turn(40.0, TURNSPEED, RIGHT);
+                Turn(37.0, TURNSPEED, RIGHT);
             } else {
                 //original blue
                 Turn(130.,TURNSPEED,RIGHT);
@@ -323,7 +323,7 @@ int main()
             Drive(2.,-SLOWSPEED);
             Turn(98.,TURNSPEED,LEFT);
             Drive(2.75,SLOWSPEED);
-            Turn(93.,TURNSPEED,LEFT);
+            Turn(92.,TURNSPEED,LEFT);
 
         }
         else if(lightValue<=0.6){
@@ -352,7 +352,7 @@ int main()
             Drive(2.,-SLOWSPEED);
             Turn(90.,TURNSPEED,LEFT);
             Drive(8.25,SLOWSPEED);
-            Turn(93.3,TURNSPEED,LEFT);
+            Turn(95.0,TURNSPEED,LEFT);
         }
     
     /////////////////////STEP 6 Moving to luggage drop off and dropping the luggage off/////////////////////////////
@@ -366,7 +366,7 @@ int main()
     rightMotor.Stop();
 
     //move back a little so bumper doesn't grind
-    Drive(0.5, -FASTSPEED);
+    Drive(0.25, -FASTSPEED);
 
     //lift forklift so to drop luggage
     forklift.toTop();
@@ -678,9 +678,9 @@ void StampArm(){
     forklift.toTop();
 
     //turn left to push stamp arm
-    turnLeft(28.0,30.0);
+    turnLeft(22.5,30.0);
     //Move forward to push stamp arm more
-    moveForward(1.0,50.0);
+    moveForward(1.5,50.0);
 
     ////////////////// Getting Stamp Arm Back Down /////////////////
 

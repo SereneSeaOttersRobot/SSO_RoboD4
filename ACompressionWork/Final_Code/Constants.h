@@ -14,7 +14,7 @@
 
 /************** PID *****************/
 struct {
-float P = 0.5;
+float P = 2;
 float I = 0.1;
 float D = 0.25;
 } PID;
@@ -36,7 +36,7 @@ float D = 0.25;
 //DigitalInputPin - Button
 #define Button_ForkTop_Port FEHIO::P0_7
 #define Button_ForkBot_Port FEHIO::P3_4
-#define Button_ForkFront_Port FEHIO::P3_5
+#define Button_ForkFront_Port FEHIO::P1_7
 //reserved null port
 #define Null_Port FEHIO::P3_7
 #define Null_Motor_Port FEHMotor::Motor1
