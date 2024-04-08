@@ -174,7 +174,7 @@ int main()
         //moving to correct fuel lever
         if (Lever == LEFT){
             
-            Drive(6.9,FASTSPEED);
+            Drive(7.0,FASTSPEED);
             Turn(41.,TURNSPEED,LEFT);
             Drive(6.,FASTSPEED);
             
@@ -213,7 +213,7 @@ int main()
     forklift.toBottom();
     Drive(2.25, SLOWSPEED);
     forklift.up();
-    Sleep(1.45);
+    Sleep(1.5);
     forklift.Stop();
     //forklift.toBottom();
     Drive(2.0,-SLOWSPEED);
@@ -243,35 +243,7 @@ int main()
     //Drive(30.,SUPERSPEED);
     //moveForward(30.,35.);
 
-    //trying to go consistently up the ramp
-    if (0){
-    rightMotor.SetPercent(80.);
-    leftMotor.SetPercent(80.);
-    Sleep(1.5);
-    rightMotor.SetPercent(50.);
-    leftMotor.SetPercent(50.);
-    Sleep(0.85);
-    rightMotor.Stop();
-    leftMotor.Stop();
-    
-    Turn(62.,FASTTURNSPEED,LEFT);
-    
-    //Drive(18.,SUPERSPEED);
-    //moveForward(18.,35.);
-    rightMotor.SetPercent(50.);
-    leftMotor.SetPercent(50.);
-    while (!lf_middle.onWhite()){}
-    rightMotor.SetPercent(30.);
-    leftMotor.SetPercent(30.);
-    Sleep(1.0);
-    while (!lf_middle.onWhite()){}
-    rightMotor.Stop();
-    leftMotor.Stop();
-    
-    rightMotor.SetPercent(30.);
-    leftMotor.SetPercent(30.);
-    Sleep(0.25);
-    }
+    //getting up ramp
     if (1){
         rightMotor.SetPercent(70.);
         leftMotor.SetPercent(80.);
@@ -284,7 +256,7 @@ int main()
         rightMotor.SetPercent(-30.);
         leftMotor.SetPercent(-30.);
         Sleep(0.6);
-        Turn(90.,FASTTURNSPEED,LEFT);
+        Turn(88.,FASTTURNSPEED,LEFT);
         rightMotor.SetPercent(50.);
         leftMotor.SetPercent(50.);
         Sleep(2.0);
@@ -325,7 +297,8 @@ int main()
             Drive(2.75,-SLOWSPEED);
             if (1) {
                 //backwards until aligned
-                Drive(3.0, -SLOWSPEED);
+                Turn(15.,TURNSPEED,LEFT);
+                Drive(6.0, -SLOWSPEED);
                 Turn(40.0, TURNSPEED, RIGHT);
             } else {
                 //original blue
@@ -341,13 +314,16 @@ int main()
 
             leftMotor.Stop();
             rightMotor.Stop();
-            Drive(0.4,SLOWSPEED);
+            //Drive(0.45,SLOWSPEED);
+            leftMotor.SetPercent(20.);
+            rightMotor.SetPercent(20.);
+            Sleep(0.2);
 
             //starting to move towards luggage
             Drive(2.,-SLOWSPEED);
-            Turn(92.3,TURNSPEED,LEFT);
-            Drive(3.25,SLOWSPEED);
-            Turn(93.3,TURNSPEED,LEFT);
+            Turn(98.,TURNSPEED,LEFT);
+            Drive(2.75,SLOWSPEED);
+            Turn(93.,TURNSPEED,LEFT);
 
         }
         else if(lightValue<=0.6){
@@ -370,7 +346,7 @@ int main()
 
             leftMotor.Stop();
             rightMotor.Stop();
-            Drive(0.4,SLOWSPEED);
+            Drive(0.45,SLOWSPEED);
 
             //starting to move towards luggage
             Drive(2.,-SLOWSPEED);
@@ -407,7 +383,9 @@ int main()
     ///////////////////STEP 7 Moving to passport and completing passport/////////////////////////////
     //turn towards line
     Turn(120.0,TURNSPEED,LEFT);
+    forklift.down();
     Drive(6.5,FASTSPEED);
+    forklift.Stop();
 
     //turning left until line is found
     leftMotor.SetPercent(-15.);
@@ -417,11 +395,12 @@ int main()
     rightMotor.Stop();
     //following the line
     LineFollow(color);  //stops one if doesnt find the line
-    /*
+    forklift.toBottom();
+    
     StampArm();
 
 
-
+    /*
     ////////////////////////////////STEP 8 finding line and going back to stop button//////////////////////////////
     Turn(140.,TURNSPEED,RIGHT);
     Drive(15.,FASTSPEED);
@@ -690,17 +669,18 @@ void StampArm(){
     Sleep(1.9); //org 2.0
     forklift.Stop();
     
+    moveForward(0.5,15.);
     // Turn slightly and go forward more to get more under
-    turnLeft(5.0,15.0);
-    moveForward(0.5,15.0);
+    turnLeft(15.0,15.0);
+    moveForward(0.3,15.0);
     
     // Raise forklift all the way up
     forklift.toTop();
 
     //turn left to push stamp arm
-    turnLeft(25.0,30.0);
+    turnLeft(28.0,30.0);
     //Move forward to push stamp arm more
-    moveForward(.75,50.0);
+    moveForward(1.0,50.0);
 
     ////////////////// Getting Stamp Arm Back Down /////////////////
 
