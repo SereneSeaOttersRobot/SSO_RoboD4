@@ -111,6 +111,8 @@ int main()
     leftEncoder.SetThresholds(0.15, 2.35);
     leftEncoder.ResetCounts();
 
+    moveForward(5.0,30.0);
+
     
 
 

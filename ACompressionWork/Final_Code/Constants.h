@@ -14,7 +14,7 @@
 
 /************** PID *****************/
 struct {
-float P = 2;
+float P = 0.5;
 float I = 0.1;
 float D = 0.25;
 } PID;

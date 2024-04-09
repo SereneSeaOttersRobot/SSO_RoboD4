@@ -144,8 +144,21 @@ int main()
     }
     
     if (1){
-    RCS.InitializeTouchMenu(Team_Key);
-    const int Lever = RCS.GetCorrectLever(); //follows the side enumeration
+        // COMMENTED OUT BECAUSE RCS IS DOWN PUT IT BACK LATER
+        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    // RCS.InitializeTouchMenu(Team_Key);
+    // const int Lever = RCS.GetCorrectLever(); //follows the side enumeration
+    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+    int Lever = LEFT;
+
+
+
+
+
+
+
+
 
     ///////////////////////////////Step 1, start with initiating at light////////////////////////
     while (CdS.notRed()){
@@ -175,7 +188,7 @@ int main()
         if (Lever == LEFT){
             
             Drive(7.0,FASTSPEED);
-            Turn(43.,TURNSPEED,LEFT);
+            Turn(42.,TURNSPEED,LEFT);
             Drive(7.0,FASTSPEED);
             
             
@@ -245,18 +258,25 @@ int main()
 
     //getting up ramp
     if (1){
+        // Cling to right wall
         rightMotor.SetPercent(60.);
         leftMotor.SetPercent(70.);
         Sleep(1.0);
+
+        // move away from lip
         rightMotor.SetPercent(80.);
         Sleep(0.8);
+
+        // slow down and move towards wall until hit ticket kiosk
         rightMotor.SetPercent(30.);
         leftMotor.SetPercent(40.);
         while (forklift.front()==BNP){}
+
+        // back up after hitting ticket kisok
         rightMotor.SetPercent(-30.);
         leftMotor.SetPercent(-30.);
         Sleep(0.6);
-        Turn(88.,FASTTURNSPEED,LEFT);
+        Turn(85.,FASTTURNSPEED,LEFT);
         rightMotor.SetPercent(50.);
         leftMotor.SetPercent(50.);
         Sleep(2.0);
@@ -352,7 +372,7 @@ int main()
             Drive(2.,-SLOWSPEED);
             Turn(90.,TURNSPEED,LEFT);
             Drive(8.25,SLOWSPEED);
-            Turn(95.0,TURNSPEED,LEFT);
+            Turn(93.0,TURNSPEED,LEFT);
         }
     
     /////////////////////STEP 6 Moving to luggage drop off and dropping the luggage off/////////////////////////////
@@ -382,7 +402,7 @@ int main()
 
     ///////////////////STEP 7 Moving to passport and completing passport/////////////////////////////
     //turn towards line
-    Turn(120.0,TURNSPEED,LEFT);
+    Turn(115.0,TURNSPEED,LEFT);
     forklift.down();
     Drive(6.5,FASTSPEED);
     forklift.Stop();
@@ -678,9 +698,9 @@ void StampArm(){
     forklift.toTop();
 
     //turn left to push stamp arm
-    turnLeft(22.5,30.0);
+    turnLeft(20.0,30.0);
     //Move forward to push stamp arm more
-    moveForward(1.5,50.0);
+    moveForward(2.5,30.0);
 
     ////////////////// Getting Stamp Arm Back Down /////////////////
 
