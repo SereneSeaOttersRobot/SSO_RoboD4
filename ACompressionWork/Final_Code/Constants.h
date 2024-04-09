@@ -64,16 +64,11 @@ float D = 0.25;
 //Left
 #define LF_Left_LeftMotor 5.
 #define LF_Left_RightMotor 20.
-#define LF_Left_LeftMotor2 3.
-#define LF_Left_RightMotor2 15.
 //Middle
 #define LF_Middle_Motor 20.
-#define LF_Middle_Motor2 15.
 //Right
 #define LF_Right_LeftMotor 20.
 #define LF_Right_RightMotor 5.
-#define LF_Right_LeftMotor2 15.
-#define LF_Right_RightMotor2 3.
 
 /****** CdS Sensor Color Values ******/
 //Red

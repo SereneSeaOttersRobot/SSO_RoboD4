@@ -20,6 +20,15 @@
 #define OLD_T_P_D 0.8888888
 #define OLD_T_P_I 12.732
 
+//Left
+#define LF_Left_LeftMotor2 3.
+#define LF_Left_RightMotor2 15.
+//Middle
+#define LF_Middle_Motor2 15.
+//Right
+#define LF_Right_LeftMotor2 15.
+#define LF_Right_RightMotor2 3.
+
 
 /*
 Function prototypes
