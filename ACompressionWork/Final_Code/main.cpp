@@ -86,6 +86,7 @@ void Turn(float degrees, float speed, Side direction);
  * @param colorToFollow white or yellow colored line to follow
 */
 void LineFollow(Color colorToFollow);
+void LineFollow2(Color colorToFollow);
 
 /**
  * Test function for supporting maneul determination of PID constant values
@@ -414,7 +415,7 @@ int main()
     leftMotor.Stop();
     rightMotor.Stop();
     //following the line
-    LineFollow(color);  //stops one if doesnt find the line
+    LineFollow2(color);  //stops one if doesnt find the line
     forklift.toBottom();
     
     StampArm();
@@ -552,7 +553,60 @@ void LineFollow(Color colorToFollow){
     } while (left || middle || right);
     leftMotor.Stop();
     rightMotor.Stop();
-
+}
+void LineFollow2(Color colorToFollow){
+    Color line = colorToFollow;
+    bool left = false, middle = true, right = false;
+    int state = MIDDLE;
+    do {
+        switch(state){
+            case LEFT:{
+                //set motors
+                leftMotor.SetPercent(LF_Left_LeftMotor2);
+                rightMotor.SetPercent(LF_Left_RightMotor2);
+                //update state
+                if (right){
+                    state = RIGHT;
+                } else if (middle){
+                    state = MIDDLE;
+                }
+                break;
+            }
+            case MIDDLE:{
+                //set motors
+                leftMotor.SetPercent(LF_Middle_Motor2);
+                rightMotor.SetPercent(LF_Middle_Motor2);
+                //update state
+                if (right){
+                    state = RIGHT;
+                } else if (left){
+                    state = LEFT;
+                }
+                break;
+            }
+            case RIGHT:{
+                //set motors
+                leftMotor.SetPercent(LF_Right_LeftMotor2);
+                rightMotor.SetPercent(LF_Right_RightMotor2);
+                //update state
+                if (left){
+                    state = LEFT;
+                } else if (middle){
+                    state = MIDDLE;
+                }
+                break;
+            }
+            default:{
+                //never gets run
+            }
+        }
+        Sleep(0.05);
+        left = lf_left.onColor(line);
+        middle = lf_middle.onColor(line);
+        right = lf_right.onColor(line);
+    } while (left || middle || right);
+    leftMotor.Stop();
+    rightMotor.Stop();
 }
 
 void PIDTesting(){
@@ -670,6 +724,8 @@ void StampArm(){
     moveForward(2.0,15.0);
     //turn to stamp arm
     turnRight(80.0,15.0);
+
+    moveForward(0.5,15.);
 
     ////////////////// Lifting and Pushing Stamp Arm //////////////////////
 
