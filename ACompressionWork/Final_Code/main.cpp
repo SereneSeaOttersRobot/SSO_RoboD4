@@ -405,7 +405,7 @@ int main()
     //Drive(0.3,SLOWSPEED);
     rightMotor.SetPercent(30.);
     leftMotor.SetPercent(30.);
-    Sleep(0.25);
+    Sleep(0.5);
 
     //move back 1 inch
     Drive(1.3, -SLOWSPEED);
@@ -428,12 +428,17 @@ int main()
     forklift.toBottom();
     
     StampArm();
+    /////// move forklift to down position ////
+    forklift.toBottom();
+    //move forklift up a little to align with final button
+    forklift.up();
+    Sleep(1.0);
+    forklift.Stop();
 
-
-    /*
+    
     ////////////////////////////////STEP 8 finding line and going back to stop button//////////////////////////////
     Turn(140.,TURNSPEED,RIGHT);
-    Drive(15.,FASTSPEED);
+    Drive(6.,FASTSPEED);
     //finding line and following it to ramp
     leftMotor.SetPercent(-15.);
     rightMotor.SetPercent(15.);
@@ -452,13 +457,15 @@ int main()
 
     //////////// Move down ramp and back to button ///////////
 
-    /////// move forklift to down position ////
-    forklift.toBottom();
-    //move forklift up a little to align with final button
-    forklift.up();
-    Sleep(1.0);
-    forklift.Stop();
+    rightMotor.SetPercent(80.);
+    leftMotor.SetPercent(70.);
+    Sleep(0.75);
+    leftMotor.SetPercent(90.);
+    Sleep(0.5);
+    leftMotor.SetPercent(40.);
+    rightMotor.SetPercent(20.);
 
+    /*
     //////// adjustment turn?
     //forward to setup for turn
     Drive(1.0,SLOWSPEED);
