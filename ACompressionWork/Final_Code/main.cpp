@@ -156,11 +156,10 @@ int main()
     if (1){
         // COMMENTED OUT BECAUSE RCS IS DOWN PUT IT BACK LATER
         // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    // RCS.InitializeTouchMenu(Team_Key);
-    // const int Lever = RCS.GetCorrectLever(); //follows the side enumeration
+    RCS.InitializeTouchMenu(Team_Key);
+    const int Lever = RCS.GetCorrectLever(); //follows the side enumeration
     // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-    int Lever = LEFT;
 
 
 
@@ -197,9 +196,9 @@ int main()
         //moving to correct fuel lever
         if (Lever == LEFT){
             
-            Drive(7.0,FASTSPEED);
+            Drive(7.25,FASTSPEED);
             Turn(42.,TURNSPEED,LEFT);
-            Drive(7.0,FASTSPEED);
+            Drive(6.5,FASTSPEED);
             
             
             
@@ -231,7 +230,7 @@ int main()
     forklift.Stop();
     Drive(2.,-SLOWSPEED);
     //wait 5 seconds
-    Sleep(3.25);
+    Sleep(3.0);
     //move arm lower than fuel lever.
     forklift.toBottom();
     Drive(2.25, SLOWSPEED);
@@ -254,13 +253,15 @@ int main()
         Turn(90.,FASTTURNSPEED,LEFT);
     }
     
-    rightMotor.SetPercent(30.);
-    leftMotor.SetPercent(30.);
+    rightMotor.SetPercent(40.);
+    leftMotor.SetPercent(40.);
     while (forklift.front()==BNP){}
     rightMotor.Stop();
     leftMotor.Stop();
     
     Turn(85.,FASTTURNSPEED,LEFT);
+
+
     //forklift.toBottom();
     
     //Drive(30.,SUPERSPEED);
@@ -273,9 +274,11 @@ int main()
         leftMotor.SetPercent(70.);
         Sleep(1.0);
 
+
         // move away from lip
         rightMotor.SetPercent(80.);
         Sleep(0.8);
+
 
         // slow down and move towards wall until hit ticket kiosk
         rightMotor.SetPercent(30.);
@@ -293,8 +296,8 @@ int main()
     }
 
     //turning and finding the line
-    leftMotor.SetPercent(15.);
-    rightMotor.SetPercent(-15.);
+    leftMotor.SetPercent(20.);
+    rightMotor.SetPercent(-20.);
     while (!lf_middle.onWhite()) //while middle has not detected line
     {   
         //Print line followers' values to output file.
@@ -353,7 +356,7 @@ int main()
             Drive(2.,-SLOWSPEED);
             Turn(98.,TURNSPEED,LEFT);
             Drive(2.75,SLOWSPEED);
-            Turn(92.,TURNSPEED,LEFT);
+            Turn(90.,TURNSPEED,LEFT);
 
         }
         else if(lightValue<=0.6){
@@ -405,21 +408,21 @@ int main()
     //Drive(0.3,SLOWSPEED);
     rightMotor.SetPercent(30.);
     leftMotor.SetPercent(30.);
-    Sleep(0.5);
+    Sleep(0.65);
 
     //move back 1 inch
     Drive(1.3, -SLOWSPEED);
 
     ///////////////////STEP 7 Moving to passport and completing passport/////////////////////////////
     //turn towards line
-    Turn(115.0,TURNSPEED,LEFT);
     forklift.down();
-    Drive(6.5,FASTSPEED);
+    Turn(115.0,TURNSPEED,LEFT);
     forklift.Stop();
+    Drive(6.5,FASTSPEED);
 
     //turning left until line is found
-    leftMotor.SetPercent(-15.);
-    rightMotor.SetPercent(15.);
+    leftMotor.SetPercent(-20.);
+    rightMotor.SetPercent(20.);
     while (!lf_middle.onWhite()); //while middle has not detected line
     leftMotor.Stop();
     rightMotor.Stop();
@@ -428,20 +431,15 @@ int main()
     forklift.toBottom();
     
     StampArm();
-    /////// move forklift to down position ////
-    forklift.toBottom();
-    //move forklift up a little to align with final button
-    forklift.up();
-    Sleep(1.0);
-    forklift.Stop();
-
     
     ////////////////////////////////STEP 8 finding line and going back to stop button//////////////////////////////
-    Turn(140.,TURNSPEED,RIGHT);
+    forklift.down();
+    Turn(120.,FASTTURNSPEED,RIGHT);
     Drive(6.,FASTSPEED);
+    forklift.Stop();
     //finding line and following it to ramp
-    leftMotor.SetPercent(-15.);
-    rightMotor.SetPercent(15.);
+    leftMotor.SetPercent(-20.);
+    rightMotor.SetPercent(20.);
     while (!lf_middle.onWhite()) //while middle has not detected line
     {   
         //Print line followers' values to output file.
@@ -455,15 +453,22 @@ int main()
     //following the line
     LineFollow(color);  //stops one if doesnt find the line
 
-    //////////// Move down ramp and back to button ///////////
+    forklift.toBottom();
+    //move forklift up a little to align with final button
+    forklift.up();
+    Sleep(1.5);
+    forklift.Stop();
 
+    //////////// Move down ramp and back to button ///////////
+    Turn(35.,FASTTURNSPEED,RIGHT);
     rightMotor.SetPercent(80.);
-    leftMotor.SetPercent(70.);
-    Sleep(0.75);
-    leftMotor.SetPercent(90.);
-    Sleep(0.5);
-    leftMotor.SetPercent(40.);
-    rightMotor.SetPercent(20.);
+    leftMotor.SetPercent(80.);
+    Sleep(1.5);
+    leftMotor.SetPercent(20.);
+    rightMotor.SetPercent(40.);
+    while (forklift.front()==BNP){}
+    leftMotor.Stop();
+    rightMotor.Stop();
 
     /*
     //////// adjustment turn?
@@ -751,7 +756,7 @@ void StampArm(){
     forklift.Stop();
 
     //move forward 1.15 inches, to get further under stamp arm
-    moveForward(1.15, 15.0);
+    moveForward(0.9, 15.0);
 
     //turn a little left so to stay under stamp arm when near top of forklift height.
     turnLeft(5.0,15.0);

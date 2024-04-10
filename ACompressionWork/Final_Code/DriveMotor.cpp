@@ -116,12 +116,12 @@ void DriveTrain::Turn(float degrees, AnalogEncoder &leftEncoder, AnalogEncoder &
     this->LeftMotor.Stop();
     this->RightMotor.Stop();
     //tries to handle momentum overshoot by recalling itself for the opposite direction by the offshoot amount
-    Sleep(0.2);
-    int offTicks = (left+right)/2 - ticks;
-    if (offTicks > 2){
-        expSpeed = -expSpeed/2.0;
-        this->Turn(offTicks*DEGREES_PER_TICK, leftEncoder, rightEncoder);
-    }
+    // Sleep(0.2);
+    // int offTicks = (left+right)/2 - ticks;
+    // if (offTicks > 2){
+    //     expSpeed = -expSpeed/2.0;
+    //     this->Turn(offTicks*DEGREES_PER_TICK, leftEncoder, rightEncoder);
+    // }
 
 }
 
