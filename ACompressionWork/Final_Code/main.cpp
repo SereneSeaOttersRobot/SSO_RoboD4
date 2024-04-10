@@ -136,21 +136,19 @@ int main()
     forklift.setButtonPins(Button_ForkTop_Port, Button_ForkBot_Port, Button_ForkFront_Port);
     leftEncoder.SetThresholds(Encoder_Low_Threshold, Encoder_High_Threshold);
     rightEncoder.SetThresholds(Encoder_Low_Threshold, Encoder_High_Threshold);
-    if (0){
-        //turning and finding the line
-        leftMotor.SetPercent(15.);
-        rightMotor.SetPercent(-15.);
-        while (!lf_middle.onWhite()){
-            //LCD.WriteLine(lf_right.Value());
-            //LCD.WriteLine(lf_middle.Value());
-            //LCD.WriteLine(lf_left.Value());
-            //Sleep(0.3);
-            //LCD.Clear();
+    if (1){
+        while (1){
+            if(forklift.bottom()==BP){
+                LCD.WriteLine("bottom Buton Pressed");
+                Sleep(0.1);
+            }
+            if(forklift.top()==BP){
+                LCD.WriteLine("Top button pressed");
+            }
+            if (forklift.front()==BP){
+                LCD.WriteLine("Front button pressed0");
+            }
         }
-        leftMotor.Stop();
-        rightMotor.Stop();
-        Color color = Color::White;
-        LineFollow(color);  //stops one if doesnt find the lin
     }
     
     if (1){
@@ -232,14 +230,20 @@ int main()
     //wait 5 seconds
     Sleep(3.0);
     //move arm lower than fuel lever.
-    forklift.toBottom();
+    //forklift.toBottom();
+    forklift.down();
+    while(forklift.bottom()==BNP){}
+    forklift.Stop();
     Drive(2.25, SLOWSPEED);
     forklift.up();
     Sleep(1.5);
     forklift.Stop();
     //forklift.toBottom();
     Drive(2.0,-SLOWSPEED);
-    forklift.toBottom();
+    //forklift.toBottom();
+    forklift.down();
+    while(forklift.bottom()==BNP){}
+    forklift.Stop();
 
     
     /////////////////////////Step 4 moving to ticket kiosk light/////////////////////////////
@@ -394,7 +398,9 @@ int main()
     //move forward until front bumper is hit
     leftMotor.SetPercent(30.0);
     rightMotor.SetPercent(30.0);
-    while (forklift.front() != BP){}
+    //float time;
+    //time = TimeNow();
+    while (forklift.front() != BP){}    // || TimeNow()-time<3.5
     leftMotor.Stop();
     rightMotor.Stop();
 
@@ -428,7 +434,10 @@ int main()
     rightMotor.Stop();
     //following the line
     LineFollow2(color);  //stops one if doesnt find the line
-    forklift.toBottom();
+    //forklift.toBottom();
+    forklift.down();
+    while(forklift.bottom()==BNP){}
+    forklift.Stop();
     
     StampArm();
     
@@ -453,7 +462,10 @@ int main()
     //following the line
     LineFollow(color);  //stops one if doesnt find the line
 
-    forklift.toBottom();
+    //forklift.toBottom();
+    forklift.down();
+    while(forklift.bottom()==BNP){}
+    forklift.Stop();
     //move forklift up a little to align with final button
     forklift.up();
     Sleep(1.5);

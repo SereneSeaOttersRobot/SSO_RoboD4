@@ -169,7 +169,13 @@ DigitalInputPin forkbumper(BUTTON_FORKLIFT_PORT);       //micro switch button on
 int main()
 {   
 
-    
+    // forklift.SetPercent(-100.);
+    // while (forkbottom.Value()==1){
+    //     if (forkbottom.Value()==0){
+    //         LCD.WriteLine("Button pressed");
+    //     }
+    // }
+    // forklift.Stop();
     //open file to output collected testing data
     FEHFile *fout = SD.FOpen("PERFTR.txt","w");
 
