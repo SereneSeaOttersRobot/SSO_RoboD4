@@ -25,7 +25,7 @@
 #define LF_Left_RightMotor2 15.
 //Middle
 #define LF_Middle_Motor2 15.
-//Right
+//Right.
 #define LF_Right_LeftMotor2 15.
 #define LF_Right_RightMotor2 3.
 
@@ -136,7 +136,7 @@ int main()
     forklift.setButtonPins(Button_ForkTop_Port, Button_ForkBot_Port, Button_ForkFront_Port);
     leftEncoder.SetThresholds(Encoder_Low_Threshold, Encoder_High_Threshold);
     rightEncoder.SetThresholds(Encoder_Low_Threshold, Encoder_High_Threshold);
-    if (1){
+    if (0){
         while (1){
             if(forklift.bottom()==BP){
                 LCD.WriteLine("bottom Buton Pressed");
@@ -176,7 +176,7 @@ int main()
     //Drive(1.5,-SLOWSPEED);
     rightMotor.SetPercent(-30.);
     leftMotor.SetPercent(-30.);
-    Sleep(0.5);
+    Sleep(0.4);
     rightMotor.Stop();
     leftMotor.Stop();
 
@@ -226,24 +226,18 @@ int main()
     forklift.down();
     Sleep(1.5);
     forklift.Stop();
-    Drive(2.,-SLOWSPEED);
+    Drive(2.,-FASTSPEED);
     //wait 5 seconds
-    Sleep(3.0);
+    Sleep(2.5);
     //move arm lower than fuel lever.
-    //forklift.toBottom();
-    forklift.down();
-    while(forklift.bottom()==BNP){}
-    forklift.Stop();
-    Drive(2.25, SLOWSPEED);
+    forklift.toBottom();
+    Drive(2.25, FASTSPEED);
     forklift.up();
     Sleep(1.5);
     forklift.Stop();
     //forklift.toBottom();
-    Drive(2.0,-SLOWSPEED);
-    //forklift.toBottom();
-    forklift.down();
-    while(forklift.bottom()==BNP){}
-    forklift.Stop();
+    Drive(2.0,-FASTSPEED);
+    forklift.toBottom();
 
     
     /////////////////////////Step 4 moving to ticket kiosk light/////////////////////////////
@@ -396,6 +390,7 @@ int main()
     //turning and moving towards the luggage drop off
 
     //move forward until front bumper is hit
+    forklift.up();
     leftMotor.SetPercent(30.0);
     rightMotor.SetPercent(30.0);
     //float time;
@@ -403,6 +398,7 @@ int main()
     while (forklift.front() != BP){}    // || TimeNow()-time<3.5
     leftMotor.Stop();
     rightMotor.Stop();
+    forklift.Stop();
 
     //move back a little so bumper doesn't grind
     Drive(0.25, -FASTSPEED);
@@ -417,14 +413,14 @@ int main()
     Sleep(0.65);
 
     //move back 1 inch
-    Drive(1.3, -SLOWSPEED);
+    Drive(1.3, -FASTSPEED);
 
     ///////////////////STEP 7 Moving to passport and completing passport/////////////////////////////
     //turn towards line
     forklift.down();
-    Turn(115.0,TURNSPEED,LEFT);
-    forklift.Stop();
+    Turn(115.0,FASTTURNSPEED,LEFT);
     Drive(6.5,FASTSPEED);
+    forklift.Stop();
 
     //turning left until line is found
     leftMotor.SetPercent(-20.);
@@ -434,10 +430,7 @@ int main()
     rightMotor.Stop();
     //following the line
     LineFollow2(color);  //stops one if doesnt find the line
-    //forklift.toBottom();
-    forklift.down();
-    while(forklift.bottom()==BNP){}
-    forklift.Stop();
+    forklift.toBottom();
     
     StampArm();
     
@@ -462,20 +455,13 @@ int main()
     //following the line
     LineFollow(color);  //stops one if doesnt find the line
 
-    //forklift.toBottom();
-    forklift.down();
-    while(forklift.bottom()==BNP){}
-    forklift.Stop();
-    //move forklift up a little to align with final button
-    forklift.up();
-    Sleep(1.5);
-    forklift.Stop();
-
     //////////// Move down ramp and back to button ///////////
     Turn(35.,FASTTURNSPEED,RIGHT);
+    forklift.up();
     rightMotor.SetPercent(80.);
     leftMotor.SetPercent(80.);
     Sleep(1.5);
+    forklift.Stop();
     leftMotor.SetPercent(20.);
     rightMotor.SetPercent(40.);
     while (forklift.front()==BNP){}
@@ -789,7 +775,7 @@ void StampArm(){
     //turn left to push stamp arm
     turnLeft(20.0,30.0);
     //Move forward to push stamp arm more
-    moveForward(2.5,30.0);
+    moveForward(2.5,40.0);
 
     ////////////////// Getting Stamp Arm Back Down /////////////////
 
