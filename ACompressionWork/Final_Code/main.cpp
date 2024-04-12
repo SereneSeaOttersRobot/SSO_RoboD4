@@ -144,9 +144,11 @@ int main()
             }
             if(forklift.top()==BP){
                 LCD.WriteLine("Top button pressed");
+                Sleep(0.1);
             }
             if (forklift.front()==BP){
                 LCD.WriteLine("Front button pressed0");
+                Sleep(0.1);
             }
         }
     }
@@ -155,9 +157,9 @@ int main()
         // COMMENTED OUT BECAUSE RCS IS DOWN PUT IT BACK LATER
         // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     RCS.InitializeTouchMenu(Team_Key);
-    const int Lever = RCS.GetCorrectLever(); //follows the side enumeration
+    //const int Lever = RCS.GetCorrectLever(); //follows the side enumeration
     // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
+    int Lever = LEFT;
 
 
 
@@ -224,7 +226,7 @@ int main()
 
     //moving forklift and maneuvering to flip fuel switch up and down
     forklift.down();
-    Sleep(1.5);
+    Sleep(1.4);//was 1.5
     forklift.Stop();
     Drive(2.,-FASTSPEED);
     //wait 5 seconds
@@ -309,7 +311,7 @@ int main()
 
     //following the line
     Color color = Color::White;
-    LineFollow(color);  //stops one if doesnt find the line
+    LineFollow2(color);  //stops one if doesnt find the line
     
     //maneuver to get to light
     Turn(10.0,1.6,LEFT);
@@ -319,7 +321,7 @@ int main()
     //determining blue and red and moving to appropriate button
     float lightValue;
     lightValue=CdS.Value();
-        if (lightValue>0.6){
+        if (1){    // lightValue>0.6
             //moving to blue button
             LCD.WriteLine("Blue light Found");
             forklift.up();
@@ -341,7 +343,9 @@ int main()
             rightMotor.SetPercent(15.);
 
             //waiting for contact
-            while (forklift.front()==BNP){};
+            float time;
+            time=TimeNow();
+            while (forklift.front()==BNP && TimeNow()-time<2.75){};
 
             leftMotor.Stop();
             rightMotor.Stop();
@@ -367,23 +371,49 @@ int main()
             Drive(2.5,-SLOWSPEED);
             Turn(130.,SLOWSPEED,RIGHT);
             Drive(6.25,SLOWSPEED);
-            Turn(100.,SLOWSPEED,LEFT);
+            Turn(80.,SLOWSPEED,LEFT);
 
             leftMotor.SetPercent(15.);
             rightMotor.SetPercent(15.);
             
             //waiting for contact
-            while (forklift.front()==BNP){};
+            float time3;
+            time3=TimeNow();
+            while (forklift.front()==BNP && TimeNow()-time3<2.8){};
 
             leftMotor.Stop();
             rightMotor.Stop();
-            Drive(0.45,SLOWSPEED);
+            leftMotor.SetPercent(30.);
+            rightMotor.SetPercent(35.);
+            Sleep(0.3);
+            leftMotor.Stop();
+            rightMotor.Stop();
 
+            if(1){
+                Drive(2.,-FASTSPEED);
+                Turn(140.,FASTTURNSPEED,LEFT);
+                rightMotor.SetPercent(50.);
+                leftMotor.SetPercent(50.);
+                Sleep(1.5);
+                rightMotor.Stop();
+                leftMotor.Stop();
+                rightMotor.SetPercent(20.);
+                leftMotor.SetPercent(-20.);
+                while (!lf_middle.onWhite()) {    }
+                leftMotor.Stop();
+                rightMotor.Stop();
+                //following the line
+                LineFollow(color);  //stops one if doesnt find the line
+                Drive(5.,-FASTSPEED);
+                Turn(105.,FASTTURNSPEED,LEFT);
+            }
+            if (0){
             //starting to move towards luggage
             Drive(2.,-SLOWSPEED);
-            Turn(90.,TURNSPEED,LEFT);
+            Turn(110.,TURNSPEED,LEFT);
             Drive(8.25,SLOWSPEED);
             Turn(93.0,TURNSPEED,LEFT);
+            }
         }
     
     /////////////////////STEP 6 Moving to luggage drop off and dropping the luggage off/////////////////////////////
@@ -393,9 +423,9 @@ int main()
     forklift.up();
     leftMotor.SetPercent(30.0);
     rightMotor.SetPercent(30.0);
-    //float time;
-    //time = TimeNow();
-    while (forklift.front() != BP){}    // || TimeNow()-time<3.5
+    float time2;
+    time2 = TimeNow();
+    while (forklift.front() != BP && TimeNow()-time2<3.0){}    // && TimeNow()-time<3.0
     leftMotor.Stop();
     rightMotor.Stop();
     forklift.Stop();
@@ -742,9 +772,9 @@ void StampArm(){
     //move forward to setup for turn
     moveForward(2.0,15.0);
     //turn to stamp arm
-    turnRight(80.0,15.0);
+    turnRight(78.0,15.0);   //was 80
 
-    moveForward(0.5,15.);
+    moveForward(0.5,15.);   
 
     ////////////////// Lifting and Pushing Stamp Arm //////////////////////
 
