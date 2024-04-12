@@ -271,7 +271,7 @@ int main()
     if (1){
         // Cling to right wall
         rightMotor.SetPercent(60.);
-        leftMotor.SetPercent(70.);
+        leftMotor.SetPercent(75.);
         Sleep(1.0);
 
 
