@@ -276,6 +276,7 @@ int main()
 
 
         // move away from lip
+        leftMotor.SetPercent(70.);
         rightMotor.SetPercent(80.);
         Sleep(0.8);
 
@@ -345,7 +346,7 @@ int main()
             //waiting for contact
             float time;
             time=TimeNow();
-            while (forklift.front()==BNP && TimeNow()-time<2.75){};
+            while (forklift.front()==BNP && TimeNow()-time<3.25){};
 
             leftMotor.Stop();
             rightMotor.Stop();
