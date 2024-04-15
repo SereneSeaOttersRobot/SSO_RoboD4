@@ -356,10 +356,29 @@ int main()
             Sleep(0.2);
 
             //starting to move towards luggage
+            if (0){ //old method
             Drive(2.,-SLOWSPEED);
             Turn(98.,TURNSPEED,LEFT);
             Drive(2.75,SLOWSPEED);
             Turn(90.,TURNSPEED,LEFT);
+            }
+            if (1){ //new method
+                Turn(140.,FASTTURNSPEED,LEFT);
+                rightMotor.SetPercent(50.);
+                leftMotor.SetPercent(50.);
+                Sleep(1.5);
+                rightMotor.Stop();
+                leftMotor.Stop();
+                rightMotor.SetPercent(20.);
+                leftMotor.SetPercent(-20.);
+                while (!lf_middle.onWhite()) {    }
+                leftMotor.Stop();
+                rightMotor.Stop();
+                //following the line
+                LineFollow(color);  //stops one if doesnt find the line
+                Drive(5.,-FASTSPEED);
+                Turn(95.,FASTTURNSPEED,LEFT);
+            }
 
         }
         else if(lightValue<=0.6){
@@ -406,7 +425,7 @@ int main()
                 //following the line
                 LineFollow(color);  //stops one if doesnt find the line
                 Drive(5.,-FASTSPEED);
-                Turn(105.,FASTTURNSPEED,LEFT);
+                Turn(95.,FASTTURNSPEED,LEFT);
             }
             if (0){
             //starting to move towards luggage
@@ -420,6 +439,7 @@ int main()
     /////////////////////STEP 6 Moving to luggage drop off and dropping the luggage off/////////////////////////////
     //turning and moving towards the luggage drop off
 
+    if (0){ //old method
     //move forward until front bumper is hit
     forklift.up();
     leftMotor.SetPercent(30.0);
@@ -430,6 +450,19 @@ int main()
     leftMotor.Stop();
     rightMotor.Stop();
     forklift.Stop();
+    }
+    if (1){ //new method
+        forklift.up();
+        leftMotor.SetPercent(35.0);
+        rightMotor.SetPercent(30.0);
+        float time5;
+        time5 = TimeNow();
+        while (forklift.front() != BP && TimeNow()-time5<2.0){}    // && TimeNow()-time<3.0
+        leftMotor.Stop();
+        rightMotor.Stop();
+        forklift.Stop();
+        
+    }
 
     //move back a little so bumper doesn't grind
     Drive(0.25, -FASTSPEED);
