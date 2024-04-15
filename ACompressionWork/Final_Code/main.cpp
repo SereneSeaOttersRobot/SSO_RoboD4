@@ -450,7 +450,16 @@ int main()
     //turn towards line
     forklift.down();
     Turn(115.0,FASTTURNSPEED,LEFT);
-    Drive(6.5,FASTSPEED);
+    leftMotor.SetPercent(30.0);
+    rightMotor.SetPercent(30.0);
+    while (!lf_middle.onWhite()){
+        if (forklift.bottom() == BP){
+            forklift.Stop();
+        }
+    }
+    Sleep(0.3);
+    leftMotor.Stop();
+    rightMotor.Stop();
     forklift.Stop();
 
     //turning left until line is found
