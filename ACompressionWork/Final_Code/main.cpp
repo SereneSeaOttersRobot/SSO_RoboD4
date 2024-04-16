@@ -259,7 +259,7 @@ int main()
     rightMotor.Stop();
     leftMotor.Stop();
     
-    Turn(85.,FASTTURNSPEED,LEFT);
+    Turn(80.,FASTTURNSPEED,LEFT);
 
 
     //forklift.toBottom();
@@ -332,8 +332,8 @@ int main()
             if (1) {
                 //backwards until aligned
                 Turn(15.,TURNSPEED,LEFT);
-                Drive(6.0, -SLOWSPEED);
-                Turn(37.0, TURNSPEED, RIGHT);
+                Drive(5.6, -SLOWSPEED);
+                Turn(36.0, TURNSPEED, RIGHT);
             } else {
                 //original blue
                 Turn(130.,TURNSPEED,RIGHT);
@@ -346,7 +346,7 @@ int main()
             //waiting for contact
             float time;
             time=TimeNow();
-            while (forklift.front()==BNP && TimeNow()-time<3.25){};
+            while (forklift.front()==BNP && TimeNow()-time<3.6){};
 
             leftMotor.Stop();
             rightMotor.Stop();
@@ -354,6 +354,9 @@ int main()
             leftMotor.SetPercent(20.);
             rightMotor.SetPercent(20.);
             Sleep(0.2);
+            leftMotor.SetPercent(-30.);
+            rightMotor.SetPercent(-30.);
+            Sleep(0.4);
 
             //starting to move towards luggage
             if (0){ //old method
@@ -364,20 +367,31 @@ int main()
             }
             if (1){ //new method
                 Turn(140.,FASTTURNSPEED,LEFT);
-                rightMotor.SetPercent(50.);
-                leftMotor.SetPercent(50.);
-                Sleep(1.5);
-                rightMotor.Stop();
+                leftMotor.SetPercent(0.);
+                rightMotor.SetPercent(0.);
+
+                leftMotor.SetPercent(-30.0);
+                rightMotor.SetPercent(-30.0);
+                Sleep(0.5);
+
+                leftMotor.SetPercent(30.);
+                rightMotor.SetPercent(30.);
+                while (!lf_middle.onWhite()){}
+                leftMotor.SetPercent(30.0);
+                rightMotor.SetPercent(30.0);
+                Sleep(0.3);
                 leftMotor.Stop();
-                rightMotor.SetPercent(20.);
+                rightMotor.Stop();
+                //turning left until line is found
                 leftMotor.SetPercent(-20.);
-                while (!lf_middle.onWhite()) {    }
+                rightMotor.SetPercent(20.);
+                while (!lf_middle.onWhite()); //while middle has not detected line
                 leftMotor.Stop();
                 rightMotor.Stop();
                 //following the line
                 LineFollow(color);  //stops one if doesnt find the line
-                Drive(5.,-FASTSPEED);
-                Turn(95.,FASTTURNSPEED,LEFT);
+                Drive(6.5,-FASTSPEED);
+                Turn(92.5,FASTTURNSPEED,LEFT);
             }
 
         }
@@ -412,20 +426,27 @@ int main()
             if(1){
                 Drive(2.,-FASTSPEED);
                 Turn(140.,FASTTURNSPEED,LEFT);
-                rightMotor.SetPercent(50.);
-                leftMotor.SetPercent(50.);
-                Sleep(1.5);
-                rightMotor.Stop();
+
+                
+                leftMotor.SetPercent(30.);
+                rightMotor.SetPercent(30.);
+                while (!lf_middle.onWhite()){}
+                leftMotor.SetPercent(30.0);
+                rightMotor.SetPercent(30.0);
+                Sleep(0.3);
                 leftMotor.Stop();
-                rightMotor.SetPercent(20.);
+                rightMotor.Stop();
+                //turning left until line is found
                 leftMotor.SetPercent(-20.);
-                while (!lf_middle.onWhite()) {    }
+                rightMotor.SetPercent(20.);
+                while (!lf_middle.onWhite()); //while middle has not detected line
                 leftMotor.Stop();
                 rightMotor.Stop();
                 //following the line
                 LineFollow(color);  //stops one if doesnt find the line
-                Drive(5.,-FASTSPEED);
-                Turn(95.,FASTTURNSPEED,LEFT);
+                Drive(6.5,-FASTSPEED);
+                Turn(92.5,FASTTURNSPEED,LEFT);
+
             }
             if (0){
             //starting to move towards luggage
@@ -453,27 +474,30 @@ int main()
     }
     if (1){ //new method
         forklift.up();
-        leftMotor.SetPercent(35.0);
-        rightMotor.SetPercent(30.0);
+        leftMotor.SetPercent(53.0);
+        rightMotor.SetPercent(8.0);
         float time5;
         time5 = TimeNow();
-        while (forklift.front() != BP && TimeNow()-time5<2.0){}    // && TimeNow()-time<3.0
+        while (forklift.front() != BP && TimeNow()-time5<1.4){}    // && TimeNow()-time<3.0
         leftMotor.Stop();
         rightMotor.Stop();
         forklift.Stop();
-        
     }
 
     //move back a little so bumper doesn't grind
-    Drive(0.25, -FASTSPEED);
+    leftMotor.SetPercent(-30.0);
+    rightMotor.SetPercent(-30.0);
+    Sleep(0.3);
+    rightMotor.Stop();
+    leftMotor.Stop();
 
     //lift forklift so to drop luggage
     forklift.toTop();
 
     //move forward to push in
     //Drive(0.3,SLOWSPEED);
-    rightMotor.SetPercent(30.);
-    leftMotor.SetPercent(30.);
+    rightMotor.SetPercent(40.);
+    leftMotor.SetPercent(40.);
     Sleep(0.65);
 
     //move back 1 inch
@@ -504,8 +528,65 @@ int main()
     //following the line
     LineFollow2(color);  //stops one if doesnt find the line
     forklift.toBottom();
+     ////////////////////////////STEP 7 Passport///////////////////////////////////////////////
+        /////////////////// Moving to and under Stamp Arm ///////////////////
+
+    //move forward to setup for turn
+    moveForward(2.0,15.0);
+    //turn to stamp arm
+    turnRight(65.0,15.0);   //was 78 then 74 then 68
+
+    moveForward(0.5,15.);   
+
+    ////////////////// Lifting and Pushing Stamp Arm //////////////////////
+
+    //forklift up for a few seconds
+    forklift.up(); //currently percent = -90.0 90 vs 100
+    Sleep(1.9); //org 2.0
+    forklift.Stop();
+
+    //move forward 1.15 inches, to get further under stamp arm
+    moveForward(0.9, 15.0);
+
+    //turn a little left so to stay under stamp arm when near top of forklift height.
+    turnLeft(5.0,15.0);
+
+    //forklift go up for two seconds
+    forklift.up(); //currently percent = -90.0 90 vs 100
+    Sleep(1.9); //org 2.0
+    forklift.Stop();
     
-    StampArm();
+    moveForward(0.5,15.);
+    // Turn slightly and go forward more to get more under
+    turnLeft(15.0,15.0);
+    moveForward(0.3,15.0);
+    
+    // Raise forklift all the way up
+    //forklift.toTop();
+
+    //turn left to push stamp arm
+    turnLeft(20.0,30.0);
+    //Move forward to push stamp arm more
+    moveForward(2.5,40.0);
+
+    ////////////////// Getting Stamp Arm Back Down /////////////////
+
+
+    
+    //move back to get out of the way of the stamp arm
+    moveBackward(2,30.0);
+
+    // turn to get to left of stamp
+    turnLeft(30.0,30);
+
+    //Drive forwards to get back in plane with arm
+    moveForward(3.5,30.0);
+
+    //turn right to hit stamp down
+    turnRight(50.0,30);
+
+    // Move back to let it fall
+    moveBackward(5.0,30.0);
     
     ////////////////////////////////STEP 8 finding line and going back to stop button//////////////////////////////
     forklift.down();
@@ -815,7 +896,7 @@ void StampArm(){
     //move forward to setup for turn
     moveForward(2.0,15.0);
     //turn to stamp arm
-    turnRight(78.0,15.0);   //was 80
+    turnRight(74.0,15.0);   //was 78
 
     moveForward(0.5,15.);   
 
