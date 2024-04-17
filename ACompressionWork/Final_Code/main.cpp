@@ -322,7 +322,7 @@ int main()
     //determining blue and red and moving to appropriate button
     float lightValue;
     lightValue=CdS.Value();
-        if (1){    // lightValue>0.6
+        if (lightValue>0.6){    // lightValue>0.6
             //moving to blue button
             LCD.WriteLine("Blue light Found");
             forklift.up();
@@ -340,13 +340,13 @@ int main()
                 Drive(4.0,SLOWSPEED);
                 Turn(100.,TURNSPEED,LEFT);
             }
-            leftMotor.SetPercent(15.);
-            rightMotor.SetPercent(15.);
+            leftMotor.SetPercent(20.);
+            rightMotor.SetPercent(20.);
 
             //waiting for contact
             float time;
             time=TimeNow();
-            while (forklift.front()==BNP && TimeNow()-time<3.6){};
+            while (forklift.front()==BNP && TimeNow()-time<3.5){};
 
             leftMotor.Stop();
             rightMotor.Stop();
@@ -390,7 +390,9 @@ int main()
                 rightMotor.Stop();
                 //following the line
                 LineFollow(color);  //stops one if doesnt find the line
+                forklift.up();
                 Drive(6.5,-FASTSPEED);
+                forklift.Stop();
                 Turn(92.5,FASTTURNSPEED,LEFT);
             }
 
@@ -405,15 +407,15 @@ int main()
             Drive(2.5,-SLOWSPEED);
             Turn(130.,SLOWSPEED,RIGHT);
             Drive(6.25,SLOWSPEED);
-            Turn(80.,SLOWSPEED,LEFT);
+            Turn(90.,SLOWSPEED,LEFT);
 
-            leftMotor.SetPercent(15.);
-            rightMotor.SetPercent(15.);
+            leftMotor.SetPercent(20.);
+            rightMotor.SetPercent(20.);
             
             //waiting for contact
             float time3;
             time3=TimeNow();
-            while (forklift.front()==BNP && TimeNow()-time3<2.8){};
+            while (forklift.front()==BNP && TimeNow()-time3<2.7){};
 
             leftMotor.Stop();
             rightMotor.Stop();
@@ -444,7 +446,9 @@ int main()
                 rightMotor.Stop();
                 //following the line
                 LineFollow(color);  //stops one if doesnt find the line
+                forklift.up();
                 Drive(6.5,-FASTSPEED);
+                forklift.Stop();
                 Turn(92.5,FASTTURNSPEED,LEFT);
 
             }
@@ -473,15 +477,15 @@ int main()
     forklift.Stop();
     }
     if (1){ //new method
-        forklift.up();
+        //forklift.up();
         leftMotor.SetPercent(53.0);
-        rightMotor.SetPercent(8.0);
+        rightMotor.SetPercent(12.0);
         float time5;
         time5 = TimeNow();
         while (forklift.front() != BP && TimeNow()-time5<1.4){}    // && TimeNow()-time<3.0
         leftMotor.Stop();
         rightMotor.Stop();
-        forklift.Stop();
+        //forklift.Stop();
     }
 
     //move back a little so bumper doesn't grind
@@ -496,8 +500,8 @@ int main()
 
     //move forward to push in
     //Drive(0.3,SLOWSPEED);
-    rightMotor.SetPercent(40.);
-    leftMotor.SetPercent(40.);
+    rightMotor.SetPercent(42.);
+    leftMotor.SetPercent(42.);
     Sleep(0.65);
 
     //move back 1 inch
@@ -545,11 +549,12 @@ int main()
     Sleep(1.9); //org 2.0
     forklift.Stop();
 
+    //turn a little left so to stay under stamp arm when near top of forklift height.
+    turnLeft(5.0,15.0);
+
     //move forward 1.15 inches, to get further under stamp arm
     moveForward(0.9, 15.0);
 
-    //turn a little left so to stay under stamp arm when near top of forklift height.
-    turnLeft(5.0,15.0);
 
     //forklift go up for two seconds
     forklift.up(); //currently percent = -90.0 90 vs 100
@@ -574,13 +579,13 @@ int main()
 
     
     //move back to get out of the way of the stamp arm
-    moveBackward(2,30.0);
+    moveBackward(2.0,30.0);
 
     // turn to get to left of stamp
     turnLeft(30.0,30);
 
     //Drive forwards to get back in plane with arm
-    moveForward(3.5,30.0);
+    moveForward(1.6,30.0);  //was 3.5
 
     //turn right to hit stamp down
     turnRight(50.0,30);
@@ -590,9 +595,9 @@ int main()
     
     ////////////////////////////////STEP 8 finding line and going back to stop button//////////////////////////////
     forklift.down();
-    Turn(120.,FASTTURNSPEED,RIGHT);
-    Drive(6.,FASTSPEED);
+    Turn(115.,FASTTURNSPEED,RIGHT);
     forklift.Stop();
+    Drive(6.,FASTSPEED);
     //finding line and following it to ramp
     leftMotor.SetPercent(-20.);
     rightMotor.SetPercent(20.);
@@ -608,14 +613,16 @@ int main()
     rightMotor.Stop();
     //following the line
     LineFollow(color);  //stops one if doesnt find the line
+    forklift.toBottom();
 
     //////////// Move down ramp and back to button ///////////
     Turn(35.,FASTTURNSPEED,RIGHT);
     forklift.up();
     rightMotor.SetPercent(80.);
     leftMotor.SetPercent(80.);
-    Sleep(1.5);
+    Sleep(1.2);
     forklift.Stop();
+    Sleep(0.3);
     leftMotor.SetPercent(20.);
     rightMotor.SetPercent(40.);
     while (forklift.front()==BNP){}
